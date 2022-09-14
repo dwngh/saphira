@@ -10,8 +10,10 @@
 **Lưu ý** : 
 * Khi bắt đầu code cho một task nào đó, mọi người phải tạo branch mới từ nhánh ***main*** với tên branch liên quan tới task của mình (Không được đặt tên chung chung kiểu như "*Fig bug*", "*Thêm chức năng*", ...)
 * Từ nhánh mới tạo commit code dần vào nhánh đó (Thằng nào commit thẳng vào main phạt ***50k***)
+* Thỉnh thoảng check xem nhánh main có gì mới không, nếu có thì nên merge về nhánh của mình tránh bị tụt hậu rồi lúc merge bị conflict
 * Cố gắng code sáng sủa, dễ đọc. Nếu không tự tin có thể dùng thêm extension.
 
 ## Hỗ trợ
 * [Visual Studio Code](https://code.visualstudio.com/download)
 * Extension Prettier (Tìm trên mục extension ở VS Code rồi tìm cách cài đặt, khi lưu file extension sẽ tự căn chỉnh code cho mình)
+* [Github Desktop](https://desktop.github.com/)
