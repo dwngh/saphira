@@ -22,7 +22,7 @@ export class ItemsController {
         return this.iService.create(item);
     } 
 
-    @Put(':id') 
+    @Put() 
     update(@Body() item: Item) {
         return this.iService.update(item);
     }

@@ -10,7 +10,7 @@ export class Item {
     @Column({length: 500})
     name: string;
 
-    @Column({default: 1}) 
+    @Column() 
     status: number;
 
     @Column('date', { nullable: true })
