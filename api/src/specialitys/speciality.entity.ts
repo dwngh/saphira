@@ -1,6 +1,7 @@
 import {
-    Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
+    Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
+import { Hospital } from '../hospitals/hospital.entity';
 import { User } from '../users/user.entity';
 
 
@@ -9,13 +10,14 @@ export class Speciality {
     @PrimaryGeneratedColumn() 
     id: number;
     
-    @Column()
-    hospital_id: number;
+    @ManyToOne(() => Hospital, hospital => hospital.specialitys)
+    @JoinColumn()
+    hospital: Hospital['id'];
 
     @Column() 
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     note: string;
 
     @OneToMany(() => User, user => user.speciality)

@@ -17,31 +17,31 @@ export class User {
     @Column()
     password: string;
 
-    @Column()
+    @Column({nullable: true})
     birthday: Date;
 
     //or Linkstyle?
-    @Column()
+    @Column({nullable: true})
     email: string;
 
-    @Column()
+    @Column({nullable: true})
     phone: string;
 
     //0 - admin, 1 - patient, 2 - doctor, 3 - secretary
-    @Column()
+    @Column({nullable: true})
     role: number;
 
     //
     @Column()
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     address: string;
 
    // @Column()
     //profile_img: ImageData;
 
-    @Column()
+    @Column({nullable: true})
     gender: boolean;
 
     //Chung minh thu (CCCD)
@@ -52,20 +52,20 @@ export class User {
     @JoinColumn()
     public hospital: Hospital['id'];
 
-    @Column()
+    @Column({nullable: true})
     price: number;
 
     //Số bảo hiểm y tế
-    @Column()
+    @Column({nullable: true})
     hi_num: string;
 
-    @Column('float')
+    @Column('float', {nullable: true})
     weight: number;
 
-    @Column('float')
+    @Column('float', {nullable: true})
     height: number;
 
-    @Column()
+    @Column({nullable: true})
     blood_type: number;
 
     @ManyToOne(() => Speciality, (speciality) => speciality.users)
@@ -73,7 +73,7 @@ export class User {
     public speciality: Speciality['id'];
 
     //Tiền sử bệnh
-    @Column()
+    @Column({nullable: true})
     anamnesis: string;
 
     @OneToMany(()=> Notification, notification => notification.user) 

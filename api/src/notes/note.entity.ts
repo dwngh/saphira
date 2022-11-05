@@ -12,6 +12,6 @@ export class Note {
     @JoinColumn()
     public order: Order['id'];
 
-    @Column() 
+    @Column({nullable: true}) 
     content: string;
 }

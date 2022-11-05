@@ -26,18 +26,18 @@ export class Order {
     @Column('text') 
     description: string;
 
-    @Column()
+    @Column({nullable: true})
     price: number;
 
     // 
-    @Column()
+    @Column({nullable: true})
     status: number; 
 
     //- Ca người dùng chọn và lưu theo đúng một số theo thứ tự ca trong xâu avail.
-    @Column()
+    @Column({nullable: true})
     shift: number;
 
-    @Column()
+    @Column({nullable: true})
     created_at: Date;
 
     @OneToMany(() => Attachment, attachment => attachment.order)
@@ -45,4 +45,7 @@ export class Order {
 
     @OneToMany(() => Note, note => note.order)
     public notes: Note[];
+
+    @Column()
+    isPaid: boolean;
 }
