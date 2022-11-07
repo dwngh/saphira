@@ -11,14 +11,17 @@ import { CalendarsModule } from './calendars/calendars.module';
 import { NotesModule } from './notes/notes.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import * as dotenv from 'dotenv'
+
+dotenv.config();
 
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'Aimatlac0',
+    host: process.env.DB_HOST,
+    port: + (process.env.DB_PORT),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
     database: 'saphira',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
