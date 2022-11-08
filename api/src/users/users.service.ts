@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class UsersService {
@@ -10,7 +12,18 @@ export class UsersService {
     private readonly usersRepo: Repository<User>,
   ) {}
 
+  validateUser(user: User) {
+    return true;
+  }
+
   async create(user: User): Promise<User> {
+    let saltRounds = 10;
+
+    if (!this.validateUser(user))
+      throw new BadRequestException({ error: 'Invalid user information' });
+
+    let pwd = await bcrypt.hash(user.password, saltRounds);
+    user.password = pwd;
     return await this.usersRepo.save(user);
   }
 
@@ -19,7 +32,11 @@ export class UsersService {
   }
 
   async findOne(_id): Promise<User> {
-    return await this.usersRepo.findOneBy({id: _id});
+    return await this.usersRepo.findOneBy({ id: _id });
+  }
+
+  async findByUsername(_username): Promise<User> {
+    return await this.usersRepo.findOneBy({ username: _username });
   }
 
   async update(user: User): Promise<UpdateResult> {

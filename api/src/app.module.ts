@@ -11,6 +11,7 @@ import { CalendarsModule } from './calendars/calendars.module';
 import { NotesModule } from './notes/notes.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv'
 
 dotenv.config();
@@ -34,7 +35,8 @@ dotenv.config();
   CalendarsModule,
   NotesModule,
   AttachmentsModule,
-  NotificationsModule
+  NotificationsModule,
+  AuthModule
 ],
   controllers: [AppController],
   providers: [AppService],
