@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult  } from 'typeorm';
 import { Order } from './order.entity';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class OrdersService {
@@ -9,8 +10,15 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly ordersRepo: Repository<Order>
   ) {}
+
+  async validateOrder(order: Order) {
+    return true;
+  }
+
   async create(order: Order) {
-    return await this.ordersRepo.save(order);
+    if (await this.validateOrder(order))
+      return await this.ordersRepo.save(order);
+    else throw new BadRequestException({ error: 'Invalid order information' });
   }
 
   async findAll(): Promise<Order[]> {

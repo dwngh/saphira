@@ -12,14 +12,15 @@ export class UsersService {
     private readonly usersRepo: Repository<User>,
   ) {}
 
-  validateUser(user: User) {
+  async validateUser(user: User) {
+    //validate user here
     return true;
   }
 
   async create(user: User): Promise<User> {
     let saltRounds = 10;
 
-    if (!this.validateUser(user))
+    if (!(await this.validateUser(user)))
       throw new BadRequestException({ error: 'Invalid user information' });
 
     let pwd = await bcrypt.hash(user.password, saltRounds);
