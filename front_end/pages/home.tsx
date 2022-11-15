@@ -8,18 +8,38 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AuthService } from "../service/AuthService"
+import { useState } from 'react';
 
 const theme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const {fetchLogin} = AuthService();
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const userInfo = {
       username: data.get('username'),
-      password: data.get('password'),
-    });
+      password: data.get('password')
+    }
+    const Regex = /^[a-zA-Z0-9]+$/;
+    if(!Regex.test(userInfo.username))
+    {
+      setIsUsernameValid(true)
+    } else setIsUsernameValid(false)
+    if(!Regex.test(userInfo.password))
+    {
+      setIsPasswordValid(true)
+    } else setIsPasswordValid(false)
+    if(Regex.test(userInfo.username) && Regex.test(userInfo.password)){
+      await fetchLogin(userInfo)
+    }
+    
   };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -53,16 +73,18 @@ export default function SignInSide() {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
+                error={isUsernameValid}
                 margin="normal"
                 required
                 fullWidth
                 id="username"
-                label="UserName"
+                label="User Name"
                 name="username"
                 autoComplete="UserName"
                 autoFocus
               />
               <TextField
+                error={isPasswordValid}
                 margin="normal"
                 required
                 fullWidth
