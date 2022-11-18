@@ -4,8 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import dayjs, { Dayjs } from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
@@ -17,19 +16,51 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { Icon } from "@mui/material";
 import { useState } from "react";
+import InputAdornment from "@mui/material/InputAdornment";
+import DateFilter from "./filterBox/DateFilter";
+import dayjs, { Dayjs } from "dayjs";
+import HospitalFilter from "./filterBox/HospitalFilter";
+import SpecialityFilter from "./filterBox/SpecialityFilter";
+import DoctorCard from "./DoctorCard";
 
-export default function Content() {
+export default function ChooseDoctorContent() {
     const [filterMenu, setFilterMenu] = useState(null);
     const [showDateFilter, setShowDateFilter] = useState(false);
     const [showHospitalFilter, setShowHospitalFilter] = useState(false);
     const [showSpecialityFilter, setShowSpecialityFilter] = useState(false);
 
+    const [dateFilter, setDateFilter] = useState(dayjs());
+    const [hospitalFilter, setHospitalFilter] = useState("");
+    const [specialityFilter, setSpecialityFilter] = useState("");
+
+    const handleChangeDate = (newValue: Dayjs) => {
+        setDateFilter(newValue);
+    };
+    const handleCancelDateFilter = () => {
+        setShowDateFilter(false);
+    };
+
+    const handleChangeHospital = (newValue) => {
+        setHospitalFilter(newValue);
+    };
+    const handleCancelHospitalFilter = () => {
+        setShowHospitalFilter(false);
+    };
+
+    const handleChangeSpeciality = (newValue) => {
+        setSpecialityFilter(newValue);
+    };
+    const handleCancelSpecialityFilter = () => {
+        setShowSpecialityFilter(false);
+    };
+
     const open = Boolean(filterMenu);
-    const handleMenuOpen = (e) => {
+
+    const handleFilterMenuOpen = (e) => {
         setFilterMenu(e.currentTarget);
     };
 
@@ -38,7 +69,14 @@ export default function Content() {
     };
 
     return (
-        <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
+        <Paper
+            sx={{
+                maxWidth: 936,
+                margin: "auto",
+                overflow: "hidden",
+                height: 450,
+            }}
+        >
             <AppBar
                 position="static"
                 color="default"
@@ -66,7 +104,7 @@ export default function Content() {
                         </Grid>
                         <Grid item>
                             <Tooltip title="Reload">
-                                <IconButton onClick={handleMenuOpen}>
+                                <IconButton onClick={handleFilterMenuOpen}>
                                     <FilterListIcon
                                         color="inherit"
                                         sx={{ display: "block" }}
@@ -77,65 +115,63 @@ export default function Content() {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <AppBar
-                position="static"
-                color="default"
-                elevation={0}
-                sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
-            >
-                <Toolbar>
-                    <Grid container spacing={1} alignItems="center">
-                        <Grid item>
-                            <IconButton onClick={() => console.log("AAA")}>
-                                <ClearIcon
-                                    color="inherit"
-                                    sx={{ display: "block" }}
+            {(showDateFilter || showHospitalFilter || showSpecialityFilter) && (
+                <AppBar
+                    position="static"
+                    color="default"
+                    elevation={0}
+                    sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)"}}
+                >
+                    <Toolbar>
+                        <Grid container spacing={1} alignItems="center">
+                            {showDateFilter && (
+                                <DateFilter
+                                    value={dateFilter}
+                                    onCancel={handleCancelDateFilter}
+                                    onDateChange={handleChangeDate}
                                 />
-                            </IconButton>
-                        </Grid>
-                        <Grid item>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DesktopDatePicker
-                                inputFormat="MM/DD/YYYY"
-                                // value={value}
-                                // onChange={handleChange}
-                                renderInput={(params) => (
-                                    <TextField {...params} hiddenLabel size='small' variant="filled"/>
-                                )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <AppBar
-                position="static"
-                color="default"
-                elevation={0}
-                sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
-            >
-                <Toolbar>
-                    <Grid container spacing={1} alignItems="center">
-                        <Grid item>
-                            <IconButton onClick={() => console.log("AAA")}>
-                                <ClearIcon
-                                    color="inherit"
-                                    sx={{ display: "block" }}
+                            )}
+                            {showHospitalFilter && (
+                                <HospitalFilter
+                                    value={hospitalFilter}
+                                    onChange={handleChangeHospital}
+                                    onCancel={handleCancelHospitalFilter}
                                 />
-                            </IconButton>
+                            )}
+                            {showSpecialityFilter && (
+                                <SpecialityFilter
+                                    value={specialityFilter}
+                                    onChange={handleChangeSpeciality}
+                                    onCancel={handleCancelSpecialityFilter}
+                                />
+                            )}
                         </Grid>
-                        <Grid item>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <Typography
+                    </Toolbar>
+                </AppBar>
+            )}
+            {/* <Typography
                 sx={{ my: 5, mx: 2 }}
                 color="text.secondary"
                 align="center"
             >
                 No users for this project yet
-            </Typography>
+            </Typography> */}
+            <Paper
+                style={{
+                    maxHeight:
+                        showDateFilter ||
+                        showHospitalFilter ||
+                        showSpecialityFilter
+                            ? 350
+                            : 400,
+                    overflow: "auto",
+                }}
+                variant="outlined" square 
+            >
+                <DoctorCard name="Nguyễn Văn A" speciality="Tai mũi họng" calendar="Thứ 2" price={400000}/>
+                <DoctorCard name="Trần Văn B" speciality="Xương khớp" calendar="Thứ 4,6" price={300000}/>
+                <DoctorCard name="Đỗ Thị C" speciality="Răng hàm mặt" calendar="Thứ 3,4,6" price={500000}/>
+            </Paper>
 
             <Menu
                 id="basic-menu"

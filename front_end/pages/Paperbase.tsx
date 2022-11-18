@@ -4,7 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navigator from '../components/Navigator';
-import Content from '../components/Content';
+import Content from '../components/patient/ChooseDoctorContent';
 import Header from '../components/Header';
 import { getTheme, Copyright } from '../utils/theme/ThemeProvider';
 
