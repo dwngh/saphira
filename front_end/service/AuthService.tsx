@@ -4,6 +4,7 @@ export const AuthService = () => {
     const BACKEND_SERVER = "http://localhost:3333";
 
     const fetchLogin = async (userInfo:any) => {
+        let data = ''
         await axios({
             method: "POST",
             url: `${BACKEND_SERVER}/auth/login/`,
@@ -13,12 +14,13 @@ export const AuthService = () => {
             }
         })
             .then((res) => {
-                const data = res.data
+                data = res.data
                 console.log(data)
             })
             .catch((err) => {
                 console.error(err);
             });
+            return data
     };
 
     const fetchSignUp = async (userInfo:any) => {

@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthService } from "../service/AuthService"
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { storeAT } from '../redux/authSlice';
 
 const theme = createTheme();
 
@@ -17,6 +19,7 @@ export default function SignInSide() {
   const {fetchLogin} = AuthService();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const dispatch = useDispatch()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,7 +38,11 @@ export default function SignInSide() {
       setIsPasswordValid(true)
     } else setIsPasswordValid(false)
     if(Regex.test(userInfo.username) && Regex.test(userInfo.password)){
-      await fetchLogin(userInfo)
+      const data = await fetchLogin(userInfo)
+      if(data !== '') {
+        dispatch(storeAT(data))
+      } else alert('Error')
+      
     }
     
   };

@@ -59,7 +59,7 @@ export default function SignUp() {
       setIsIdentityNumValid(true)
     } else setIsIdentityNumValid(false)
     if(Regex.test(userInfo.username) && Regex.test(userInfo.password) && RegexName.test(userInfo.name) && RegexNum.test(userInfo.identity_num)){
-      await fetchLogin(userInfo)
+      await fetchSignUp(userInfo)
       
     }
   };
