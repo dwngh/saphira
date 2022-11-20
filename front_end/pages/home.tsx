@@ -9,17 +9,19 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthService } from "../service/AuthService"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { storeAT } from '../redux/authSlice';
+import { useAuth } from '../utils/useAuth';
 
 const theme = createTheme();
 
 export default function SignInSide() {
   const {fetchLogin} = AuthService();
+  const {signin} = useAuth();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const dispatch = useDispatch()
+  
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,9 +42,9 @@ export default function SignInSide() {
     if(Regex.test(userInfo.username) && Regex.test(userInfo.password)){
       const data = await fetchLogin(userInfo)
       if(data !== '') {
-        dispatch(storeAT(data))
-      } else alert('Error')
-      
+        signin(data);
+        window.location.href = "/sample";
+      } else alert('Error');
     }
     
   };
@@ -85,7 +87,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="username"
-                label="User Name"
+                label="Username"
                 name="username"
                 autoComplete="UserName"
                 autoFocus

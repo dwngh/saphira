@@ -1,13 +1,19 @@
-import type { AppProps } from 'next/app'
-import { store } from '../redux/store'
-import { Provider } from 'react-redux'
+import React, { FC } from 'react';
+import { AppProps } from 'next/app';
+import { PersistGate } from 'redux-persist/integration/react';
+import { useStore } from 'react-redux';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return(
-    <Provider store={store}>
-      <Component {...pageProps} />
-    </Provider>
-  ) 
-}
+import { wrapper } from '../store';
 
-export default MyApp
+const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
+  const store: any = useStore();
+  return (
+    <PersistGate persistor={store.__persistor} loading={<div>Loading</div>}>
+      <>
+        <Component {...pageProps} />
+      </>
+    </PersistGate>
+  );
+};
+
+export default wrapper.withRedux(WrappedApp);
