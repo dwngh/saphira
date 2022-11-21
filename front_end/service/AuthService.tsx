@@ -1,43 +1,46 @@
 import axios from "axios";
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 
 export const AuthService = () => {
-    const fetchLogin = async (userInfo:any) => {
-        let data = ''
+    const fetchLogin = async (userInfo: any) => {
+        let data = "";
         await axios({
             method: "POST",
-            url: `${process.env.BACKEND_SERVER}/auth/login/`,
+            url: `${process.env.NEXT_PUBLIC_HOST}/auth/login/`,
             // header  (chỉnh  sửa header khi thêm jwt)
             data: {
-                ...userInfo
-            }
+                ...userInfo,
+            },
         })
             .then((res) => {
-                data = res.data
-                console.log(data)
+                data = res.data;
+                console.log(data);
             })
             .catch((err) => {
                 console.error(err);
             });
-            return data
+        return data;
     };
 
-    const fetchSignUp = async (userInfo:any) => {
+    const fetchSignUp = async (userInfo: any) => {
+        let response;
         await axios({
             method: "POST",
-            url: `${process.env.BACKEND_SERVER}/users/`,
+            url: `${process.env.NEXT_PUBLIC_HOST}/users/`,
             // header  (chỉnh  sửa header khi thêm jwt)
             data: {
-                ...userInfo
-            }
+                ...userInfo,
+            },
         })
             .then((res) => {
-                const data = res.data
-                console.log(data)
+                console.log("Sign in successfully ...");
+                response = res;
+                return res;
             })
             .catch((err) => {
                 console.error(err);
             });
+        return response;
     };
 
     return { fetchLogin, fetchSignUp };

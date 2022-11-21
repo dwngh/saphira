@@ -6,7 +6,7 @@ const Sample = () => {
   const {accessToken, logout} = useAuth();
   const router = useRouter();
   useEffect(() => {
-    if (!accessToken) router.push("/home");
+    if (!accessToken) router.push("/login");
   }, [accessToken])
   return (
     <div>
