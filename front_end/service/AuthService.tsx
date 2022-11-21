@@ -1,13 +1,12 @@
 import axios from "axios";
+import * as dotenv from 'dotenv'
 
 export const AuthService = () => {
-    const BACKEND_SERVER = "http://localhost:3333";
-
     const fetchLogin = async (userInfo:any) => {
         let data = ''
         await axios({
             method: "POST",
-            url: `${BACKEND_SERVER}/auth/login/`,
+            url: `${process.env.BACKEND_SERVER}/auth/login/`,
             // header  (chỉnh  sửa header khi thêm jwt)
             data: {
                 ...userInfo
@@ -26,7 +25,7 @@ export const AuthService = () => {
     const fetchSignUp = async (userInfo:any) => {
         await axios({
             method: "POST",
-            url: `${BACKEND_SERVER}/users/`,
+            url: `${process.env.BACKEND_SERVER}/users/`,
             // header  (chỉnh  sửa header khi thêm jwt)
             data: {
                 ...userInfo
