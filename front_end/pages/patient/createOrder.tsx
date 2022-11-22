@@ -3,12 +3,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Navigator from "../components/Navigator";
-import ChooseDoctorContent from "../components/patient/ChooseDoctorContent";
-import Header from "../components/Header";
-import { getTheme, Copyright } from "../utils/theme/ThemeProvider";
-import ChooseDateContent from "../components/patient/ChooseDateContent";
-import DescriptionContent from "../components/patient/DescriptionContent";
+import Navigator from "../../components/Navigator";
+import ChooseDoctorContent from "../../components/patient/ChooseDoctorContent";
+import Header from "../../components/Header";
+import { getTheme, Copyright } from "../../utils/theme/ThemeProvider";
+import ChooseDateContent from "../../components/patient/ChooseDateContent";
+import DescriptionContent from "../../components/patient/DescriptionContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;

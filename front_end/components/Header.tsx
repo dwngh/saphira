@@ -21,6 +21,7 @@ interface HeaderProps {
 }
 
 const headerTitle = {
+    home: "Trang chủ",
     "create-order": "Tạo yêu cầu khám bệnh",
     "my-orders": "Quản lý yêu cầu",
     attachment: "Tệp đính kèm",
@@ -129,15 +130,21 @@ export default function Header(props) {
                 elevation={0}
                 sx={{ zIndex: 0 }}
             >
-                <Tabs value={props.choosing ?? 0} textColor="inherit">
-                    {props.tabs.map((value, index) => (
-                        <Tab id={"" + index} label={value} onClick={props.onChangeTab}/>
-                    ))}
+                {props.tabs.length > 0 && (
+                    <Tabs value={props.choosing ?? 0} textColor="inherit">
+                        {props.tabs.map((value, index) => (
+                            <Tab
+                                id={"" + index}
+                                label={value}
+                                onClick={props.onChangeTab}
+                            />
+                        ))}
 
-                    {/* <Tab label="Sign-in method" />
+                        {/* <Tab label="Sign-in method" />
                     <Tab label="Templates" />
                     <Tab label="Usage" /> */}
-                </Tabs>
+                    </Tabs>
+                )}
             </AppBar>
         </React.Fragment>
     );
