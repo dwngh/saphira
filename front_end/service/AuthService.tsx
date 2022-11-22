@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 
 export const AuthService = () => {
     const fetchLogin = async (userInfo: any) => {
-        let data = "";
+        let data;
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/auth/login/`,
@@ -14,7 +14,6 @@ export const AuthService = () => {
         })
             .then((res) => {
                 data = res.data;
-                console.log(data);
             })
             .catch((err) => {
                 console.error(err);
@@ -43,5 +42,25 @@ export const AuthService = () => {
         return response;
     };
 
-    return { fetchLogin, fetchSignUp };
+    const fetchUser = async (token) => {
+        let response;
+        await axios({
+            method: "POST",
+            url: `${process.env.NEXT_PUBLIC_HOST}/auth/profile`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            } 
+        })
+            .then((res) => {
+                console.log("Sign in successfully ...");
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    };
+
+    return { fetchLogin, fetchSignUp, fetchUser };
 };

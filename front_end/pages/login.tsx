@@ -20,8 +20,8 @@ import { useRouter } from "next/router";
 const theme = createTheme();
 
 export default function SignInSide() {
-    const { fetchLogin } = AuthService();
-    const { signin } = useAuth();
+    const { fetchLogin, fetchUser } = AuthService();
+    const { accessToken, role, signin, storeProfile} = useAuth();
     const router = useRouter();
     const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
@@ -47,9 +47,31 @@ export default function SignInSide() {
         } else setIsPasswordValid(false);
         if (Regex.test(userInfo.username) && Regex.test(userInfo.password)) {
             const data = await fetchLogin(userInfo);
-            if (data !== "") {
+            if (data) {
                 signin(data);
-                window.location.href = "/patient/home";
+                let user = await fetchUser(accessToken);
+                console.log(user);
+                storeProfile(user);
+                let roleStr = "";
+                switch (user.role) {
+                    case 1:
+                        roleStr = "patient";
+                        break;
+                    case 2:
+                        roleStr = "doctor";
+                        break;
+                    case 3:
+                        roleStr = "secretary";
+                        break;
+                    case 0:
+                        roleStr = "admin";
+                        break;
+                }
+                if (roleStr != "") window.location.href = `/${roleStr}/home`;
+                else
+                    toast.error(
+                        "Unexpected error! Please try to signin again."
+                    );
             } else toast.error("Username not found or incorrect password!");
         }
     };

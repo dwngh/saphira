@@ -23,7 +23,7 @@ export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const { accessToken } = useAuth();
+    const { name, accessToken } = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -81,6 +81,7 @@ export default function Paperbase() {
                                 margin: "auto",
                                 overflow: "hidden",
                                 height: 450,
+                                padding: 5,
                             }}
                         >
                             <Typography
@@ -88,14 +89,14 @@ export default function Paperbase() {
                                 component="div"
                                 color="default"
                             >
-                                Chào mừng bạn quay trở lại!
+                                Chào mừng bạn đã quay trở lại! 
                             </Typography>
                             <Typography
                                 variant="subtitle1"
                                 component="div"
-                                color="default"
+                                color="Highlight"
                             >
-                                {accessToken}
+                                Bệnh nhân: {name}
                             </Typography>
                             <Typography variant="body1" component="div">
                                 Sử dụng các chức năng bên trái thanh công cụ để
