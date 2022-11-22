@@ -49,7 +49,7 @@ export default function SignInSide() {
             const data = await fetchLogin(userInfo);
             if (data !== "") {
                 signin(data);
-                window.location.href = "/sample";
+                window.location.href = "/patient/home";
             } else toast.error("Username not found or incorrect password!");
         }
     };
