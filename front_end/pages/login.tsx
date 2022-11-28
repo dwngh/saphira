@@ -21,14 +21,28 @@ const theme = createTheme();
 
 export default function SignInSide() {
     const { fetchLogin, fetchUser } = AuthService();
-    const { accessToken, role, signin, storeProfile} = useAuth();
+    const { accessToken, role, signin, storeProfile } = useAuth();
     const router = useRouter();
     const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
 
     useEffect(() => {
-        if (router.query?.signupSuccess == 1)
-            toast.success("Sign up successfully! Please login.");
+        let msg;
+        if (router.query?.signupSuccess) {
+            toast.success("Sign up successfully! Please login.", {
+                toastId: "sign-in-success",
+            });
+        }
+        if ((msg = router.query?.error)) {
+            toast.error(msg, {
+                toastId: "error-" + msg,
+            });
+        }
+        if ((msg = router.query?.warning)) {
+            toast.error(msg, {
+                toastId: "warning-" + msg,
+            });
+        }
     }, [router.query]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -47,9 +61,10 @@ export default function SignInSide() {
         } else setIsPasswordValid(false);
         if (Regex.test(userInfo.username) && Regex.test(userInfo.password)) {
             const data = await fetchLogin(userInfo);
+            console.log(data);
             if (data) {
                 signin(data);
-                let user = await fetchUser(accessToken);
+                let user = await fetchUser(data.access_token);
                 console.log(user);
                 storeProfile(user);
                 let roleStr = "";

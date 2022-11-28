@@ -15,11 +15,12 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
+import Sample from "../sample";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
 
-export default function Paperbase() {
+export default function Default() {
     const router = useRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
@@ -85,24 +86,7 @@ export default function Paperbase() {
                                 padding: 5,
                             }}
                         >
-                            <Typography
-                                variant="h5"
-                                component="div"
-                                color="default"
-                            >
-                                Chào mừng bạn đã quay trở lại! 
-                            </Typography>
-                            <Typography
-                                variant="subtitle1"
-                                component="div"
-                                color="Highlight"
-                            >
-                                Bệnh nhân: {name}
-                            </Typography>
-                            <Typography variant="body1" component="div">
-                                Sử dụng các chức năng bên trái thanh công cụ để
-                                thao tác.
-                            </Typography>
+                            <Sample />
                         </Paper>
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>

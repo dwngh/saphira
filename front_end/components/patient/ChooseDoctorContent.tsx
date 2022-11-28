@@ -25,7 +25,7 @@ import DateFilter from "./filterBox/DateFilter";
 import dayjs, { Dayjs } from "dayjs";
 import HospitalFilter from "./filterBox/HospitalFilter";
 import SpecialityFilter from "./filterBox/SpecialityFilter";
-import DoctorCard from "./DoctorCard";
+import DoctorCard from "./card/DoctorCard";
 
 export default function ChooseDoctorContent() {
     const [filterMenu, setFilterMenu] = useState(null);
