@@ -121,7 +121,7 @@ export default function OrderCard(props: OrderCardProps) {
                     <AccordionDetails>
                         <Grid container spacing={1}>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontWeight: "bold" }}>
+                                <Typography>
                                     Bác sĩ:
                                 </Typography>
                                 {props.item.doctor}

@@ -3,14 +3,25 @@ import Paper from "@mui/material/Paper";
 import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import OrderDetailCard from "./card/OrderDetailCard";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 
 
 export default function OrderDetailContent() {
+    const [openConfirm, setOpenConfirm] = useState(false);
+    const handleClose = () => {
+        setOpenConfirm(false);
+    }
+    const handleOpenConfirm = () => {
+        setOpenConfirm(true);
+    }
+    const handleSave = () => {
+        // Xu ly logic
+        setOpenConfirm(false);
+    }
+
     return (
         <Paper
             sx={{
@@ -66,11 +77,33 @@ export default function OrderDetailContent() {
                         variant="contained"
                         color="success"
                         sx={{ height: 40, borderRadius: 28 }}
+                        onClick={handleOpenConfirm}
                     >
                         Xác nhận
                     </Button>
                 </Box>
             </Box>
+            <Dialog
+                open={openConfirm}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Xác nhận yêu cầu"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn chắc chắn muốn tạo yêu cầu với thông tin như trên?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Hủy</Button>
+                    <Button onClick={handleSave} autoFocus>
+                        Lưu
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Paper>
     );
 }

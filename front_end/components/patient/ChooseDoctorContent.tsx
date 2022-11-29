@@ -103,7 +103,7 @@ export default function ChooseDoctorContent() {
                             />
                         </Grid>
                         <Grid item>
-                            <Tooltip title="Reload">
+                            <Tooltip title="Bộ lọc">
                                 <IconButton onClick={handleFilterMenuOpen}>
                                     <FilterListIcon
                                         color="inherit"

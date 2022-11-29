@@ -36,11 +36,11 @@ interface HeaderProps {
 }
 
 const headerTitle = {
-    home: "Trang chủ",
+    "home": "Trang chủ",
     "create-order": "Tạo yêu cầu khám bệnh",
     "my-orders": "Quản lý yêu cầu",
-    attachment: "Tệp đính kèm",
-    profile: "Tài khoản của tôi",
+    "attachment": "Tệp đính kèm",
+    "profile": "Tài khoản của tôi",
     "update-profile": "Cập nhật thông tin cá nhân",
 };
 
@@ -220,7 +220,6 @@ export default function Header(props: HeaderProps) {
                         sx={{ minHeight: "30", paddingTop: 3, paddingBottom: 3}}
                     >
                         <Grid item xs={3}>
-                            <AccountCircleIcon />
                             <SpAvatar name={name} width={100}/>
                         </Grid>
                     </Grid>
