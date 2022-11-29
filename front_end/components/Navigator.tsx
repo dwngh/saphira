@@ -8,59 +8,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
-import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
-import PermMediaOutlinedIcon from "@mui/icons-material/PhotoSizeSelectActual";
-import PublicIcon from "@mui/icons-material/Public";
-import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
-import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
-import TimerIcon from "@mui/icons-material/Timer";
-import SettingsIcon from "@mui/icons-material/Settings";
-import PhonelinkSetupIcon from "@mui/icons-material/PhonelinkSetup";
 import MedicationLiquidTwoToneIcon from "@mui/icons-material/MedicationLiquidTwoTone";
-import AddIcon from "@mui/icons-material/Add";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import EditIcon from "@mui/icons-material/Edit";
-
-const categories = [
-    {
-        id: "CÔNG CỤ",
-        children: [
-            {
-                id: "create-order",
-                text: "Tạo yêu cầu khám bệnh",
-                icon: <AddIcon />,
-                active: false,
-            },
-            {
-                id: "my-orders",
-                text: "Quản lý yêu cầu",
-                icon: <DnsRoundedIcon />,
-            },
-            {
-                id: "attachment",
-                text: "Tệp đính kèm",
-                icon: <AttachFileIcon />,
-            },
-        ],
-    },
-    {
-        id: "TÀI KHOẢN",
-        children: [
-            {
-                id: "profile",
-                text: "Tài khoản của tôi",
-                icon: <AccountCircleIcon />,
-            },
-            {
-                id: "update-profile",
-                text: "Cập nhật thông tin cá nhân",
-                icon: <EditIcon />,
-            },
-        ],
-    },
-];
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 const item = {
     py: "12px",
@@ -79,14 +29,21 @@ const itemCategory = {
 
 export default function Navigator(props) {
     const { ...other } = props.PaperProps;
-    React.useEffect(() => {
-        categories.forEach(category => {
-            category.children.forEach(item => {
+    const [categories, setCategories] = useState([...props.categories]);
+    const [choosing, setChoosing] = useState(props.choosing);
+    const [homePage, setHomepage] = useState(props.home);
+    const router = useRouter();
+
+    useEffect(() => {
+        let temp = [...categories];
+        temp.forEach((category) => {
+            category.children.forEach((item) => {
                 if (item.id == props.choosing) item.active = true;
                 else item.active = false;
-            })
-        })
-    }, [])
+            });
+        });
+        setCategories(temp);
+    }, [choosing]);
 
     return (
         <Drawer variant="permanent" {...other}>
@@ -103,27 +60,39 @@ export default function Navigator(props) {
                     <MedicationLiquidTwoToneIcon fontSize="large" />
                     &nbsp;&nbsp;Saphira
                 </ListItem>
-                <ListItem sx={{ ...item, ...itemCategory }}>
-                    <ListItemIcon>
-                        <HomeIcon />
-                    </ListItemIcon>
-                    <ListItemText>Home</ListItemText>
+                <ListItem sx={{ ...item, ...itemCategory }} selected={choosing == "home"} onClick={() => router.push(homePage)}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText>Home</ListItemText>
+                    </ListItemButton>
                 </ListItem>
                 {categories.map(({ id, children }) => (
                     <Box key={id} sx={{ bgcolor: "#101F33" }}>
                         <ListItem sx={{ py: 2, px: 3 }}>
-                            <ListItemText sx={{ color: "#fff", fontWeight: 500 }}>
+                            <ListItemText
+                                sx={{ color: "#fff", fontWeight: 500 }}
+                            >
                                 <b>{id}</b>
                             </ListItemText>
                         </ListItem>
-                        {children.map(({ id: childId, text, icon, active }) => (
-                            <ListItem disablePadding key={childId}>
-                                <ListItemButton selected={active} sx={item}>
-                                    <ListItemIcon>{icon}</ListItemIcon>
-                                    <ListItemText>{text}</ListItemText>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
+                        {children.map(
+                            ({ id: childId, text, icon, active, route }) => (
+                                <ListItem disablePadding key={childId}>
+                                    <ListItemButton
+                                        selected={active}
+                                        sx={item}
+                                        onClick={() => {
+                                            router.push(route ?? "/sample");
+                                        }}
+                                    >
+                                        <ListItemIcon>{icon}</ListItemIcon>
+                                        <ListItemText>{text}</ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                            )
+                        )}
                         <Divider sx={{ mt: 2 }} />
                     </Box>
                 ))}

@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
+import AttachmentContent from "../../components/patient/AttachmentContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -24,7 +25,8 @@ export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const { username, name, accessToken } = useAuth();
+    const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<AttachmentContent />);
+    const { accessToken } = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -60,14 +62,14 @@ export default function Paperbase() {
                     )}
                     <PatientNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="home"
+                        choosing="attachment"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="home"
+                        title="attachment"
                         choosing={currentTabId}
                         tabs={[]}
                         onChangeTab={handleChangeTab}
@@ -81,28 +83,10 @@ export default function Paperbase() {
                                 maxWidth: 936,
                                 margin: "auto",
                                 overflow: "hidden",
-                                height: 450,
-                                padding: 5,
+                                height: 500,
                             }}
                         >
-                            <Typography
-                                variant="h5"
-                                component="div"
-                                color="default"
-                            >
-                                Chào mừng bạn đã quay trở lại! 
-                            </Typography>
-                            <Typography
-                                variant="subtitle1"
-                                component="div"
-                                color="Highlight"
-                            >
-                                Bệnh nhân: {name}
-                            </Typography>
-                            <Typography variant="body1" component="div">
-                                Sử dụng các chức năng bên trái thanh công cụ để
-                                thao tác.
-                            </Typography>
+                            {currentTab}
                         </Paper>
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>

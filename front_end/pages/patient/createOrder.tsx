@@ -3,12 +3,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Navigator from "../../components/Navigator";
+import Navigator from "../../components/patient/Navigator";
 import ChooseDoctorContent from "../../components/patient/ChooseDoctorContent";
 import Header from "../../components/Header";
 import { getTheme, Copyright } from "../../utils/theme/ThemeProvider";
 import ChooseDateContent from "../../components/patient/ChooseDateContent";
 import DescriptionContent from "../../components/patient/DescriptionContent";
+import PatientNavigator from "../../components/patient/Navigator";
+import OrderDetailContent from "../../components/patient/OrderDetailContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -16,8 +18,8 @@ const tabs = ["Bác sĩ", "Ngày giờ", "Mô tả", "Thanh toán"];
 const content = [
     <ChooseDoctorContent />,
     <ChooseDateContent w_str="0101100"/>,
-    <DescriptionContent />,
-    <Box />,
+    <DescriptionContent isCompleted={false}/>,
+    <OrderDetailContent />,
 ];
 
 export default function Paperbase() {
@@ -48,14 +50,14 @@ export default function Paperbase() {
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
                     {isSmUp ? null : (
-                        <Navigator
+                        <PatientNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
                         />
                     )}
-                    <Navigator
+                    <PatientNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
                         choosing="create-order"
                         sx={{ display: { sm: "block", xs: "none" } }}

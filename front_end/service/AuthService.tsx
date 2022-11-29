@@ -44,6 +44,7 @@ export const AuthService = () => {
 
     const fetchUser = async (token) => {
         let response;
+        console.log("TOKENは" + token);
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/auth/profile`,

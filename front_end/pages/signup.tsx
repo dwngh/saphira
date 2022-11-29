@@ -64,6 +64,8 @@ export default function SignUp() {
             RegexName.test(userInfo.name) &&
             RegexNum.test(userInfo.identity_num)
         ) {
+            // Temp
+            userInfo.role = 1;
             let data = await fetchSignUp(userInfo);
             console.log(data);
             if (data?.status == 201) {
