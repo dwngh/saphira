@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
-import ShiftList from "../time/shiftList";
+import ShiftList from "../time/ShiftList";
 
 interface ChooseDateContentProps {
     w_str;

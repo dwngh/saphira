@@ -12,9 +12,12 @@ import { NotesModule } from './notes/notes.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import * as dotenv from 'dotenv'
 
 dotenv.config();
+console.log(join(__dirname, '..', '..', 'front_end', 'out'))
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -26,6 +29,9 @@ dotenv.config();
     database: 'saphira',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
+  }),
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', '..', 'front_end', 'out'),
   }),
   ItemsModule,
   UsersModule,

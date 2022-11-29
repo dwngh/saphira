@@ -49,8 +49,8 @@ export default function SignInSide() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const userInfo = {
-            username: data.get("username"),
-            password: data.get("password"),
+            username: data.get("username") + "",
+            password: data.get("password") + "",
         };
         const Regex = /^[a-zA-Z0-9]+$/;
         if (!Regex.test(userInfo.username)) {

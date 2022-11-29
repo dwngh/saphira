@@ -59,6 +59,7 @@ export default function Paperbase() {
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
+                            choosing="profile"
                         />
                     )}
                     <PatientNavigator

@@ -1,12 +1,8 @@
 import {
     Card,
-    CardActionArea,
-    Paper,
     Typography,
     Grid,
     Box,
-    Slide,
-    SwipeableDrawer,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -162,7 +158,7 @@ export default function OrderCard(props: OrderCardProps) {
                     </AccordionSummary>
                     <AccordionDetails>
                         {props.attachments.map((attachment) => (
-                            <Typography>
+                            <Typography key={attachment.id}>
                                 <Link href={attachment.href}>
                                     {attachment.name}
                                 </Link>

@@ -16,10 +16,10 @@ let theme = getTheme("default");
 const drawerWidth = 256;
 const tabs = ["Bác sĩ", "Ngày giờ", "Mô tả", "Thanh toán"];
 const content = [
-    <ChooseDoctorContent />,
-    <ChooseDateContent w_str="0101100"/>,
-    <DescriptionContent isCompleted={false}/>,
-    <OrderDetailContent />,
+    <ChooseDoctorContent key="choose-doctor-content"/>,
+    <ChooseDateContent w_str="0101100" key="choose-date-content"/>,
+    <DescriptionContent isCompleted={false} key="description-content"/>,
+    <OrderDetailContent key="order-detail-content"/>,
 ];
 
 export default function Paperbase() {
@@ -55,6 +55,7 @@ export default function Paperbase() {
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
+                            choosing="create-order"
                         />
                     )}
                     <PatientNavigator

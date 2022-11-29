@@ -1,6 +1,6 @@
 import { AppBar, Button, Paper, SwipeableDrawer, Typography } from "@mui/material";
 import { Fragment } from "react";
-import ShiftList from "../../time/shiftList";
+import ShiftList from "../../time/ShiftList";
 import Box from "@mui/material/Box";
 import DescriptionCard from "./DescriptionCard";
 import OrderDetailCard from "./OrderDetailCard";

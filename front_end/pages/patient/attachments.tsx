@@ -57,6 +57,7 @@ export default function Paperbase() {
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
+                            choosing="attachment"
                             onClose={handleDrawerToggle}
                         />
                     )}

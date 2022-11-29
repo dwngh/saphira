@@ -1,9 +1,9 @@
-import { Button, Divider, Paper, Typography } from "@mui/material";
+import { Button, Divider, Paper, Typography, Box } from "@mui/material";
 
 interface ShiftLabelProps {
     shift;
     status;
-    onShiftChoose: (e) => {};
+    onShiftChoose: (e) => void;
 }
 
 const shiftList = [
@@ -30,7 +30,7 @@ function ShiftLabel(props: ShiftLabelProps) {
             id={props.shift}
             type="submit"
             color="primary"
-            variant={variant}
+            variant={props.status == 1 ? "contained" : "outlined"}
             sx={{
                 borderRadius: 28,
                 margin: 1,
@@ -56,7 +56,7 @@ export default function ShiftList(props: ShiftListProps) {
         <Paper elevation={1} sx={{ marginTop: 3 }}>
             <Typography variant="subtitle1" component="div">
                 {shiftList.map((shift, index) => {
-                    const rows = [];
+                    const rows = [<Box key={"box-" + index}/>];
                     let status = 0;
                     if (index == props.choosedShift) status = 1;
                     if (index == 0) rows.push(<Divider />);
