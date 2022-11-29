@@ -17,14 +17,10 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
-import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "../utils/useAuth";
 import { Box, Card, Paper } from "@mui/material";
 import SpAvatar from "./user/Avatar";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 interface HeaderProps {
@@ -164,6 +160,7 @@ export default function Header(props: HeaderProps) {
                         {props.tabs.map((value, index) => (
                             <Tab
                                 id={"" + index}
+                                key={"tab-" + index}
                                 label={value}
                                 onClick={props.onChangeTab}
                             />

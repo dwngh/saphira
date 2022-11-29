@@ -16,7 +16,7 @@ let theme = getTheme("default");
 const drawerWidth = 256;
 const tabs = ["Yêu cầu của tôi"];
 const content = [
-    <MyDoctorContent />,
+    <MyDoctorContent key="my-doctor-content"/>,
 ];
 
 export default function Paperbase() {
@@ -52,6 +52,7 @@ export default function Paperbase() {
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
+                            choosing="my-orders"
                         />
                     )}
                     <PatientNavigator

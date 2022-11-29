@@ -38,10 +38,11 @@ export default function SignUp() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const userInfo = {
-            name: data.get("fullName"),
-            username: data.get("username"),
-            password: data.get("password"),
-            identity_num: data.get("identity_num"),
+            name: data.get("fullName") + "",
+            username: data.get("username") + "",
+            password: data.get("password") + "",
+            identity_num: data.get("identity_num") + "",
+            role: 1,
         };
         const Regex = /^[a-zA-Z0-9]+$/;
         const RegexName = /^[a-zA-Z\- ]+$/;
@@ -64,8 +65,7 @@ export default function SignUp() {
             RegexName.test(userInfo.name) &&
             RegexNum.test(userInfo.identity_num)
         ) {
-            // Temp
-            userInfo.role = 1;
+
             let data = await fetchSignUp(userInfo);
             console.log(data);
             if (data?.status == 201) {

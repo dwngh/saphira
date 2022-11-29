@@ -7,7 +7,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import Navigator from "../Navigator";
 import LogoutIcon from '@mui/icons-material/Logout';
 
-export default function PatientNavigator({ choosing, PaperProps }) {
+interface PatientNavigatorProps {
+    choosing;
+    PaperProps?;
+    variant?;
+    open?;
+    onClose?;
+    sx?;
+}
+
+export default function PatientNavigator(props: PatientNavigatorProps) {
     const categories = [
         {
             id: "CÔNG CỤ",
@@ -60,10 +69,11 @@ export default function PatientNavigator({ choosing, PaperProps }) {
 
     return (
         <Navigator
-            PaperProps={PaperProps}
-            choosing={choosing}
+            PaperProps={props.PaperProps}
+            choosing={props.choosing}
             home="/patient/home"
             categories={categories}
+            sx={props?.sx}
         />
     );
 }
