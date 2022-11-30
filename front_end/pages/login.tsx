@@ -82,7 +82,7 @@ export default function SignInSide() {
                         roleStr = "admin";
                         break;
                 }
-                if (roleStr != "") window.location.href = `/${roleStr}/home`;
+                if (roleStr != "") router.push(`/${roleStr}/home`);
                 else
                     toast.error(
                         "Unexpected error! Please try to signin again."
@@ -172,7 +172,7 @@ export default function SignInSide() {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="/signup" variant="body2">
+                                    <Link onClick={() => router.push("/signup")} variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>

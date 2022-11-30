@@ -174,7 +174,7 @@ export default function SignUp() {
                         </Button>
                         <Grid container justifyContent="center">
                             <Grid item>
-                                <Link href="/home" variant="body2">
+                                <Link onClick={() => router.push("/login")} variant="body2">
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
