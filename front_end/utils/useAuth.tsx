@@ -1,19 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
-import { IAuthState } from "../store/auth/auth";
+import { AuthState } from "../redux/auth/auth";
 
 export function useAuth() {
     const dispatch = useDispatch();
     const accessToken = useSelector(
-        ({ auth }: { auth: IAuthState }) => auth.payload.accessToken
+        ({ auth }: { auth: AuthState }) => auth.payload.accessToken
     );
     const username = useSelector(
-        ({ auth }: { auth: IAuthState }) => auth.payload.username
+        ({ auth }: { auth: AuthState }) => auth.payload.username
     );
     const name = useSelector(
-        ({ auth }: { auth: IAuthState }) => auth.payload.name
+        ({ auth }: { auth: AuthState }) => auth.payload.name
     );
     const role = useSelector(
-        ({ auth }: { auth: IAuthState }) => auth.payload.role
+        ({ auth }: { auth: AuthState }) => auth.payload.role
     );
 
     const signin = (res) => {
