@@ -10,8 +10,6 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AuthService } from "../service/AuthService";
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { storeAT } from "../redux/authSlice";
 import { useAuth } from "../utils/useAuth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
