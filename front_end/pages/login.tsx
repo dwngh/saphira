@@ -10,8 +10,6 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AuthService } from "../service/AuthService";
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { storeAT } from "../redux/authSlice";
 import { useAuth } from "../utils/useAuth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -82,7 +80,7 @@ export default function SignInSide() {
                         roleStr = "admin";
                         break;
                 }
-                if (roleStr != "") window.location.href = `/${roleStr}/home`;
+                if (roleStr != "") router.push(`/${roleStr}/home`);
                 else
                     toast.error(
                         "Unexpected error! Please try to signin again."
@@ -172,7 +170,7 @@ export default function SignInSide() {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="/signup" variant="body2">
+                                    <Link onClick={() => router.push("/signup")} variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>
