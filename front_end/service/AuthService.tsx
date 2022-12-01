@@ -60,6 +60,8 @@ export const AuthService = () => {
             .catch((err) => {
                 console.error(err);
             });
+        console.log("Response ...");
+        console.log(response);
         return response;
     };
 

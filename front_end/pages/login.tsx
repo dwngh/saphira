@@ -80,7 +80,7 @@ export default function SignInSide() {
                         roleStr = "admin";
                         break;
                 }
-                if (roleStr != "") router.push(`/${roleStr}/home`);
+                if (roleStr != "") router.push(`/gateway`);
                 else
                     toast.error(
                         "Unexpected error! Please try to signin again."

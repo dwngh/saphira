@@ -3,35 +3,34 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Navigator from "../../components/Navigator";
+import Navigator from "../../components/patient/Navigator";
 import ChooseDoctorContent from "../../components/patient/ChooseDoctorContent";
 import Header from "../../components/Header";
 import { getTheme, Copyright } from "../../utils/theme/ThemeProvider";
 import ChooseDateContent from "../../components/patient/ChooseDateContent";
 import DescriptionContent from "../../components/patient/DescriptionContent";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
-import AttachmentContent from "../../components/patient/AttachmentContent";
-import ProfileContent from "../../components/ProfileContent";
+import OrderDetailContent from "../../components/patient/OrderDetailContent";
+import AdminNavigator from "../../components/admin/Navigator";
+import AccountListContent from "../../components/admin/AccountListContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
+const tabs = ["Danh sách", "Thêm tài khoản"];
+const content = [
+    <AccountListContent key="admin-accounts"/>,
+    <Box  key="choose-date-content"/>,
+];
 
 export default function Paperbase() {
-    const router = useRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const [currentTab, setCurrentTab] = React.useState<JSX.Element>();
-    const { accessToken, userId } = useAuth();
+    const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
 
-    useEffect(() => {
-        setCurrentTab(<ProfileContent userId={userId} />)
-    }, [])
+    React.useEffect(() => {
+        setCurrentTab(content[currentTabId]);
+    }, [currentTabId]);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -42,14 +41,6 @@ export default function Paperbase() {
         setCurrentTabId(+id);
     };
 
-    useEffect(() => {
-        if (!accessToken)
-            router.push({
-                pathname: "/login",
-                query: { unauthorized: 1 },
-            });
-    }, [accessToken]);
-
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -59,26 +50,26 @@ export default function Paperbase() {
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
                     {isSmUp ? null : (
-                        <PatientNavigator
+                        <AdminNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
-                            choosing="profile"
+                            choosing="create-order"
                         />
                     )}
-                    <PatientNavigator
+                    <AdminNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="profile"
+                        choosing="create-order"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="profile"
+                        title="admin-accounts"
                         choosing={currentTabId}
-                        tabs={[]}
+                        tabs={tabs}
                         onChangeTab={handleChangeTab}
                     />
                     <Box
