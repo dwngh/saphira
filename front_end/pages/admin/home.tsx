@@ -15,8 +15,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
-import AttachmentContent from "../../components/patient/AttachmentContent";
-import ProfileContent from "../../components/ProfileContent";
+import AdminNavigator from "../../components/admin/Navigator";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -26,13 +25,7 @@ export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const [currentTab, setCurrentTab] = React.useState<JSX.Element>();
-    const { accessToken, userId } = useAuth();
-
-    useEffect(() => {
-        setCurrentTab(<ProfileContent userId={userId} />)
-    }, [])
-
+    const { username, name, accessToken } = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -59,24 +52,24 @@ export default function Paperbase() {
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
                     {isSmUp ? null : (
-                        <PatientNavigator
+                        <AdminNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
+                            choosing="home"
                             onClose={handleDrawerToggle}
-                            choosing="profile"
                         />
                     )}
-                    <PatientNavigator
+                    <AdminNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="profile"
+                        choosing="home"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="profile"
+                        title="home"
                         choosing={currentTabId}
                         tabs={[]}
                         onChangeTab={handleChangeTab}
@@ -85,7 +78,34 @@ export default function Paperbase() {
                         component="main"
                         sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
                     >
-                        {currentTab}
+                        <Paper
+                            sx={{
+                                maxWidth: 936,
+                                margin: "auto",
+                                overflow: "hidden",
+                                height: 450,
+                                padding: 5,
+                            }}
+                        >
+                            <Typography
+                                variant="h5"
+                                component="div"
+                                color="default"
+                            >
+                                Chào mừng bạn đã quay trở lại! 
+                            </Typography>
+                            <Typography
+                                variant="subtitle1"
+                                component="div"
+                                color="Highlight"
+                            >
+                                Admin: {name}
+                            </Typography>
+                            <Typography variant="body1" component="div">
+                                Sử dụng các chức năng bên trái thanh công cụ để
+                                thao tác.
+                            </Typography>
+                        </Paper>
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
                         <Copyright />

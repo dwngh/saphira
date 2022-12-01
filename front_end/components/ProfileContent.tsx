@@ -6,7 +6,9 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import { Grid } from "@mui/material";
 
-interface ProfileContentProps {}
+interface ProfileContentProps {
+    userId;
+}
 
 export default function ProfileContent(props: ProfileContentProps) {
     return (

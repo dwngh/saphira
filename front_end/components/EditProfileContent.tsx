@@ -25,7 +25,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import dayjs from "dayjs";
 
-interface EditProfileContentProps {}
+interface EditProfileContentProps {
+    userId;
+}
 
 export default function EditProfileContent(props: EditProfileContentProps) {
     const [openConfirm, setOpenConfirm] = useState(false);

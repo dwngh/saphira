@@ -15,6 +15,9 @@ export function useAuth() {
     const role = useSelector(
         ({ auth }: { auth: AuthState }) => auth.payload.role
     );
+    const userId = useSelector(
+        ({ auth }: { auth: AuthState }) => auth.payload.userId
+    );
 
     const signin = (res) => {
         dispatch({
@@ -36,5 +39,5 @@ export function useAuth() {
         });
     };
 
-    return { accessToken, username, name, role, signin, logout, storeProfile };
+    return { accessToken, username, name, role, userId, signin, logout, storeProfile };
 }

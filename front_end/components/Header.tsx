@@ -38,6 +38,7 @@ const headerTitle = {
     "attachment": "Tệp đính kèm",
     "profile": "Tài khoản của tôi",
     "update-profile": "Cập nhật thông tin cá nhân",
+    "admin-accounts": "Quản lý tài khoản",
 };
 
 export default function Header(props: HeaderProps) {

@@ -27,8 +27,8 @@ export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<EditProfileContent/>);
-    const { accessToken } = useAuth();
+    const [currentTab, setCurrentTab] = React.useState<JSX.Element>();
+    const { accessToken, userId } = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -37,6 +37,10 @@ export default function Paperbase() {
         let id = e.currentTarget.id;
         setCurrentTabId(+id);
     };
+
+    useEffect(() => {
+        setCurrentTab(<EditProfileContent userId={userId} />)
+    }, [])
 
     useEffect(() => {
         if (!accessToken)

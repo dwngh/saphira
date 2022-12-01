@@ -1,5 +1,6 @@
 export interface AuthState {
     payload: {
+      userId: number;
       accessToken: string;
       username: string;
       name: string;
@@ -9,6 +10,7 @@ export interface AuthState {
   
   const initialState: AuthState = {
     payload: {
+      userId: -1,
       accessToken: '',
       username: '',
       name: '',
@@ -19,7 +21,6 @@ export interface AuthState {
   const auth = (state = initialState, action): AuthState => {
     switch (action.type) {
       case 'SIGNIN_SUCCESS':
-        console.log("Fucking success");
         return {
           ...state,
           payload: {
@@ -36,11 +37,11 @@ export interface AuthState {
           },
         };
       case 'STORE_PROFILE':
-        console.log("Fucking store");
         return {
           ...state,
           payload: {
             ...state.payload,
+            userId: action.payload.userId,
             username: action.payload.username,
             name: action.payload.name,
             role: action.payload.role,
