@@ -13,13 +13,13 @@ import PatientNavigator from "../../components/patient/Navigator";
 import OrderDetailContent from "../../components/patient/OrderDetailContent";
 import AdminNavigator from "../../components/admin/Navigator";
 import AccountListContent from "../../components/admin/AccountListContent";
+import HospitalManagementContent from "../../components/admin/HospitalManagementContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
-const tabs = ["Danh sách", "Thêm tài khoản"];
+const tabs = ["Danh sách" ];
 const content = [
-    <AccountListContent key="admin-accounts"/>,
-    <Box  key="choose-date-content"/>,
+    <HospitalManagementContent key="hospital-management"/>,
 ];
 
 export default function Paperbase() {
@@ -55,19 +55,19 @@ export default function Paperbase() {
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
-                            choosing="admin-accounts"
+                            choosing="admin-hospital"
                         />
                     )}
                     <AdminNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="admin-accounts"
+                        choosing="admin-hospital"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="admin-accounts"
+                        title="admin-hospital"
                         choosing={currentTabId}
                         tabs={tabs}
                         onChangeTab={handleChangeTab}

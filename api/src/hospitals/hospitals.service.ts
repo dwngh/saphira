@@ -18,7 +18,7 @@ export class HospitalsService {
   }
 
   async create(hospital: Hospital): Promise<Hospital> {
-    return await this.hospitalsRepo.create(hospital);
+    return await this.hospitalsRepo.save(hospital);
   }
 
   async update(hostpital : Hospital): Promise<UpdateResult> {
