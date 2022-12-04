@@ -68,6 +68,12 @@ export class User {
     @Column({nullable: true})
     blood_type: number;
 
+    @Column({nullable: true})
+    specialityId: number;
+
+    @Column({nullable: true})
+    hospitalId: number;
+
     @ManyToOne(() => Speciality, (speciality) => speciality.users)
     @JoinColumn()
     public speciality: Speciality['id'];

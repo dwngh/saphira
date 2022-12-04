@@ -90,6 +90,11 @@ export default function CrudTable(props: CrudTableProps) {
         setIsEdit(true);
     };
 
+    const handleDelete = (e) => {
+        let id = +e.currentTarget.id;
+        props.deleteItem(id, accessToken);
+    }
+
     useEffect(() => {
         if (isEdit) handleClickOpenDialog();
     }, [item])
@@ -179,7 +184,7 @@ export default function CrudTable(props: CrudTableProps) {
                                                                     row["id"] +
                                                                     ""
                                                                 }
-                                                                onClick={() => {}}
+                                                                onClick={handleDelete}
                                                             >
                                                                 <DeleteIcon />
                                                             </IconButton>

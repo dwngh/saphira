@@ -22,19 +22,18 @@ export default function FormDialog(props: FormDialogProps) {
     const [formList, setFormList] = useState<JSX.Element[]>([]);
 
     useEffect(() => {
-        console.log("Init")
+        console.log("Init");
         console.log(props.item);
         let temp: JSX.Element[] = [];
         props.columns.map((column) => {
             if (column.input) {
-                let prop = {...column.props};
+                let prop = { ...column.props };
                 if (props.isEdit) prop.defaultValue = props.item[column.id];
                 console.log(props.isEdit);
                 console.log(column.props);
                 console.log(prop);
-                temp.push(<column.input {...prop}/>);
+                temp.push(<column.input {...prop} />);
             }
-            
         });
         console.log(temp);
         setFormList(temp);
@@ -55,7 +54,9 @@ export default function FormDialog(props: FormDialogProps) {
     return (
         <div>
             <Dialog open={props.open} onClose={props.onClose}>
-                <DialogTitle>Tạo bệnh viện</DialogTitle>
+                <DialogTitle>
+                    {props.isEdit ? "Cập nhật" : "Tạo mới"}
+                </DialogTitle>
                 <DialogContent>
                     <Box
                         component="form"
@@ -64,9 +65,7 @@ export default function FormDialog(props: FormDialogProps) {
                         onSubmit={handleSubmit}
                         sx={{ mt: 1 }}
                     >
-                        <>
-                            { formList.map((item) => item) }
-                        </>
+                        <>{formList.map((item) => item)}</>
                         <Button
                             type="submit"
                             fullWidth

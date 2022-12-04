@@ -18,12 +18,14 @@ import { useAuth } from "../../utils/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { AuthService } from "../../service/AuthService";
+import SpecialityManagementContent from "../../components/admin/SpecialityManagementContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
-const tabs = ["Danh sách" ];
+const tabs = ["Danh sách", "Chuyên Ngành"];
 const content = [
-    <HospitalManagementContent key="hospital-management"/>,
+    <HospitalManagementContent key="hospital-management" />,
+    <SpecialityManagementContent key="speciality-management" />,
 ];
 
 export default function Paperbase() {
