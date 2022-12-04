@@ -4,6 +4,8 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { Order } from '../orders/order.entity';
+import { Item } from '../items/item.entity';
 
 @Injectable()
 export class UsersService {
@@ -26,23 +28,32 @@ export class UsersService {
     if (resultByEmail) throw new BadRequestException('Email already used!');
     if (resultByPhone) throw new BadRequestException('Phone number already used!');
     */
+    //console.log(resultByUsername.username);
     if (resultByUsername == null) {
+      
       if (resultByIdentityNum == null) {
+        //console.log("xacthucthanhconghihi");
+
         return true;
       } else throw new BadRequestException('Identity number already exists!')
     } else throw new BadRequestException('Username already exists!');
-    
   }
 
   async create(user: User): Promise<User> {
     let saltRounds = 10;
+
+    if(user.username == "admin") {
+      user.role = 0;
+    } 
 
     if (!(await this.validateUser(user)))
       throw new BadRequestException({ error: 'Invalid user information' });
 
     let pwd = await bcrypt.hash(user.password, saltRounds);
     user.password = pwd;
+    //console.log("Dangkithanhconghihi");
     return await this.usersRepo.save(user);
+    
   }
 
   async findAll(): Promise<User[]> {
@@ -70,6 +81,19 @@ export class UsersService {
     return await this.usersRepo.findOneBy( {phone: _phone});
   }
 */
+
+  async findByOrderId(_orderid): Promise<User> {
+    //console.log(_orderid);
+    
+    const userFinded = await this.usersRepo.findOneBy({order: _orderid});
+    if (userFinded) {
+      return userFinded;
+    } throw new BadRequestException("Not Found");
+
+    
+    //const user = await this.usersRepo.getEntityById
+    
+  }
 
   async update(user: User): Promise<UpdateResult> {
     return await this.usersRepo.update(user.id, user);

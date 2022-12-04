@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { HospitalsService } from './hospitals.service';
 import { Hospital } from './hospital.entity';
 
@@ -21,8 +21,8 @@ export class HospitalsController {
     return this.hospitalsService.findOne(+id);
   }
 
-  @Post(':id')
-  update(@Param('id') id: string, @Body() hospital: Hospital) {
+  @Put()
+  update(@Body() hospital: Hospital) {
     return this.hospitalsService.update(hospital);
   }
 

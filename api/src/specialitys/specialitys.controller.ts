@@ -16,6 +16,11 @@ export class SpecialitysController {
       return this.specialitysService.findOne(id);
   }
 
+  @Get('/hospital/' + ':id') 
+  getByHospital(@Param('id', ParseIntPipe) id: number) {
+    return this.specialitysService.findByHospital(id);
+  }
+
   @Post()
   create(@Body() item: Speciality) {
       return this.specialitysService.create(item);

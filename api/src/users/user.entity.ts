@@ -1,10 +1,11 @@
 import {
     Column, PrimaryGeneratedColumn, Entity
 } from 'typeorm'
-import { JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Hospital } from '../hospitals/hospital.entity';
 import { Notification } from '../notifications/notification.entity';
 import { Speciality } from '../specialitys/speciality.entity';
+import { Order } from '../orders/order.entity';
 
 @Entity()
 export class User {
@@ -50,7 +51,7 @@ export class User {
 
     @ManyToOne(()=> Hospital, (hospital) => hospital.users)
     @JoinColumn()
-    public hospital: Hospital['id'];
+    public hospital: Hospital;
 
     @Column({nullable: true})
     price: number;
@@ -76,7 +77,7 @@ export class User {
 
     @ManyToOne(() => Speciality, (speciality) => speciality.users)
     @JoinColumn()
-    public speciality: Speciality['id'];
+    public speciality: Speciality;
 
     //Tiền sử bệnh
     @Column({nullable: true})
@@ -84,4 +85,8 @@ export class User {
 
     @OneToMany(()=> Notification, notification => notification.user) 
     notices: Notification[];
+
+    @OneToOne(()=> Order) 
+    @JoinColumn()
+    public order: Order; 
 }
