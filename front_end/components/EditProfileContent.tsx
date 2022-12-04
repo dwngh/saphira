@@ -27,7 +27,7 @@ import dayjs from "dayjs";
 import { useAuth } from "../utils/useAuth";
 import { UserService } from "../service/UserService";
 import { AuthService } from "../service/AuthService";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HospitalService } from "../service/HospitalService";
 import { SpecialityService } from "../service/SpecialityService";
@@ -46,27 +46,31 @@ export default function EditProfileContent(props: EditProfileContentProps) {
     const { getSpecialities } = SpecialityService();
     const [hospitals, setHospitals] = useState<any>([]);
     const [specialities, setSpecialities] = useState<any>([]);
-    const [data, dataSet] = useState<any>(props.registering ? { role: 1 } : {
-        address: "",
-        anamnesis: "",
-        birthday: dayjs(),
-        blood_type: 0,
-        email: "",
-        gender: true,
-        height: 0,
-        hi_num: "",
-        id: 0,
-        identity_num: "",
-        name: "",
-        password: "",
-        phone: "",
-        price: 0,
-        role: 1,
-        username: "",
-        weight: 0,
-        hospitalId: 0,
-        specialityId: 0,
-    });
+    const [data, dataSet] = useState<any>(
+        props.registering
+            ? { role: 1 }
+            : {
+                  address: "",
+                  anamnesis: "",
+                  birthday: dayjs(),
+                  blood_type: 0,
+                  email: "",
+                  gender: true,
+                  height: 0,
+                  hi_num: "",
+                  id: 0,
+                  identity_num: "",
+                  name: "",
+                  password: "",
+                  phone: "",
+                  price: 0,
+                  role: 1,
+                  username: "",
+                  weight: 0,
+                  hospitalId: 0,
+                  specialityId: 0,
+              }
+    );
 
     const handleChangeName = (e) => {
         dataSet((prevState) => ({
@@ -190,14 +194,19 @@ export default function EditProfileContent(props: EditProfileContentProps) {
         setOpenConfirm(false);
         let response;
         if (props.registering) {
-            let temp = {...data}
-            delete temp['id']
+            let temp = { ...data };
+            delete temp["id"];
             response = await fetchSignUp(temp);
         } else {
             response = await updateUser(data, accessToken);
         }
-        if (response.status == 201 || response.affected == 1) toast.success(props.registering ? "Registered new account!" : "Updated profile!");
-        else toast.error("Error occured! Please try again.")
+        if (response.status == 201 || response.affected == 1)
+            toast.success(
+                props.registering
+                    ? "Registered new account!"
+                    : "Updated profile!"
+            );
+        else toast.error("Error occured! Please try again.");
     };
 
     useEffect(() => {
@@ -205,12 +214,12 @@ export default function EditProfileContent(props: EditProfileContentProps) {
             let response = await getUser(props.userId, accessToken);
             dataSet(response);
         }
-        const fetchDoctorAdditionInfo = async() => {
+        const fetchDoctorAdditionInfo = async () => {
             let hospital = await getHospitals(accessToken);
             let speciality = await getSpecialities(accessToken);
             setHospitals(hospital);
             setSpecialities(speciality);
-        }
+        };
         if (!props.registering) {
             fetchMyAPI();
         }
@@ -513,7 +522,12 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                                 onChange={handleChangeHospital}
                             >
                                 {hospitals.map((hospital) => (
-                                    <MenuItem value={hospital.id}>{hospital.name}</MenuItem>
+                                    <MenuItem
+                                        value={hospital.id}
+                                        key={hospital.id}
+                                    >
+                                        {hospital.name}
+                                    </MenuItem>
                                 ))}
                                 {/* <MenuItem value={0}>Admin</MenuItem> */}
                             </Select>
@@ -534,7 +548,12 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                                 onChange={handleChangeSpeciality}
                             >
                                 {specialities.map((speciality) => (
-                                    <MenuItem value={speciality.id}>{speciality.name}</MenuItem>
+                                    <MenuItem
+                                        value={speciality.id}
+                                        key={speciality.id}
+                                    >
+                                        {speciality.name}
+                                    </MenuItem>
                                 ))}
                             </Select>
                             <FormHelperText

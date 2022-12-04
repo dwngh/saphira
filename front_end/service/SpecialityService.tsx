@@ -6,8 +6,8 @@ export const SpecialityService = () => {
         let response;
 
         await axios({
-            method: "POST",
-            url: `${process.env.NEXT_PUBLIC_HOST}/specialitys/${payload.id}`,
+            method: "PUT",
+            url: `${process.env.NEXT_PUBLIC_HOST}/specialitys`,
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
