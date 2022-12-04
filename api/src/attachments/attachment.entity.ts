@@ -15,9 +15,9 @@ export class Attachment {
     @Column("blob", {nullable:true})
     file;
 
-    @Column() 
+    @Column({charset: 'utf8', collation: 'utf8_general_ci'}) 
     fileName: string;
 
-    @Column() 
+    @Column({nullable:true}) 
     created_at: Date;
 }

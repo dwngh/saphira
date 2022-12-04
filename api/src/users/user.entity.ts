@@ -33,7 +33,7 @@ export class User {
     role: number;
 
     //
-    @Column()
+    @Column({charset: 'utf8', collation: 'utf8_general_ci'})
     name: string;
 
     @Column({nullable: true})
@@ -80,7 +80,7 @@ export class User {
     public speciality: Speciality;
 
     //Tiền sử bệnh
-    @Column({nullable: true})
+    @Column({nullable: true,charset: 'utf8', collation: 'utf8_general_ci'})
     anamnesis: string;
 
     @OneToMany(()=> Notification, notification => notification.user) 
@@ -89,4 +89,7 @@ export class User {
     @OneToOne(()=> Order) 
     @JoinColumn()
     public order: Order; 
+
+    @Column({nullable:true})
+    orderId: number;
 }

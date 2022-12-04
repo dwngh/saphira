@@ -15,7 +15,7 @@ export class Notification {
     @Column() 
     url: string;
 
-    @Column()
+    @Column({charset: 'utf8', collation: 'utf8_general_ci'})
     content: string;
     
     @Column('date', { nullable: true })
