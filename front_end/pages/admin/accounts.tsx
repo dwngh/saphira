@@ -17,6 +17,7 @@ import EditProfileContent from "../../components/EditProfileContent";
 import { useAuth } from "../../utils/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { AuthService } from "../../service/AuthService";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -35,6 +36,15 @@ export default function Paperbase() {
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
     const { accessToken, role } = useAuth();
     const router = useRouter();
+    const { validateToken } = AuthService();
+
+    const validate = async() => {
+        let jwtValid = await validateToken(accessToken);
+        if (!jwtValid) router.push({
+            pathname: "/login",
+            query: { warning: "Session expired!" },
+        });
+    }
 
     useEffect(() => {
         setCurrentTab(content[currentTabId]);
@@ -56,6 +66,7 @@ export default function Paperbase() {
                 query: { unauthorized: 1 },
             });
         if (role != 0) router.push("/gateway");
+        validate();
     }, [accessToken]);
 
     return (

@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
 import AttachmentContent from "../../components/patient/AttachmentContent";
+import { AuthService } from "../../service/AuthService";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -27,6 +28,16 @@ export default function Paperbase() {
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<AttachmentContent />);
     const { accessToken, role } = useAuth();
+    const { validateToken } = AuthService();
+
+    const validate = async() => {
+        let jwtValid = await validateToken(accessToken);
+        if (!jwtValid) router.push({
+            pathname: "/login",
+            query: { warning: "Session expired!" },
+        });
+    }
+    
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -43,6 +54,7 @@ export default function Paperbase() {
                 query: { unauthorized: 1 },
             });
         if (role != 1) router.push("/gateway");
+        validate();
     }, [accessToken]);
 
     return (
