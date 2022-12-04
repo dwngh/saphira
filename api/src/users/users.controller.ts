@@ -23,6 +23,12 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Get('/order/' + ':id')
+  findByOrderId(@Param('id', ParseIntPipe) id: number) {
+    console.log(id);
+    return this.usersService.findByOrderId(id);
+  }
+
   @Put()
   update(@Body() user: User) {
     return this.usersService.update(user);

@@ -12,6 +12,12 @@ export class Attachment {
     @JoinColumn() 
     public order: Order['id'];
 
-    @Column()
-    file: string;
+    @Column("blob", {nullable:true})
+    file;
+
+    @Column() 
+    fileName: string;
+
+    @Column() 
+    created_at: Date;
 }
