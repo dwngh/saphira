@@ -26,7 +26,7 @@ export default function Paperbase() {
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<AttachmentContent />);
-    const { accessToken } = useAuth();
+    const { accessToken, role } = useAuth();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -42,6 +42,7 @@ export default function Paperbase() {
                 pathname: "/login",
                 query: { unauthorized: 1 },
             });
+        if (role != 1) router.push("/gateway");
     }, [accessToken]);
 
     return (

@@ -11,6 +11,9 @@ import ChooseDateContent from "../../components/patient/ChooseDateContent";
 import DescriptionContent from "../../components/patient/DescriptionContent";
 import PatientNavigator from "../../components/patient/Navigator";
 import MyDoctorContent from "../../components/patient/MyOrderContent";
+import { useAuth } from "../../utils/useAuth";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -24,8 +27,10 @@ export default function Paperbase() {
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
+    const { accessToken, role } = useAuth();
+    const router = useRouter();
 
-    React.useEffect(() => {
+    useEffect(() => {
         setCurrentTab(content[currentTabId]);
     }, [currentTabId]);
 
@@ -37,6 +42,15 @@ export default function Paperbase() {
         let id = e.currentTarget.id;
         setCurrentTabId(+id);
     };
+
+    useEffect(() => {
+        if (!accessToken)
+            router.push({
+                pathname: "/login",
+                query: { unauthorized: 1 },
+            });
+        if (role != 1) router.push("/gateway");
+    }, [accessToken]);
 
     return (
         <ThemeProvider theme={theme}>

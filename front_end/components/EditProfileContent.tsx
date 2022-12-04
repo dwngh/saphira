@@ -24,132 +24,188 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import dayjs from "dayjs";
-import { useAuth } from "../utils/useAuth"
-import { UserService } from "../service/UserService"
+import { useAuth } from "../utils/useAuth";
+import { UserService } from "../service/UserService";
+import { AuthService } from "../service/AuthService";
+import { toast,ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface EditProfileContentProps {
-    userId;
+    userId?;
+    registering?: boolean;
+    privilege?: boolean;
 }
 
 export default function EditProfileContent(props: EditProfileContentProps) {
-    const { accessToken, userId } = useAuth();
-    const { getUser, updateUser } = UserService()
-    const [data, dataSet] = useState<any>({
-        address:'',
-        anamnesis:'',
-        birthday:dayjs('2014-08-18'),
-        blood_type:'',
-        email:'',
-        gender:0,
-        height:'',
-        hi_num:'',
-        id:0,
-        identity_num:'',
-        name:'',
-        password:'',
-        phone:'',
-        price:'',
-        role:'',
-        username:'',
-        weight:'',
-    })
+    const { accessToken } = useAuth();
+    const { getUser, updateUser } = UserService();
+    const { fetchSignUp } = AuthService();
+    const [data, dataSet] = useState<any>(props.registering ? { role: 1 } : {
+        address: "",
+        anamnesis: "",
+        birthday: dayjs(),
+        blood_type: 0,
+        email: "",
+        gender: true,
+        height: 0,
+        hi_num: "",
+        id: 0,
+        identity_num: "",
+        name: "",
+        password: "",
+        phone: "",
+        price: 0,
+        role: 1,
+        username: "",
+        weight: 0,
+        hospital: 0,
+        speciality: 0,
+    });
 
     const handleChangeName = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            name: e.target.value
+            name: e.target.value,
         }));
-    }
+    };
     const handleChangeBirthday = (value) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            birthday: value
+            birthday: value,
         }));
-    }
+    };
     const handleChangeGender = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            gender: e.target.value
+            gender: e.target.value,
         }));
-    }
+    };
+    const handleChangeRole = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            role: e.target.value,
+        }));
+    };
     const handleChangeIden_num = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            identity_num: e.target.value
+            identity_num: e.target.value,
         }));
-    }
+    };
     const handleChangeAddress = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            address: e.target.value
+            address: e.target.value,
         }));
-    }
+    };
     const handleChangePhone = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            phone: e.target.value
+            phone: e.target.value,
         }));
-    } 
+    };
     const handleChangeEmail = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            email: e.target.value
+            email: e.target.value,
         }));
-    }
+    };
     const handleChangeHi_num = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            hi_num: e.target.value
+            hi_num: e.target.value,
         }));
-    }
+    };
     const handleChangeHeight = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            height: e.target.value
+            height: e.target.value,
         }));
-    }
+    };
     const handleChangeWeight = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            weight: e.target.value
+            weight: e.target.value,
         }));
-    }
+    };
     const handleChangeBlood_type = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            blood_type: e.target.value
+            blood_type: e.target.value,
         }));
-    }
+    };
     const handleChangeAnamnesis = (e) => {
-        dataSet(prevState => ({
+        dataSet((prevState) => ({
             ...prevState,
-            anamnesis: e.target.value
+            anamnesis: e.target.value,
         }));
-    }
+    };
+    const handleChangeHospital = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            hospital: e.target.value,
+        }));
+    };
+    const handleChangeSpeciality = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            speciality: e.target.value,
+        }));
+    };
+    const handleChangePrice = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            price: e.target.value,
+        }));
+    };
+    const handleChangeUsername = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            username: e.target.value,
+        }));
+    };
+    const handleChangePassword = (e) => {
+        dataSet((prevState) => ({
+            ...prevState,
+            password: e.target.value,
+        }));
+    };
     const [openConfirm, setOpenConfirm] = useState(false);
 
     const handleSaveConfirm = () => {
         setOpenConfirm(true);
-    }
+    };
 
     const handleClose = () => {
         setOpenConfirm(false);
-    }
+    };
 
     const handleSave = async () => {
         setOpenConfirm(false);
-        const respone = await updateUser(data, accessToken)
-        console.log(respone)
-    }
+        let response;
+        if (props.registering) {
+            let temp = {...data}
+            delete temp['id']
+            response = await fetchSignUp(temp);
+            console.log(response);
+        } else {
+            response = await updateUser(data, accessToken);
+            console.log(response);
+        }
+        if (response.status == 201 || response.affected == 1) toast.success(props.registering ? "Registered new account!" : "Updated profile!");
+        else toast.error("Error occured! Please try again.")
+    };
 
     useEffect(() => {
         async function fetchMyAPI() {
-          let response = await getUser(props.userId, accessToken)
-          dataSet(response)
+            let response = await getUser(props.userId, accessToken);
+            dataSet(response);
         }
-        fetchMyAPI()
-    }, [])
-    console.log(data)
+        if (!props.registering) {
+            fetchMyAPI();
+        }
+    }, []);
+    console.log(data);
     return (
         <Paper
             sx={{
@@ -165,8 +221,40 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                 color="primary"
                 sx={{ fontWeight: "bold", marginBottom: 4 }}
             >
-                Cập nhật thông tin
+                {props.registering ? "Tạo tài khoản mới" : "Cập nhật thông tin"}
             </Typography>
+            {props.registering && (
+                <>
+                    <Divider>
+                        <Typography variant="caption" color="#9e9e9e">
+                            Thông tin tài khoản
+                        </Typography>
+                    </Divider>
+                    <Grid container spacing={2} sx={{ padding: 2 }}>
+                        <Grid item xs={6}>
+                            <TextField
+                                id="outlined-multiline-flexible"
+                                label="Username"
+                                multiline
+                                value={data.username}
+                                onChange={handleChangeUsername}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Password"
+                                type="password"
+                                id="password"
+                                value={data.password}
+                                onChange={handleChangePassword}
+                                required
+                            />
+                        </Grid>
+                    </Grid>
+                </>
+            )}
+
             <Divider>
                 <Typography variant="caption" color="#9e9e9e">
                     Thông tin định danh
@@ -181,6 +269,7 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                         maxRows={4}
                         value={data.name}
                         onChange={handleChangeName}
+                        required
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -220,6 +309,7 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                         maxRows={4}
                         value={data.identity_num}
                         onChange={handleChangeIden_num}
+                        required
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -255,15 +345,33 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                     />
                 </Grid>
                 <Grid item xs={4}>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={0}
-                        label="Vai trò"
-                        disabled
-                    >
-                        <MenuItem value={0}>Bệnh nhân</MenuItem>
-                    </Select>
+                    {props.privilege ? (
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={data.role}
+                            label="Vai trò"
+                            onChange={handleChangeRole}
+                        >
+                            <MenuItem value={0}>Admin</MenuItem>
+                            <MenuItem value={1}>Bệnh nhân</MenuItem>
+                            <MenuItem value={2}>Thư ký</MenuItem>
+                            <MenuItem value={3}>Bác sĩ</MenuItem>
+                        </Select>
+                    ) : (
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={data.role}
+                            label="Vai trò"
+                            disabled
+                        >
+                            <MenuItem value={0}>Admin</MenuItem>
+                            <MenuItem value={1}>Bệnh nhân</MenuItem>
+                            <MenuItem value={2}>Thư ký</MenuItem>
+                            <MenuItem value={3}>Bác sĩ</MenuItem>
+                        </Select>
+                    )}
                     <FormHelperText
                         id="outlined-weight-helper-text"
                         sx={{ ml: 1 }}
@@ -272,106 +380,180 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                     </FormHelperText>
                 </Grid>
             </Grid>
-            <Divider>
-                <Typography variant="caption" color="#9e9e9e">
-                    Thông tin bệnh nhân
-                </Typography>
-            </Divider>
-            <Grid container spacing={3} sx={{ padding: 2 }}>
-                <Grid item xs={3}>
-                    <TextField
-                        id="outlined-multiline-flexible"
-                        label="Số BHYT"
-                        multiline
-                        maxRows={4}
-                        value={data.hi_num}
-                        onChange={handleChangeHi_num}
-                    />
-                </Grid>
-                <Grid item xs={3}>
-                    <FormControl
-                        sx={{ ml: 3, width: "15ch" }}
-                        variant="outlined"
-                    >
-                        <OutlinedInput
-                            id="outlined-adornment-weight"
-                            value={data.height}
-                            onChange={handleChangeHeight}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    cm
-                                </InputAdornment>
-                            }
-                            aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                                "aria-label": "weight",
-                            }}
-                        />
-                        <FormHelperText id="outlined-weight-helper-text">
-                            Chiều cao
-                        </FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={3}>
-                    <FormControl
-                        sx={{ ml: 3, width: "15ch" }}
-                        variant="outlined"
-                    >
-                        <OutlinedInput
-                            id="outlined-adornment-weight"
-                            value={data.weight}
-                            onChange={handleChangeWeight}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    kg
-                                </InputAdornment>
-                            }
-                            aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                                "aria-label": "weight",
-                            }}
-                        />
-                        <FormHelperText id="outlined-weight-helper-text">
-                            Cân nặng
-                        </FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={3}>
-                    <FormHelperText
-                        id="outlined-weight-helper-text"
-                        sx={{ mt: -2.5 }}
-                    >
-                        Nhóm máu
-                    </FormHelperText>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={data.blood_type}
-                        label="Nhóm máu"
-                        onChange={handleChangeBlood_type}
-                    >
-                        <MenuItem value={0}>A</MenuItem>
-                        <MenuItem value={1}>B</MenuItem>
-                        <MenuItem value={2}>AB</MenuItem>
-                        <MenuItem value={3}>O</MenuItem>
-                    </Select>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography sx={{ fontWeight: "bold" }}>
-                        Tiểu sử bệnh:
-                    </Typography>
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Tiểu sử bệnh"
-                        multiline
-                        value={data.anamnesis}
-                        rows={7}
-                        sx={{ marginTop: 3 }}
-                        fullWidth={true}
-                        onChange={handleChangeAnamnesis}
-                    />
-                </Grid>
-            </Grid>
+            {data.role == 1 && (
+                <>
+                    <Divider>
+                        <Typography variant="caption" color="#9e9e9e">
+                            Thông tin bệnh nhân
+                        </Typography>
+                    </Divider>
+                    <Grid container spacing={3} sx={{ padding: 2 }}>
+                        <Grid item xs={3}>
+                            <TextField
+                                id="outlined-multiline-flexible"
+                                label="Số BHYT"
+                                multiline
+                                maxRows={4}
+                                value={data.hi_num}
+                                onChange={handleChangeHi_num}
+                            />
+                        </Grid>
+                        <Grid item xs={3}>
+                            <FormControl
+                                sx={{ ml: 3, width: "15ch" }}
+                                variant="outlined"
+                            >
+                                <OutlinedInput
+                                    id="outlined-adornment-weight"
+                                    value={data.height}
+                                    onChange={handleChangeHeight}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            cm
+                                        </InputAdornment>
+                                    }
+                                    aria-describedby="outlined-weight-helper-text"
+                                    inputProps={{
+                                        "aria-label": "weight",
+                                    }}
+                                />
+                                <FormHelperText id="outlined-weight-helper-text">
+                                    Chiều cao
+                                </FormHelperText>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <FormControl
+                                sx={{ ml: 3, width: "15ch" }}
+                                variant="outlined"
+                            >
+                                <OutlinedInput
+                                    id="outlined-adornment-weight"
+                                    value={data.weight}
+                                    onChange={handleChangeWeight}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            kg
+                                        </InputAdornment>
+                                    }
+                                    aria-describedby="outlined-weight-helper-text"
+                                    inputProps={{
+                                        "aria-label": "weight",
+                                    }}
+                                />
+                                <FormHelperText id="outlined-weight-helper-text">
+                                    Cân nặng
+                                </FormHelperText>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <FormHelperText
+                                id="outlined-weight-helper-text"
+                                sx={{ mt: -2.5 }}
+                            >
+                                Nhóm máu
+                            </FormHelperText>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={data.blood_type}
+                                label="Nhóm máu"
+                                onChange={handleChangeBlood_type}
+                            >
+                                <MenuItem value={0}>A</MenuItem>
+                                <MenuItem value={1}>B</MenuItem>
+                                <MenuItem value={2}>AB</MenuItem>
+                                <MenuItem value={3}>O</MenuItem>
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold" }}>
+                                Tiểu sử bệnh:
+                            </Typography>
+                            <TextField
+                                id="outlined-multiline-static"
+                                label="Tiểu sử bệnh"
+                                multiline
+                                value={data.anamnesis}
+                                rows={7}
+                                sx={{ marginTop: 3 }}
+                                fullWidth={true}
+                                onChange={handleChangeAnamnesis}
+                            />
+                        </Grid>
+                    </Grid>
+                </>
+            )}
+            {data.role == 3 && (
+                <>
+                    <Divider>
+                        <Typography variant="caption" color="#9e9e9e">
+                            Thông tin bác sĩ
+                        </Typography>
+                    </Divider>
+                    <Grid container spacing={3} sx={{ padding: 2 }}>
+                        <Grid item xs={4}>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={data.hospital}
+                                label="Bệnh viện "
+                                sx={{ minWidth: 200 }}
+                            >
+                                {/* <MenuItem value={0}>Admin</MenuItem> */}
+                            </Select>
+                            <FormHelperText
+                                id="outlined-weight-helper-text"
+                                sx={{ ml: 1 }}
+                            >
+                                Bệnh viện
+                            </FormHelperText>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={data.speciality}
+                                label="Chuyên ngành"
+                                sx={{ minWidth: 200 }}
+                            >
+                                {/* <MenuItem value={0}>Admin</MenuItem> */}
+                            </Select>
+                            <FormHelperText
+                                id="outlined-weight-helper-text"
+                                sx={{ ml: 1 }}
+                            >
+                                Chuyên ngành
+                            </FormHelperText>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <FormControl
+                                sx={{ ml: 3, width: "15ch" }}
+                                variant="outlined"
+                            >
+                                <OutlinedInput
+                                    id="outlined-adornment-weight"
+                                    value={data.price}
+                                    onChange={handleChangePrice}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            VND
+                                        </InputAdornment>
+                                    }
+                                    aria-describedby="outlined-weight-helper-text"
+                                    inputProps={{
+                                        "aria-label": "weight",
+                                    }}
+                                    sx={{ minWidth: 150 }}
+                                />
+                                <FormHelperText id="outlined-weight-helper-text">
+                                    Giá tiền
+                                </FormHelperText>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </>
+            )}
             <Box
                 m={2}
                 //margin
@@ -417,6 +599,7 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ToastContainer />
         </Paper>
     );
 }

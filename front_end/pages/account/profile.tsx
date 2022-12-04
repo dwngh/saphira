@@ -17,6 +17,7 @@ import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
 import AttachmentContent from "../../components/patient/AttachmentContent";
 import ProfileContent from "../../components/ProfileContent";
+import AdminNavigator from "../../components/admin/Navigator";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -27,7 +28,7 @@ export default function Paperbase() {
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>();
-    const { accessToken, userId } = useAuth();
+    const { accessToken, userId, role } = useAuth();
 
     useEffect(() => {
         setCurrentTab(<ProfileContent userId={userId} />)
@@ -58,20 +59,38 @@ export default function Paperbase() {
                     component="nav"
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
-                    {isSmUp ? null : (
+                    {role == 1 && (<>
+                        {isSmUp ? null : (
+                            <PatientNavigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                choosing="profile"
+                            />
+                        )}
                         <PatientNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
-                            variant="temporary"
-                            open={mobileOpen}
-                            onClose={handleDrawerToggle}
                             choosing="profile"
+                            sx={{ display: { sm: "block", xs: "none" } }}
                         />
-                    )}
-                    <PatientNavigator
-                        PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="profile"
-                        sx={{ display: { sm: "block", xs: "none" } }}
-                    />
+                    </>)}
+                    {role == 0 && (<>
+                        {isSmUp ? null : (
+                            <AdminNavigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                choosing="profile"
+                            />
+                        )}
+                        <AdminNavigator
+                            PaperProps={{ style: { width: drawerWidth } }}
+                            choosing="profile"
+                            sx={{ display: { sm: "block", xs: "none" } }}
+                        />
+                    </>)}
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
