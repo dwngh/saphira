@@ -13,22 +13,40 @@ import PatientNavigator from "../../components/patient/Navigator";
 import OrderDetailContent from "../../components/patient/OrderDetailContent";
 import AdminNavigator from "../../components/admin/Navigator";
 import AccountListContent from "../../components/admin/AccountListContent";
+import EditProfileContent from "../../components/EditProfileContent";
+import { useAuth } from "../../utils/useAuth";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { AuthService } from "../../service/AuthService";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
 const tabs = ["Danh sách", "Thêm tài khoản"];
 const content = [
     <AccountListContent key="admin-accounts"/>,
-    <Box  key="choose-date-content"/>,
+    <EditProfileContent registering privilege key="choose-date-content"/>,
 ];
+
+
 
 export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
+    const { accessToken, role } = useAuth();
+    const router = useRouter();
+    const { validateToken } = AuthService();
 
-    React.useEffect(() => {
+    const validate = async() => {
+        let jwtValid = await validateToken(accessToken);
+        if (!jwtValid) router.push({
+            pathname: "/login",
+            query: { warning: "Session expired!" },
+        });
+    }
+
+    useEffect(() => {
         setCurrentTab(content[currentTabId]);
     }, [currentTabId]);
 
@@ -40,6 +58,16 @@ export default function Paperbase() {
         let id = e.currentTarget.id;
         setCurrentTabId(+id);
     };
+
+    useEffect(() => {
+        if (!accessToken)
+            router.push({
+                pathname: "/login",
+                query: { unauthorized: 1 },
+            });
+        if (role != 0) router.push("/gateway");
+        validate();
+    }, [accessToken]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -55,12 +83,12 @@ export default function Paperbase() {
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
-                            choosing="create-order"
+                            choosing="admin-accounts"
                         />
                     )}
                     <AdminNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="create-order"
+                        choosing="admin-accounts"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>

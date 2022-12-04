@@ -39,6 +39,7 @@ const headerTitle = {
     "profile": "Tài khoản của tôi",
     "update-profile": "Cập nhật thông tin cá nhân",
     "admin-accounts": "Quản lý tài khoản",
+    "admin-hospital": "Quản lý bệnh viện",
 };
 
 export default function Header(props: HeaderProps) {

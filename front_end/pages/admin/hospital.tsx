@@ -10,17 +10,22 @@ import { getTheme, Copyright } from "../../utils/theme/ThemeProvider";
 import ChooseDateContent from "../../components/patient/ChooseDateContent";
 import DescriptionContent from "../../components/patient/DescriptionContent";
 import PatientNavigator from "../../components/patient/Navigator";
-import MyDoctorContent from "../../components/patient/MyOrderContent";
+import OrderDetailContent from "../../components/patient/OrderDetailContent";
+import AdminNavigator from "../../components/admin/Navigator";
+import AccountListContent from "../../components/admin/AccountListContent";
+import HospitalManagementContent from "../../components/admin/HospitalManagementContent";
 import { useAuth } from "../../utils/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { AuthService } from "../../service/AuthService";
+import SpecialityManagementContent from "../../components/admin/SpecialityManagementContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
-const tabs = ["Yêu cầu của tôi"];
+const tabs = ["Danh sách", "Chuyên Ngành"];
 const content = [
-    <MyDoctorContent key="my-doctor-content"/>,
+    <HospitalManagementContent key="hospital-management" />,
+    <SpecialityManagementContent key="speciality-management" />,
 ];
 
 export default function Paperbase() {
@@ -40,7 +45,7 @@ export default function Paperbase() {
         });
     }
 
-    useEffect(() => {
+    React.useEffect(() => {
         setCurrentTab(content[currentTabId]);
     }, [currentTabId]);
 
@@ -59,7 +64,7 @@ export default function Paperbase() {
                 pathname: "/login",
                 query: { unauthorized: 1 },
             });
-        if (role != 1) router.push("/gateway");
+        if (role != 0) router.push("/gateway");
         validate();
     }, [accessToken]);
 
@@ -72,24 +77,24 @@ export default function Paperbase() {
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
                     {isSmUp ? null : (
-                        <PatientNavigator
+                        <AdminNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
                             onClose={handleDrawerToggle}
-                            choosing="my-orders"
+                            choosing="admin-hospital"
                         />
                     )}
-                    <PatientNavigator
+                    <AdminNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="my-orders"
+                        choosing="admin-hospital"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="my-orders"
+                        title="admin-hospital"
                         choosing={currentTabId}
                         tabs={tabs}
                         onChangeTab={handleChangeTab}

@@ -1,16 +1,63 @@
 import * as React from "react";
 import Paper from "@mui/material/Paper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import { Grid } from "@mui/material";
+import { useAuth } from "../utils/useAuth"
+import { UserService } from "../service/UserService"
+import dayjs from "dayjs";
 
 interface ProfileContentProps {
     userId;
 }
 
+const Roles = [
+    'Admin',
+    'Bệnh nhân',
+    'Thư ký',
+    'Bác sĩ'
+]
+
+const Blood_Types = [
+    'A',
+    'B',
+    'AB',
+    'O'
+]
+
 export default function ProfileContent(props: ProfileContentProps) {
+    const { accessToken, userId } = useAuth();
+    const { getUser } = UserService()
+    const [data, dataSet] = useState<any>({
+        address:'',
+        anamnesis:'',
+        birthday:dayjs('2014-08-18'),
+        blood_type:'',
+        email:'',
+        gender:0,
+        height:'',
+        hi_num:'',
+        id:0,
+        identity_num:'',
+        name:'',
+        password:'',
+        phone:'',
+        price:'',
+        role:'',
+        username:'',
+        weight:'',
+    })
+
+    useEffect(() => {
+        async function fetchMyAPI() {
+          let response = await getUser(props.userId, accessToken)
+          dataSet(response)
+        }
+        fetchMyAPI()
+    }, [])
+    
     return (
         <Paper
             sx={{
@@ -38,45 +85,45 @@ export default function ProfileContent(props: ProfileContentProps) {
                     <Typography sx={{ fontWeight: "bold" }}>
                         Họ và tên:
                     </Typography>
-                    Nguyễn Văn A
+                    {data.name}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Ngày sinh:
                     </Typography>
-                    30-2-2050
+                    {`${dayjs(data.birthday).get('date')}-${dayjs(data.birthday).get('month')+1}-${dayjs(data.birthday).get('year')}`}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Giới tính:
                     </Typography>
-                    Nam
+                    {data.gender}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>CCCD:</Typography>
-                    123456789
+                    {data.identity_num}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Địa chỉ:
                     </Typography>
-                    510B - KTX Ngoại Ngữ - Xuân Thủy - Cầu Giấy - Hà Nội
+                    {data.address}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Điện thoại:
                     </Typography>
-                    0334816745
+                    {data.phone}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
-                    aa@ppp.com
+                    {data.email}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Vai trò:
                     </Typography>
-                    Bệnh nhân
+                    {Roles[data.role]}
                 </Grid>
             </Grid>
             <Divider>
@@ -89,25 +136,25 @@ export default function ProfileContent(props: ProfileContentProps) {
                     <Typography sx={{ fontWeight: "bold" }}>
                         Số BHYT:
                     </Typography>
-                    9812749872394
+                    {data.hi_num}
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Chiều cao:
                     </Typography>
-                    183cm
+                    {`${data.height} cm`}
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Cân nặng:
                     </Typography>
-                    73kg
+                    {`${data.weight} kg`}
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold" }}>
                         Nhóm máu:
                     </Typography>
-                    O
+                    {Blood_Types[data.blood_type]}
                 </Grid>
                 <Grid item xs={12}>
                     <Typography sx={{ fontWeight: "bold" }}>
@@ -116,7 +163,7 @@ export default function ProfileContent(props: ProfileContentProps) {
                     <TextField
                         id="outlined-multiline-static"
                         label="Tiểu sử bệnh"
-                        defaultValue={"Có tiền sử hen suyễn"}
+                        value={data.anamnesis}
                         multiline
                         rows={7}
                         sx={{ marginTop: 3 }}

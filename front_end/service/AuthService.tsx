@@ -54,16 +54,35 @@ export const AuthService = () => {
         })
             .then((res) => {
                 console.log("Sign in successfully ...");
+                console.log(res);
                 response = res.data;
                 return res;
             })
             .catch((err) => {
                 console.error(err);
             });
-        console.log("Response ...");
-        console.log(response);
         return response;
     };
 
-    return { fetchLogin, fetchSignUp, fetchUser };
+    const validateToken = async(token) => {
+        let response;
+        console.log("TOKENは" + token);
+        await axios({
+            method: "POST",
+            url: `${process.env.NEXT_PUBLIC_HOST}/auth/profile`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            } 
+        })
+            .then((res) => {
+                response = res;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return (response.status == 201);
+    }
+
+    return { fetchLogin, fetchSignUp, fetchUser, validateToken };
 };

@@ -6,7 +6,7 @@ import { Hospital } from './hospital.entity';
 export class HospitalsService {
   constructor(
     @InjectRepository(Hospital)
-    private readonly hospitalsRepo: Repository<Hospital>,
+    public readonly hospitalsRepo: Repository<Hospital>,
   ) {}
 
   async findAll(): Promise<Hospital[]> {
@@ -18,7 +18,7 @@ export class HospitalsService {
   }
 
   async create(hospital: Hospital): Promise<Hospital> {
-    return await this.hospitalsRepo.create(hospital);
+    return await this.hospitalsRepo.save(hospital);
   }
 
   async update(hostpital : Hospital): Promise<UpdateResult> {

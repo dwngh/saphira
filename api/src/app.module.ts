@@ -26,7 +26,7 @@ console.log(join(__dirname, '..', '..', 'front_end', 'out'))
     port: + (process.env.DB_PORT),
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: 'saphira',
+    database: 'my_node',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
   }),

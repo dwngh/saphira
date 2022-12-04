@@ -38,7 +38,7 @@ export default function AdminNavigator(props: AdminNavigatorProps) {
                     id: "admin-hospital",
                     text: "Quản lý bệnh viện",
                     icon: <AttachFileIcon />,
-                    // route: "/patient/attachments",
+                    route: "/admin/hospital",
                 },
                 {
                     id: "admin-data",

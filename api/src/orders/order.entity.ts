@@ -17,11 +17,11 @@ export class Order {
 
     @OneToOne(() => User)
     @JoinColumn()
-    patient: User["id"];
+    patient: User;
 
     @OneToOne(() => User)
     @JoinColumn()
-    doctor: User["id"];
+    doctor: User;
 
     @Column('text') 
     description: string;
@@ -41,10 +41,10 @@ export class Order {
     created_at: Date;
 
     @OneToMany(() => Attachment, attachment => attachment.order)
-    public attachments: Attachment[];
+    attachments?: Attachment[];
 
     @OneToMany(() => Note, note => note.order)
-    public notes: Note[];
+    notes?: Note[];
 
     @Column()
     isPaid: boolean;

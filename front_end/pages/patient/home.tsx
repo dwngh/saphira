@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../../utils/useAuth";
 import PatientNavigator from "../../components/patient/Navigator";
+import { AuthService } from "../../service/AuthService";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -24,7 +25,16 @@ export default function Paperbase() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const { username, name, accessToken } = useAuth();
+    const { username, name, accessToken, role } = useAuth();
+    const { validateToken } = AuthService();
+
+    const validate = async() => {
+        let jwtValid = await validateToken(accessToken);
+        if (!jwtValid) router.push({
+            pathname: "/login",
+            query: { warning: "Session expired!" },
+        });
+    }
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -40,6 +50,8 @@ export default function Paperbase() {
                 pathname: "/login",
                 query: { unauthorized: 1 },
             });
+        if (role != 1) router.push("/gateway");
+        validate();
     }, [accessToken]);
 
     return (

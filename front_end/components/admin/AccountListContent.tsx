@@ -9,11 +9,17 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
+import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Tooltip } from "@mui/material";
 import { UserService } from "../../service/UserService";
 import { useAuth } from "../../utils/useAuth";
 import { useEffect, useState } from "react";
 import User from "../../interface/user";
+import SwipeableProfile from "./card/SwipeableProfile";
+import SwipeableEditProfile from "./card/SwipableEditProfile";
+import dayjs from "dayjs";
 
 interface Column {
     id: string;
@@ -47,6 +53,13 @@ const columns: readonly Column[] = [
         label: "Ngày sinh",
         minWidth: 90,
         align: "center",
+        isFormat: true,
+        format: (value) => {
+            if (value)
+                return dayjs(value).format('DD/MM/YYYY')
+            else
+                return "None";
+        },
     },
     {
         id: "phone",
@@ -72,6 +85,12 @@ const columns: readonly Column[] = [
         minWidth: 90,
         align: "center",
     },
+    {
+        id: "action",
+        label: "Hành động",
+        minWidth: 90,
+        align: "center",
+    },
 ];
 
 
@@ -81,6 +100,9 @@ export default function AccountListContent() {
     const { accessToken, userId } = useAuth();
     const { getUsers } = UserService();
     const [userList, setUserList] = useState<User[]>([]);
+    const [openSideInfo, setOpenSideInfo] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(-1);
+    const [openSideEditInfo, setOpenSideEditInfo] = useState(false);
 
     const fetchData = async () => {
         let users = await getUsers(accessToken);
@@ -89,7 +111,7 @@ export default function AccountListContent() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [openSideEditInfo]);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -101,6 +123,24 @@ export default function AccountListContent() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
+    const handleInfo = (e) => {
+        let id = +e.currentTarget.id;
+        setOpenSideInfo(true);
+        setOpenSideEditInfo(false);
+        setCurrentUserId(id);
+    } 
+
+    const handleEdit = (e) => {
+        let id = e.currentTarget.id;
+        setOpenSideInfo(false);
+        setOpenSideEditInfo(true);
+        setCurrentUserId(id);
+    }
+
+    const handleDelete = (e) => {
+        let id = e.currentTarget.id;
+    }
 
     return (
         <Paper sx={{ width: "100%", overflow: "auto" }}>
@@ -134,16 +174,65 @@ export default function AccountListContent() {
                                         key={row.id}
                                     >
                                         {columns.map((column) => {
-                                            let value : any = row[column.id];
-                                            if (column.isFormat) value = column.format(value);
-                                            return (
-                                                <TableCell
-                                                    key={column.id}
-                                                    align={column.align}
-                                                >
-                                                    {value}
-                                                </TableCell>
-                                            );
+                                            if (column.id == "action") {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id}
+                                                        align={column.align}
+                                                    >
+                                                        <Tooltip title="Thông tin chi tiết">
+                                                            <IconButton
+                                                                id={
+                                                                    row["id"] +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleInfo
+                                                                }
+                                                            >
+                                                                <InfoIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="Chỉnh sửa">
+                                                            <IconButton
+                                                                id={
+                                                                    row["id"] +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleEdit
+                                                                }
+                                                            >
+                                                                <EditIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="Xóa">
+                                                            <IconButton
+                                                                id={
+                                                                    row["id"] +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleDelete
+                                                                }
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </TableCell>
+                                                );
+                                            } else {
+                                                let value : any = row[column.id];
+                                                if (column.isFormat) value = column.format(value);
+                                                return (
+                                                    <TableCell
+                                                        key={column.id}
+                                                        align={column.align}
+                                                    >
+                                                        {value}
+                                                    </TableCell>
+                                                );
+                                            }
                                         })}
                                     </TableRow>
                                 );
@@ -160,6 +249,8 @@ export default function AccountListContent() {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            <SwipeableProfile open={openSideInfo} setOpen={setOpenSideInfo} userId={currentUserId} />
+            <SwipeableEditProfile open={openSideEditInfo} setOpen={setOpenSideEditInfo} userId={currentUserId} privilege />
         </Paper>
     );
 }

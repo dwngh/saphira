@@ -10,10 +10,13 @@ export class Speciality {
     @PrimaryGeneratedColumn() 
     id: number;
     
-    @ManyToOne(() => Hospital, hospital => hospital.specialitys)
-    @JoinColumn()
-    hospital: Hospital['id'];
-
+    @ManyToOne(() => Hospital, hospital => hospital.specialitys, {cascade: ["insert"]})
+    @JoinColumn(/*{name: 'hospitalId'}*/)
+    hospital: Hospital["id"];
+/*
+    @Column({type: 'integer', unsigned: true})
+    hospitalId: number;
+*/
     @Column() 
     name: string;
 

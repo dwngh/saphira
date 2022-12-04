@@ -11,6 +11,10 @@ import ChooseDateContent from "../../components/patient/ChooseDateContent";
 import DescriptionContent from "../../components/patient/DescriptionContent";
 import PatientNavigator from "../../components/patient/Navigator";
 import OrderDetailContent from "../../components/patient/OrderDetailContent";
+import { useAuth } from "../../utils/useAuth";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { AuthService } from "../../service/AuthService";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -27,6 +31,17 @@ export default function Paperbase() {
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
     const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
+    const { accessToken, role } = useAuth();
+    const router = useRouter();
+    const { validateToken } = AuthService();
+
+    const validate = async() => {
+        let jwtValid = await validateToken(accessToken);
+        if (!jwtValid) router.push({
+            pathname: "/login",
+            query: { warning: "Session expired!" },
+        });
+    }
 
     React.useEffect(() => {
         setCurrentTab(content[currentTabId]);
@@ -40,6 +55,16 @@ export default function Paperbase() {
         let id = e.currentTarget.id;
         setCurrentTabId(+id);
     };
+
+    useEffect(() => {
+        if (!accessToken)
+            router.push({
+                pathname: "/login",
+                query: { unauthorized: 1 },
+            });
+        if (role != 1) router.push("/gateway");
+        validate();
+    }, [accessToken]);
 
     return (
         <ThemeProvider theme={theme}>
