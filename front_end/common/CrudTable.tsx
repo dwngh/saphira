@@ -10,14 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { useAuth } from "../utils/useAuth";
 import FormDialog from "./CrudDialog";
@@ -54,6 +48,7 @@ export default function CrudTable(props: CrudTableProps) {
     const [columns, setColumns] = useState<CrudColumn[]>([]);
     const [item, setItem] = useState<typeof props.item>();
     const [openDialog, setOpenDialog] = React.useState(false);
+    const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
     const handleClickOpenDialog = () => {
@@ -90,9 +85,12 @@ export default function CrudTable(props: CrudTableProps) {
         setIsEdit(true);
     };
 
-    const handleDelete = (e) => {
+    const handleDelete = async(e) => {
         let id = +e.currentTarget.id;
-        props.deleteItem(id, accessToken);
+        let temp = await props.deleteItem(id, accessToken);
+        if (temp?.affected == 1) toast.success("Item deleted");
+        else toast.warning("Deletion cannot be done!");
+        await fetchData();
     }
 
     useEffect(() => {
@@ -242,6 +240,7 @@ export default function CrudTable(props: CrudTableProps) {
                     isEdit={isEdit}
                 />
             </Box>
+            <ToastContainer />
         </Paper>
     );
 }

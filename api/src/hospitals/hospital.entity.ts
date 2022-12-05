@@ -10,10 +10,10 @@ export class Hospital {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({nullable: true})
+    @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
     name: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
     address: string;
 
     @OneToMany(() => User, user => user.hospital)

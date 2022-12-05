@@ -81,7 +81,7 @@ export const AuthService = () => {
             .catch((err) => {
                 console.error(err);
             });
-        return (response.status == 201);
+        return (response?.status == 201);
     }
 
     return { fetchLogin, fetchSignUp, fetchUser, validateToken };

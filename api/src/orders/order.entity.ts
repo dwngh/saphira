@@ -23,7 +23,7 @@ export class Order {
     @JoinColumn()
     doctor: User;
 
-    @Column('text') 
+    @Column({charset: 'utf8', collation: 'utf8_general_ci'}) 
     description: string;
 
     @Column({nullable: true})
