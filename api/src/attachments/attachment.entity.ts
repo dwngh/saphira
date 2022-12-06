@@ -12,6 +12,9 @@ export class Attachment {
     @JoinColumn() 
     public order: Order['id'];
 
+    @Column({nullable:true})
+    orderId: number;
+
     @Column("blob", {nullable:true})
     file;
 

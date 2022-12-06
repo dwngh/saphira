@@ -26,7 +26,12 @@ export class OrdersService {
   }
 
   async findOne(_id): Promise<Order> {
-    return await this.ordersRepo.findOneBy({id: _id});
+    const repOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.patient", "patient")
+      .leftJoin("order.doctor", "doctor").select(["order", "doctor.id", "doctor.name", "patient.id", "patient.name"])
+      .where("order.id=:id", {id: _id})
+      .getOne();
+    return repOrder;
   }
 
   async update(order: Order): Promise<UpdateResult> {

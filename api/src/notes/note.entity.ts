@@ -12,6 +12,9 @@ export class Note {
     @JoinColumn()
     public order: Order['id'];
 
+    @Column({nullable: true})
+    orderId: number;
+
     @Column({nullable: true}) 
     content: string;
 }
