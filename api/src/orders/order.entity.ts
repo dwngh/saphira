@@ -1,3 +1,4 @@
+import { LargeNumberLike } from 'crypto';
 import {
     Column, Entity, OneToMany, PrimaryGeneratedColumn
 } from 'typeorm';
@@ -19,9 +20,15 @@ export class Order {
     @JoinColumn()
     patient: User;
 
+    @Column()
+    patientId: number;
+
     @OneToOne(() => User)
     @JoinColumn()
-    doctor: User;
+    doctor: User["id"];
+
+    @Column()
+    doctorId: number;
 
     @Column({charset: 'utf8', collation: 'utf8_general_ci'}) 
     description: string;
@@ -43,9 +50,9 @@ export class Order {
     @OneToMany(() => Attachment, attachment => attachment.order)
     attachments?: Attachment[];
 
-    @OneToMany(() => Note, note => note.order)
-    notes?: Note[];
-
     @Column()
     isPaid: boolean;
+
+    @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
+    note: string;
 }

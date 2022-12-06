@@ -8,9 +8,12 @@ export class Note {
     @PrimaryGeneratedColumn() 
     id: number;
     
-    @ManyToOne(() => Order, order => order.notes)
-    @JoinColumn()
-    public order: Order['id'];
+    //@ManyToOne(() => Order, order => order.notes)
+    //@JoinColumn()
+    //public order: Order['id'];
+
+    @Column({nullable: true})
+    orderId: number;
 
     @Column({nullable: true}) 
     content: string;

@@ -6,7 +6,7 @@ import { Hospital } from '../hospitals/hospital.entity';
 import { Notification } from '../notifications/notification.entity';
 import { Speciality } from '../specialitys/speciality.entity';
 import { Order } from '../orders/order.entity';
-
+import { Calendar} from '../calendars/calendar.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn() 
@@ -21,7 +21,6 @@ export class User {
     @Column({nullable: true})
     birthday: Date;
 
-    //or Linkstyle?
     @Column({nullable: true})
     email: string;
 
@@ -32,14 +31,13 @@ export class User {
     @Column({nullable: true})
     role: number;
 
-    //
     @Column({charset: 'utf8', collation: 'utf8_general_ci'})
     name: string;
 
     @Column({nullable: true})
     address: string;
 
-   // @Column()
+    //@Column()
     //profile_img: ImageData;
 
     @Column({nullable: true})
@@ -92,4 +90,11 @@ export class User {
 
     @Column({nullable:true})
     orderId: number;
+
+    @OneToOne(()=> Calendar)
+    @JoinColumn()
+    public calendar: Calendar;
+
+    @Column({nullable: true})
+    calendarId: number;
 }

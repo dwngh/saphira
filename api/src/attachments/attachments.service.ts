@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Attachment } from './attachment.entity';
 

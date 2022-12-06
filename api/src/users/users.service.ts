@@ -51,9 +51,7 @@ export class UsersService {
 
     let pwd = await bcrypt.hash(user.password, saltRounds);
     user.password = pwd;
-    //console.log("Dangkithanhconghihi");
     return await this.usersRepo.save(user);
-    
   }
 
   async findAll(): Promise<User[]> {
@@ -61,7 +59,17 @@ export class UsersService {
   }
 
   async findOne(_id): Promise<User> {
-    return await this.usersRepo.findOneBy({ id: _id });
+    const userRep = await this.usersRepo.createQueryBuilder("user")
+      .leftJoin("user.speciality", "speciality")
+      .leftJoin("user.hospital", "hospital")
+      .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
+      .where({id: _id})
+      .getOne();
+    if (userRep?.role != 1) {
+      return await this.usersRepo.findOneBy({id: _id});
+    } else {
+      return userRep;
+    }
   }
 
   async findByUsername(_username): Promise<User> {
@@ -84,15 +92,10 @@ export class UsersService {
 
   async findByOrderId(_orderid): Promise<User> {
     //console.log(_orderid);
-    
     const userFinded = await this.usersRepo.findOneBy({order: _orderid});
     if (userFinded) {
       return userFinded;
     } throw new BadRequestException("Not Found");
-
-    
-    //const user = await this.usersRepo.getEntityById
-    
   }
 
   async update(user: User): Promise<UpdateResult> {
