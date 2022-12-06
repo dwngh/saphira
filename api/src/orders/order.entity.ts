@@ -50,9 +50,9 @@ export class Order {
     @OneToMany(() => Attachment, attachment => attachment.order)
     attachments?: Attachment[];
 
-    @OneToMany(() => Note, note => note.order)
-    notes?: Note[];
-
     @Column()
     isPaid: boolean;
+
+    @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
+    note: string;
 }
