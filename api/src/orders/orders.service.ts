@@ -41,5 +41,16 @@ export class OrdersService {
   async delete(id): Promise<DeleteResult> {
     return await this.ordersRepo.delete(id);
   }
+
+  async getAllOrdersByDoctorId(_id): Promise<Order[]> {
+    const repOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.doctor", "doctor")
+      .leftJoin("order.patient", "patient")
+      .select(["order", "patient.id", "patient.name", "patient.identity_num", "doctor.id", "doctor.name"])
+      .where("doctor.id=:id", {id: _id})
+      .getMany();
+
+    return repOrder;
+  }
 }
 

@@ -11,6 +11,11 @@ export class OrdersController {
     return this.ordersService.create(order);
   }
 
+  @Get('/doctor/' + ':id')
+  findOrdersByDoctorId(@Param('id', ParseIntPipe) id: number): Promise<Order[]> {
+    return this.ordersService.getAllOrdersByDoctorId(id);
+  }
+
   @Get()
   findAll(): Promise<Order[]> {
     return this.ordersService.findAll();

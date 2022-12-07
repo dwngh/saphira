@@ -84,12 +84,9 @@ export class User {
     @OneToMany(()=> Notification, notification => notification.user) 
     notices: Notification[];
 
-    @OneToOne(()=> Order) 
+    @OneToMany(()=> Order, order => order.doctor) 
     @JoinColumn()
-    public order: Order; 
-
-    @Column({nullable:true})
-    orderId: number;
+    public order: Order[]; 
 
     @OneToOne(()=> Calendar)
     @JoinColumn()
