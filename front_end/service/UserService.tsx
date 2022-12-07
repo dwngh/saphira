@@ -14,12 +14,15 @@ export const UserService = () => {
         })
             .then((res) => {
                 console.log("Get an user successfully ...");
+                console.log(res)
                 response = res.data;
                 return res;
             })
             .catch((err) => {
                 console.error(err);
             });
+        console.log("Returning ...")
+        console.log(response);
         return response;
     }
 

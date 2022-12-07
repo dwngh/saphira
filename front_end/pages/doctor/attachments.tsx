@@ -3,31 +3,33 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Navigator from "../../components/Navigator";
-import ChooseDoctorContent from "../../components/patient/ChooseDoctorContent";
 import Header from "../../components/Header";
 import { getTheme, Copyright } from "../../utils/theme/ThemeProvider";
-import ChooseDateContent from "../../components/patient/ChooseDateContent";
-import DescriptionContent from "../../components/patient/DescriptionContent";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import { useAuth } from "../../utils/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useAuth } from "../../utils/useAuth";
-import PatientNavigator from "../../components/patient/Navigator";
-import AdminNavigator from "../../components/admin/Navigator";
 import { AuthService } from "../../service/AuthService";
+import OrderManagementContent from "../../components/doctor/OrderManagementContent";
 import DoctorNavigator from "../../components/doctor/Navigator";
+import AttachmentContent from "../../components/doctor/AttachmentContent";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
+const tabs = ["Đính kèm"];
+const content = [
+    <AttachmentContent key="doctor-order"/>,
+    // <EditProfileContent registering privilege key="choose-date-content"/>,
+];
+
+
 
 export default function Paperbase() {
-    const router = useRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
     const [currentTabId, setCurrentTabId] = React.useState(0);
-    const { username, name, accessToken, role } = useAuth();
+    const [currentTab, setCurrentTab] = React.useState<JSX.Element>(<Box />);
+    const { accessToken, role } = useAuth();
+    const router = useRouter();
     const { validateToken } = AuthService();
 
     const validate = async() => {
@@ -37,6 +39,11 @@ export default function Paperbase() {
             query: { warning: "Session expired!" },
         });
     }
+
+    useEffect(() => {
+        setCurrentTab(content[currentTabId]);
+    }, [currentTabId]);
+
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -69,56 +76,29 @@ export default function Paperbase() {
                             PaperProps={{ style: { width: drawerWidth } }}
                             variant="temporary"
                             open={mobileOpen}
-                            choosing="home"
                             onClose={handleDrawerToggle}
+                            choosing="doctor-attachments"
                         />
                     )}
                     <DoctorNavigator
                         PaperProps={{ style: { width: drawerWidth } }}
-                        choosing="home"
+                        choosing="doctor-attachments"
                         sx={{ display: { sm: "block", xs: "none" } }}
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="home"
+                        title="admin-accounts"
                         choosing={currentTabId}
-                        tabs={[]}
+                        tabs={tabs}
                         onChangeTab={handleChangeTab}
                     />
                     <Box
                         component="main"
                         sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
                     >
-                        <Paper
-                            sx={{
-                                maxWidth: 936,
-                                margin: "auto",
-                                overflow: "hidden",
-                                height: 450,
-                                padding: 5,
-                            }}
-                        >
-                            <Typography
-                                variant="h5"
-                                component="div"
-                                color="default"
-                            >
-                                Chào mừng bạn đã quay trở lại! 
-                            </Typography>
-                            <Typography
-                                variant="subtitle1"
-                                component="div"
-                                color="Highlight"
-                            >
-                                Bác sĩ: {name}
-                            </Typography>
-                            <Typography variant="body1" component="div">
-                                Sử dụng các chức năng bên trái thanh công cụ để
-                                thao tác.
-                            </Typography>
-                        </Paper>
+                        {currentTab}
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
                         <Copyright />

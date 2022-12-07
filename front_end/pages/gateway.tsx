@@ -19,10 +19,10 @@ export default function GatewayPage(props) {
             case 1:
                 roleStr = "patient";
                 break;
-            case 2:
+            case 3:
                 roleStr = "doctor";
                 break;
-            case 3:
+            case 2:
                 roleStr = "secretary";
                 break;
             case 0:

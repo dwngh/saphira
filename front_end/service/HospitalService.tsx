@@ -47,7 +47,6 @@ export const HospitalService = () => {
 
     const createHospital = async (payload, token) => {
         let response;
-        console.log("Create hospital ");
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/hospitals`,

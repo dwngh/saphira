@@ -65,7 +65,8 @@ export class UsersService {
       .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
       .where({id: _id})
       .getOne();
-    if (userRep?.role != 1) {
+    console.log(userRep);
+    if (userRep?.role != 3) {
       return await this.usersRepo.findOneBy({id: _id});
     } else {
       return userRep;
