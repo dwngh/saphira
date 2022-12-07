@@ -27,7 +27,7 @@ export class User {
     @Column({nullable: true})
     phone: string;
 
-    //0 - admin, 1 - patient, 2 - doctor, 3 - secretary
+    //0 - admin, 1 - patient, 2 - secretary, 3 - doctor
     @Column({nullable: true})
     role: number;
 
