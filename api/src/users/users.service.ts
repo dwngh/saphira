@@ -58,6 +58,16 @@ export class UsersService {
     return await this.usersRepo.find();
   }
 
+  async findDoctors(): Promise<User[]> {
+    const doctors = await this.usersRepo.createQueryBuilder("user")
+      .leftJoin("user.speciality", "speciality")
+      .leftJoin("user.hospital", "hospital")
+      .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
+      .where({role: 3})
+      .getMany();
+    return doctors;
+  }
+
   async findOne(_id): Promise<User> {
     const userRep = await this.usersRepo.createQueryBuilder("user")
       .leftJoin("user.speciality", "speciality")
@@ -65,7 +75,7 @@ export class UsersService {
       .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
       .where({id: _id})
       .getOne();
-    if (userRep?.role != 1) {
+    if (userRep?.role != 3) {
       return await this.usersRepo.findOneBy({id: _id});
     } else {
       return userRep;

@@ -27,7 +27,7 @@ export class User {
     @Column({nullable: true})
     phone: string;
 
-    //0 - admin, 1 - patient, 2 - doctor, 3 - secretary
+    //0 - admin, 1 - patient, 2 - secretary, 3 - doctor
     @Column({nullable: true})
     role: number;
 
@@ -84,12 +84,9 @@ export class User {
     @OneToMany(()=> Notification, notification => notification.user) 
     notices: Notification[];
 
-    @OneToOne(()=> Order) 
+    @OneToMany(()=> Order, order => order.doctor) 
     @JoinColumn()
-    public order: Order; 
-
-    @Column({nullable:true})
-    orderId: number;
+    public order: Order[]; 
 
     @OneToOne(()=> Calendar)
     @JoinColumn()

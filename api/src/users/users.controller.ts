@@ -12,6 +12,11 @@ export class UsersController {
     return this.usersService.create(user);
   }
 
+  @Get('/doctors')
+  getAllDoctors(): Promise<User[]> {
+    return this.usersService.findDoctors();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(): Promise<User[]> {
