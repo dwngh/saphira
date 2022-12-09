@@ -1,6 +1,6 @@
 import { LargeNumberLike } from 'crypto';
 import {
-    Column, Entity, OneToMany, PrimaryGeneratedColumn
+    Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from 'typeorm';
 import { JoinColumn } from 'typeorm';
 import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
@@ -16,16 +16,16 @@ export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => User)
+    @ManyToOne(() => User, patient => patient.order)
     @JoinColumn()
     patient: User;
 
     @Column()
     patientId: number;
 
-    @OneToOne(() => User)
+    @ManyToOne(() => User, doctor => doctor.order)
     @JoinColumn()
-    doctor: User["id"];
+    doctor: User;
 
     @Column()
     doctorId: number;
