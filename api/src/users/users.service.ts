@@ -58,6 +58,29 @@ export class UsersService {
     return await this.usersRepo.find();
   }
 
+  async findDoctors(): Promise<User[]> {
+    const doctors = await this.usersRepo.createQueryBuilder("user")
+      .leftJoin("user.speciality", "speciality")
+      .leftJoin("user.hospital", "hospital")
+      .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
+      .where({role: 3})
+      .getMany();
+    return doctors;
+  }
+
+  async changeUserPassword(_id, oldPassword: string, newPassword: string) {
+    let saltRounds = 10;
+    const user = this.usersRepo.findOneBy({id:_id});
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, (await user).password);
+    if (!isOldPasswordCorrect) throw new BadRequestException("Wrong old password!");
+    if ((oldPassword == newPassword)) throw new BadRequestException("The new password is the same as the old password!");
+    return await this.usersRepo.createQueryBuilder()
+      .update(User)
+      .set({ password: await bcrypt.hash(newPassword, saltRounds) })
+      .where("user.Id = :id", { id: _id })
+      .execute();
+  }
+
   async findOne(_id): Promise<User> {
     const userRep = await this.usersRepo.createQueryBuilder("user")
       .leftJoin("user.speciality", "speciality")

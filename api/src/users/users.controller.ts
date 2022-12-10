@@ -11,6 +11,11 @@ export class UsersController {
   create(@Body() user: User) {
     return this.usersService.create(user);
   }
+  
+  @Post(':id') 
+  changePassword(@Param('id', ParseIntPipe)id : number, @Body('oldPassword') oldP: string, @Body('newPassword') newP: string) {
+    return this.usersService.changeUserPassword(id, oldP, newP);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get()
