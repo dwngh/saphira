@@ -237,7 +237,7 @@ export default function Header(props: HeaderProps) {
                     <Avatar /> Profile
                 </MenuItem>
                 <MenuItem onClick={openDialogChangePass}>
-                    <Avatar /> My account
+                    <Avatar /> Change Password
                 </MenuItem>
                 <Divider />
                 <MenuItem>

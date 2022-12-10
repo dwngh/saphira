@@ -78,15 +78,13 @@ export const UserService = () => {
             data: pass 
         })
             .then((res) => {
-               
-                response = res.data;
-                console.log(response);
-                return res;
+                response = "Change successful";
             })
             .catch((err) => {
                 console.error(err);
+                response = err
             });
-        return response;
+            return response
     }
 
     return { getUsers, getUser, updateUser, changePassword }
