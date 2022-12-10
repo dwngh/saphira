@@ -1,20 +1,45 @@
-import * as React from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { UserService } from '../../service/UserService';
+import { useAuth } from '../../utils/useAuth';
 
 export default function ChangePass(props) {
+  const { changePassword } = UserService()
+  const [oldPass, setOldPass] = useState('')
+  const [newPass, setNewPass] = useState('')
+  const [repeatPass, setRepeatPass] = useState('')
+  const { accessToken, userId } = useAuth();
+  const handleChangeOldPass = (event) => {
+    setOldPass(event.target.value)
+  }
 
-  const handleChangePass = () => {
-    
+  const handleChangeNewPass = (event) => {
+    setNewPass(event.target.value)
+  }
+  const handleChangeRepeatPass = (event) => {
+    setRepeatPass(event.target.value)
+  }
+  const handleChangePass = async () => {
+    if(newPass !== repeatPass) {
+      console.log("Mật khẩu không trùng khớp")
+    }
+    else{
+      const pass = {
+        oldPassword: oldPass,
+        newPassword: newPass
+      }
+      const response = await changePassword(pass, userId, accessToken)
+      props.changePass()
+    }
   };
 
   const handleCancel = () => {
-
+    props.changePass()
   };
 
   return (
@@ -29,6 +54,8 @@ export default function ChangePass(props) {
             label="Old Password"
             fullWidth
             variant="standard"
+            value={oldPass}
+            onChange={handleChangeOldPass}
           />
           <TextField
             
@@ -37,6 +64,8 @@ export default function ChangePass(props) {
             label="New Password"
             fullWidth
             variant="standard"
+            value={newPass}
+            onChange={handleChangeNewPass}
           />
           <TextField
             
@@ -46,6 +75,8 @@ export default function ChangePass(props) {
             type="password"
             fullWidth
             variant="standard"
+            value={repeatPass}
+            onChange={handleChangeRepeatPass}
           />
         </DialogContent>
         <DialogActions>

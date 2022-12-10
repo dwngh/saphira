@@ -66,5 +66,28 @@ export const UserService = () => {
         return response;
     }
 
-    return { getUsers, getUser, updateUser }
+    const changePassword = async (pass, userId, token) => {
+        let response;
+
+        await axios({
+            method: "POST",
+            url: `${process.env.NEXT_PUBLIC_HOST}/users/${userId}`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+            data: pass 
+        })
+            .then((res) => {
+               
+                response = res.data;
+                console.log(response);
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
+    return { getUsers, getUser, updateUser, changePassword }
 }

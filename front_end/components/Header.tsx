@@ -56,11 +56,14 @@ export default function Header(props: HeaderProps) {
     const openDialogChangePass = () => {
         setOpenChangePass(true)
     }
+    const CloseChangePass = () => {
+        setOpenChangePass(false)
+    }
     const { onDrawerToggle } = props.onDrawerToggle;
     const { username, name } = useAuth();
     return (
         <>
-        {openChangePass === false ? <></> : <ChangePass/>}
+        {openChangePass === false ? <></> : <ChangePass changePass={CloseChangePass}/>}
         <React.Fragment>
             <AppBar color="primary" position="sticky" elevation={0}>
                 <Toolbar>
