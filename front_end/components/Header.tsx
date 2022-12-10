@@ -21,6 +21,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useAuth } from "../utils/useAuth";
 import { Box, Card, Paper } from "@mui/material";
 import SpAvatar from "./user/Avatar";
+import ChangePass from "./user/ChangePass";
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 interface HeaderProps {
@@ -44,6 +45,7 @@ const headerTitle = {
 
 export default function Header(props: HeaderProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [openChangePass, setOpenChangePass] = React.useState(false);
     const openProfile = Boolean(anchorEl);
     const handleClickProfile = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -51,9 +53,14 @@ export default function Header(props: HeaderProps) {
     const handleCloseProfile = () => {
         setAnchorEl(null);
     };
+    const openDialogChangePass = () => {
+        setOpenChangePass(true)
+    }
     const { onDrawerToggle } = props.onDrawerToggle;
     const { username, name } = useAuth();
     return (
+        <>
+        {openChangePass === false ? <></> : <ChangePass/>}
         <React.Fragment>
             <AppBar color="primary" position="sticky" elevation={0}>
                 <Toolbar>
@@ -226,7 +233,7 @@ export default function Header(props: HeaderProps) {
                 <MenuItem>
                     <Avatar /> Profile
                 </MenuItem>
-                <MenuItem>
+                <MenuItem onClick={openDialogChangePass}>
                     <Avatar /> My account
                 </MenuItem>
                 <Divider />
@@ -238,5 +245,6 @@ export default function Header(props: HeaderProps) {
                 </MenuItem>
             </Menu>
         </React.Fragment>
+        </>
     );
 }
