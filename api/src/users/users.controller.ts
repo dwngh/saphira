@@ -12,6 +12,11 @@ export class UsersController {
     return this.usersService.create(user);
   }
 
+  @Post(':id') 
+  changePassword(@Param('id', ParseIntPipe)id : number, @Body('oldPassword') oldP: string, @Body('newPassword') newP: string) {
+    return this.usersService.changeUserPassword(id, oldP, newP);
+  }
+
   @Get('/doctors')
   getAllDoctors(): Promise<User[]> {
     return this.usersService.findDoctors();
