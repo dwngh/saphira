@@ -87,7 +87,7 @@ export default function EditProfileContent(props: EditProfileContentProps) {
     const handleChangeGender = (e) => {
         dataSet((prevState) => ({
             ...prevState,
-            gender: e.target.value,
+            gender: e.target.value === "true" ? true : false,
         }));
     };
     const handleChangeRole = (e) => {
@@ -317,8 +317,8 @@ export default function EditProfileContent(props: EditProfileContentProps) {
                         label="Gender"
                         onChange={handleChangeGender}
                     >
-                        <MenuItem value={0}>Nam</MenuItem>
-                        <MenuItem value={1}>Nữ</MenuItem>
+                        <MenuItem value={"true"}>Nam</MenuItem>
+                        <MenuItem value={"false"}>Nữ</MenuItem>
                     </Select>
                 </Grid>
                 <Grid item xs={4}>

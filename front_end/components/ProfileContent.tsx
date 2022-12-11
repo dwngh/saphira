@@ -97,7 +97,7 @@ export default function ProfileContent(props: ProfileContentProps) {
                     <Typography sx={{ fontWeight: "bold" }}>
                         Giới tính:
                     </Typography>
-                    {data.gender}
+                    {data.gender === true ? "Nam" : "Nữ"}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography sx={{ fontWeight: "bold" }}>CCCD:</Typography>
