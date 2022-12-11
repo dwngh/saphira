@@ -16,9 +16,22 @@ export class OrdersService {
   }
 
   async create(order: Order) {
-    if (await this.validateOrder(order))
-      return await this.ordersRepo.save(order);
-    else throw new BadRequestException({ error: 'Invalid order information' });
+    if (!await this.validateOrder(order))
+      throw new BadRequestException({ error: 'Invalid order information' });
+    await this.ordersRepo.save(order);
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.doctor", "doctor")
+      .leftJoin("doctor.calendar", "calendar")
+      .select(["order","doctor.id", "doctor.name", "calendar.enableAutoNote", "calendar.note"])
+      .where("order.id=:idd",{idd : order.id})
+      .getOne();
+    //console.log(resOrder.doctor.calendar.note);
+    if (resOrder.doctor.calendar.enableAutoNote===true)
+    return await this.ordersRepo.createQueryBuilder()
+      .update(Order)
+      .set({ note: resOrder.doctor.calendar.note })
+      .where("order.id = :id", { id: resOrder.id })
+      .execute();
   }
 
   async findAll(): Promise<Order[]> {
