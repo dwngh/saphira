@@ -115,5 +115,26 @@ export const OrderService = () => {
         return response;
     }
 
-    return { getOrdersByPatient, getOrders, createOrder, deleteOrder, updateOrder }
+    const getOrdersByDoctor = async (doctorId, token) => {
+        let response;
+
+        await axios({
+            method: "GET",
+            url: `${process.env.NEXT_PUBLIC_HOST}/orders/doctor/${doctorId}`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            } 
+        })
+            .then((res) => {
+                console.log("Get all order of doctor successfully ...");
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
+    return { getOrdersByPatient, getOrders, createOrder, deleteOrder, updateOrder, getOrdersByDoctor }
 }
