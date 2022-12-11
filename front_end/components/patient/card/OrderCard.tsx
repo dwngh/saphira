@@ -71,6 +71,7 @@ export default function OrderCard(props: OrderCardProps) {
                         />
                         Đơn số #{props.item.id}
                         <IconButton
+                            id={props.item.id}
                             sx={{ marginLeft: 1, marginBottom: 0.2 }}
                             onClick={() => openDetail()}
                         >
@@ -117,7 +118,7 @@ export default function OrderCard(props: OrderCardProps) {
                     <AccordionDetails>
                         <Grid container spacing={1}>
                             <Grid item xs={4}>
-                                <Typography>
+                                <Typography sx={{ fontWeight: "bold" }}>
                                     Bác sĩ:
                                 </Typography>
                                 {props.item.doctor}

@@ -1,10 +1,21 @@
-import { AppBar, Button, Paper, SwipeableDrawer, Typography } from "@mui/material";
-import { Fragment } from "react";
+import {
+    AppBar,
+    Button,
+    Paper,
+    SwipeableDrawer,
+    Typography,
+} from "@mui/material";
+import { Fragment, useEffect, useState } from "react";
 import ShiftList from "../../time/ShiftList";
 import Box from "@mui/material/Box";
 import DescriptionCard from "./DescriptionCard";
 import OrderDetailCard from "./OrderDetailCard";
 import useWindowDimensions from "../../../utils/useWindowDimensions";
+import { TimeSolve } from "../../../common/time";
+import dayjs from "dayjs";
+import { OrderService } from "../../../service/OrderService";
+import { useAuth } from "../../../utils/useAuth";
+import { toast } from "react-toastify";
 
 interface SwipeableOrderDetailProps {
     open: boolean;
@@ -13,7 +24,73 @@ interface SwipeableOrderDetailProps {
 }
 
 export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
+    const [choosedShift, setChoosedShift] = useState<number>();
+    const [avail, setAvail] = useState("00000000");
+    const [enableEditShift, setEnableEditShift] = useState(false);
+    const [description, setDescription] = useState("");
     const { height, width } = useWindowDimensions();
+    const { isEmpty, getShiftAvailable } = TimeSolve();
+    const { updateOrder } = OrderService();
+    const { accessToken } = useAuth();
+
+    useEffect(() => {
+        console.log("Swipteabsddwes");
+        console.log(props.order);
+        setChoosedShift(props.order?.shift);
+        setDescription(props.order?.description);
+        console.log(props.order?.description);
+        let date = dayjs(props.order?.date).day();
+        // console.log(dayjs(props.order?.date).format("DD-MM-YYYY"));
+        if (isEmpty(props.order?.doctor?.calendar?.avail)) setAvail("11111111");
+        else if (date == 0) {
+            setAvail(
+                getShiftAvailable(props.order?.doctor?.calendar?.avail, 6)
+            );
+        } else if (date > 0 && date <= 6) {
+            setAvail(
+                getShiftAvailable(
+                    props.order?.doctor?.calendar?.avail,
+                    date - 1
+                )
+            );
+        }
+    }, [props.order]);
+
+    const handleShiftChoose = (e) => {
+        let id = +e.currentTarget.id;
+        setChoosedShift(id);
+    };
+
+    const handleShiftSave = async() => {
+        const temp = {
+            id: props.order?.id,
+            shift: choosedShift
+        };
+        let result = await updateOrder(temp, accessToken);
+        if (result?.status == 201 || result?.affected == 1) {
+            toast.success("Cập nhật thành công");
+        } else {
+            toast.warning("Cập nhật chưa thành công");
+            setChoosedShift(props.order?.shift)
+        }
+        setEnableEditShift(false);
+    } 
+
+    const handleDescriptionSave = async(des) => {
+        const temp = {
+            id: props.order?.id,
+            description: des,
+        };
+        let result = await updateOrder(temp, accessToken);
+        if (result?.status == 201 || result?.affected == 1) {
+            toast.success("Cập nhật thành công");
+            setDescription(des);
+        } else {
+            toast.warning("Cập nhật chưa thành công");
+            setDescription(props.order?.description);
+        }
+    }
+
     return (
         <Fragment>
             <SwipeableDrawer
@@ -56,21 +133,18 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
                     </AppBar>
                     <OrderDetailCard
                         patient={{
-                            name: "Minh",
-                            email: "minh2ten@zz.com",
-                            birthday: "30-2-2002",
-                            phone: "0123456678",
+                            name: props.order?.patient?.name,
+                            email: props.order?.patient?.email,
+                            birthday: props.order?.patient?.birthday,
+                            phone: props.order?.patient?.phone,
                         }}
                         doctor={{
-                            name: "Huy",
-                            speciality: "ppppp",
-                            shift: 1,
-                            date: "30-2-2050",
-                            location: "Sao hỏa",
+                            name: props.order?.doctor?.name,
+                            speciality: props.order?.doctor?.speciality?.name,
+                            shift: props.order?.shift,
+                            date: props.order?.date,
+                            location: props.order?.location,
                         }}
-                        price={100000}
-                        shift={5}
-                        date="30-2-2022"
                         isCreated={true}
                     />
                     <Paper sx={{ margin: 2, padding: 5 }} elevation={3}>
@@ -82,9 +156,11 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
                             CA KHÁM
                         </Typography>
                         <ShiftList
-                            choosedShift={null}
-                            onChooseShift={(e) => {}}
-                            enable={false}
+                            choosedShift={choosedShift}
+                            onChooseShift={handleShiftChoose}
+                            enable={enableEditShift}
+                            avail={avail}
+                            small
                         />
                         <Box
                             m={2}
@@ -93,19 +169,32 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
                             justifyContent="flex-end"
                             alignItems="flex-end"
                         >
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                sx={{ height: 40, borderRadius: 28 }}
-                            >
-                                Chỉnh sửa
-                            </Button>
+                            {enableEditShift ? (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ height: 40, borderRadius: 28 }}
+                                    onClick={handleShiftSave}
+                                >
+                                    Lưu
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    sx={{ height: 40, borderRadius: 28 }}
+                                    onClick={() => setEnableEditShift(true)}
+                                >
+                                    Chỉnh sửa
+                                </Button>
+                            )}
                         </Box>
                     </Paper>
                     <Paper sx={{ margin: 2, padding: 3 }} elevation={3}>
                         <DescriptionCard
                             isCompleted={true}
-                            description={"Abcxyz"}
+                            description={description}
+                            setDescription={handleDescriptionSave}
                         />
                     </Paper>
                 </Paper>

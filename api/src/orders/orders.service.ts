@@ -25,6 +25,26 @@ export class OrdersService {
     return await this.ordersRepo.find();
   }
 
+  async findAllDetail(): Promise<Order[]> {
+    const repOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.patient", "patient")
+      .leftJoin("order.doctor", "doctor").select(["order", "doctor.id", "doctor.name", "patient.id", "patient.name"]).getMany();
+    return repOrder;
+  }
+
+  async getAllOrdersByPatientId(_id): Promise<Order[]> {
+    const repOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.doctor", "doctor")
+      .leftJoin("order.patient", "patient")
+      .leftJoin("doctor.speciality", "speciality")
+      .leftJoin("doctor.calendar", "calendar")
+      .select(["order", "patient.id", "patient.name", "patient.birthday", "patient.email", "patient.phone", "doctor.id", "doctor.name", "speciality.name", "calendar.avail"])
+      .where("patient.id=:id", {id: _id})
+      .getMany();
+
+    return repOrder;
+  }
+
   async findOne(_id): Promise<Order> {
     const repOrder = await this.ordersRepo.createQueryBuilder("order")
       .leftJoin("order.patient", "patient")

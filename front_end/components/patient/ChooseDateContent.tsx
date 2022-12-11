@@ -1,6 +1,6 @@
 import * as React from "react";
 import Paper from "@mui/material/Paper";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -11,14 +11,48 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import ShiftList from "../time/ShiftList";
+import { Grid } from "@mui/material";
+import { TimeSolve } from "../../common/time";
+import { toast } from "react-toastify";
 
 interface ChooseDateContentProps {
-    w_str;
+    setCalendar;
+    calendar;
+    onNextTab;
+    onPreviousTab;
 }
 
 export default function ChooseDateContent(props: ChooseDateContentProps) {
-    const [value, setValue] = useState<Dayjs | null>(dayjs());
+    const [value, setValue] = useState<Dayjs | null>(null);
+    const [orders, setOrders] = useState<any>([]);
     const [choosedShift, setChoosedShift] = useState(-1);
+    const [weekStr, setWeekStr] = useState("0000000");
+    const [shiftList, setShiftList] = useState("00000000");
+    const bottomRef = useRef(null);
+    const { getAvailableDayBit, getShiftAvailable, isEmpty } = TimeSolve();
+
+    useEffect(() => {
+        let temp = props.calendar?.avail
+            ? getAvailableDayBit(props.calendar?.avail)
+            : "1111111";
+        temp = temp.substring(temp.length - 1) + temp.substring(0, 5);
+        console.log(temp);
+        setWeekStr(temp);
+    }, []);
+
+    useEffect(() => {
+        // 👇️ scroll to bottom every time messages change
+        let temp: any = bottomRef.current;
+        if (value) temp?.scrollIntoView({ behavior: "smooth" });
+        let date = value?.day() ?? -1;
+        console.log(date);
+        if (isEmpty(props.calendar?.avail)) setShiftList("11111111");
+        else if (date == 0) {
+            setShiftList(getShiftAvailable(props.calendar?.avail, 6));
+        } else if (date > 0 && date <= 6) {
+            setShiftList(getShiftAvailable(props.calendar?.avail, date - 1));
+        }
+    }, [value]);
 
     const handleShiftChoose = (e) => {
         let id = +e.currentTarget.id;
@@ -27,10 +61,14 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
 
     const isHavingShift = (date: Dayjs) => {
         let day = date.day();
-        if (day >= 6) return true;
-        console.log("The day is: " + day);
-        if (props.w_str[day] == "0") return true;
+        if (day > 6) return true;
+        if (weekStr[day] == "0") return true;
         return false;
+    };
+
+    const handleSubmit = () => {
+        props.setCalendar(value, choosedShift);
+        props.onNextTab();
     };
 
     return (
@@ -51,7 +89,11 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
                         value={value}
                         shouldDisableDate={isHavingShift}
                         onChange={(newValue) => {
-                            setValue(newValue);
+                            if (newValue?.isBefore(dayjs()))
+                                toast.error(
+                                    "Không thể chọn ngày trong quá khứ."
+                                );
+                            else setValue(newValue);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                     />
@@ -61,37 +103,58 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
                 <Typography variant="h5" component="div">
                     Chọn ca khám:
                 </Typography>
-                <ShiftList
-                    choosedShift={choosedShift}
-                    onChooseShift={handleShiftChoose}
-                    enable={true}
-                />
-                <Box
-                    m={2}
-                    //margin
-                    display="flex"
-                    justifyContent="flex-end"
-                    alignItems="flex-end"
-                >
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        sx={{ height: 40, borderRadius: 28, marginRight: 2 }}
-                        onClick={() => {
-                            setChoosedShift(-1);
-                        }}
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ height: 40, borderRadius: 28 }}
-                        disabled={choosedShift == -1}
-                    >
-                        Tiếp tục
-                    </Button>
-                </Box>
+                {value && (
+                    <ShiftList
+                        choosedShift={choosedShift}
+                        onChooseShift={handleShiftChoose}
+                        enable={true}
+                        avail={shiftList}
+                    />
+                )}
+                <div ref={bottomRef}></div>
+                <Grid container>
+                    <Grid xs={3} sx={{ padding: 3 }}>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            sx={{
+                                height: 40,
+                                borderRadius: 28,
+                                marginRight: 2,
+                            }}
+                            onClick={props.onPreviousTab}
+                        >
+                            Quay lại
+                        </Button>
+                    </Grid>
+                    <Grid xs={3}></Grid>
+                    <Grid xs={3}></Grid>
+                    <Grid xs={3} sx={{ padding: 3 }}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            sx={{
+                                height: 40,
+                                borderRadius: 28,
+                                marginRight: 2,
+                            }}
+                            onClick={() => {
+                                setChoosedShift(-1);
+                            }}
+                        >
+                            Hủy
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ height: 40, borderRadius: 28 }}
+                            disabled={choosedShift == -1}
+                            onClick={handleSubmit}
+                        >
+                            Tiếp tục
+                        </Button>
+                    </Grid>
+                </Grid>
             </Paper>
         </Paper>
     );

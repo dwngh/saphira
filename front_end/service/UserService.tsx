@@ -28,7 +28,9 @@ export const UserService = () => {
 
     const updateUser = async (payload, token) => {
         let response;
-
+        delete payload['calendar'];
+        delete payload['hospital'];
+        delete payload['speciality'];
         await axios({
             method: "PUT",
             url: `${process.env.NEXT_PUBLIC_HOST}/users`,
@@ -69,5 +71,27 @@ export const UserService = () => {
         return response;
     }
 
-    return { getUsers, getUser, updateUser }
+    const getDoctors = async (token) => {
+        let response;
+
+        await axios({
+            method: "GET",
+            url: `${process.env.NEXT_PUBLIC_HOST}/users/doctors`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            } 
+        })
+            .then((res) => {
+                console.log("Get all doctor successfully ...");
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
+
+    return { getUsers, getUser, updateUser, getDoctors}
 }

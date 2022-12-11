@@ -9,11 +9,19 @@ import TextField from "@mui/material/TextField";
 import DescriptionCard from "./card/DescriptionCard";
 
 interface DescriptionContentProps {
-    isCompleted: boolean;
+    isCompleted?: boolean;
     description?;
+    setDescription?;
+    onNextTab;
+    onPreviousTab;
 }
 
 export default function DescriptionContent(props: DescriptionContentProps) {
+    const handleSubmit = (value) => {
+        props.setDescription(value);
+        props.onNextTab();
+    }
+
     return (
         <Paper
             sx={{
@@ -23,7 +31,11 @@ export default function DescriptionContent(props: DescriptionContentProps) {
                 height: 450,
             }}
         >
-            <DescriptionCard isCompleted={props.isCompleted} description={props?.description} />
+            <DescriptionCard
+                description={props?.description}
+                setDescription={handleSubmit}
+                onCancel={props.onPreviousTab}
+            />
         </Paper>
     );
 }

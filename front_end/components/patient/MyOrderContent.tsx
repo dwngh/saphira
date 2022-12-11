@@ -11,13 +11,46 @@ import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import OrderCard from "./card/OrderCard";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import SwipeableOrderDetail from "./card/SwipeableOrderDetail";
+import { OrderService } from "../../service/OrderService";
+import { useAuth } from "../../utils/useAuth";
+import dayjs from "dayjs";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const shiftList = [
+    "7h00 - 8h00",
+    "8h00 - 9h00",
+    "9h00 - 10h00",
+    "10h00 - 11h00",
+    "13h30 - 14h30",
+    "14h30 - 15h30",
+    "15h30 - 16h30",
+    "16h30 - 17h30",
+];
 
 export default function MyDoctorContent() {
     const [open, setOpen] = useState(false);
+    const [orders, setOrders] = useState<any[]>([]);
+    const [currentOrder, setCurrentOrder] = useState<any>({});
+    const { getOrdersByPatient } = OrderService();
+    const { accessToken, userId } = useAuth();
+
+    const fetchData = async () => {
+        const orders = await getOrdersByPatient(userId, accessToken);
+        console.log(orders);
+        setOrders(orders);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [userId]);
+
     const handleOpenDetail = (id) => {
-        console.log("Opening detail of" + id);
+        let currentId = +id;
+        const item = orders.filter(item => item.id == currentId)[0];
+        setCurrentOrder(item);
         setOpen(true);
     };
     return (
@@ -65,61 +98,26 @@ export default function MyDoctorContent() {
                 variant="outlined"
                 square
             >
-                <OrderCard
-                    item={{
-                        id: 123,
-                        status: 0,
-                        doctor: "abc",
-                        time: "Ca 7h00 - 8h00 30-2-2050",
-                        address: "Sao hỏa",
-                        note: "Nhớ đem theo đĩa bay",
-                    }}
-                    onOpenDetail={handleOpenDetail}
-                    attachments={[
-                        { name: "Don-thuoc.doc", href: "#" },
-                        { name: "ket-qua-xet-nghiem-mau.pdf", href: "#" },
-                    ]}
-                />
-                <OrderCard
-                    item={{
-                        id: 133,
-                        status: 1,
-                        doctor: "abc",
-                        time: "Ca 7h00 - 8h00 30-2-2050",
-                        address: "Sao hỏa",
-                    }}
-                    onOpenDetail={handleOpenDetail}
-                    attachments={[
-                        { name: "Don-thuoc.doc", href: "#" },
-                        { name: "ket-qua-xet-nghiem-mau.pdf", href: "#" },
-                        { name: "ketqua.pdf", href: "#" },
-                        { name: "ket-qua-xet-nghiem-mau.pdf", href: "#" },
-                    ]}
-                />
-                <OrderCard
-                    item={{
-                        id: 143,
-                        status: 2,
-                        doctor: "abc",
-                        time: "Ca 7h00 - 8h00 30-2-2050",
-                        address: "Sao hỏa",
-                    }}
-                    onOpenDetail={handleOpenDetail}
-                    attachments={[]}
-                />
-                <OrderCard
-                    item={{
-                        id: 153,
-                        status: 3,
-                        doctor: "abc",
-                        time: "Ca 7h00 - 8h00 30-2-2050",
-                        address: "Sao hỏa",
-                    }}
-                    onOpenDetail={handleOpenDetail}
-                    attachments={[]}
-                />
+                {orders.map((order) => (
+                    <OrderCard
+                        item={{
+                            id: order.id,
+                            status: order.status,
+                            doctor: order.doctor.name,
+                            time: "Ca " + shiftList[order?.shift] + " ngày " + dayjs(order?.date).format("DD-MM-YYYY"),
+                            address: order.location,
+                            note: order.note ?? '',
+                        }}
+                        onOpenDetail={handleOpenDetail}
+                        attachments={[
+                            { name: "Don-thuoc.doc", href: "#" },
+                            { name: "ket-qua-xet-nghiem-mau.pdf", href: "#" },
+                        ]}
+                    />
+                ))}
             </Paper>
-            <SwipeableOrderDetail open={open} setOpen={setOpen} order={{}} />
+            <SwipeableOrderDetail open={open} setOpen={setOpen} order={currentOrder} />
+            <ToastContainer />
         </Paper>
     );
 }

@@ -15,6 +15,8 @@ import {
     Grid,
     IconButton,
     Switch,
+    TextField,
+    Typography,
 } from "@mui/material";
 import CachedIcon from "@mui/icons-material/Cached";
 import Box from "@mui/material/Box";
@@ -55,16 +57,28 @@ interface TimeTableInterface {
 export default function TimeTable(props: TimeTableInterface) {
     const [rows, setRows] = useState<any>([]);
     const [shiftStr, setShiftStr] = useState(
-        "0000000000001000000000000010000000000000000000000"
+        "00000000000000000000000000000000000000000000000000000000"
     );
+    const [limit, setLimit] = useState(0);
     const [hasChange, setHasChange] = useState(false);
     const [enable, setEnable] = useState(false);
     const { accessToken } = useAuth();
     const { updateCalendar } = CalendarService();
 
     useEffect(() => {
-        setShiftStr(props.calendar.avail);
+        setShiftStr(props?.calendar?.avail);
+        setLimit(props?.calendar?.limit);
     }, [props.calendar]);
+
+    const handleLimitChange = (e) => {
+        let nLimit = +e.target.value
+        if (nLimit < 0) toast.error("Giới hạn yêu cầu không thể nhỏ hơn 0");
+        else {
+            setLimit(nLimit);
+        if (nLimit != props?.calendar?.limit) setHasChange(true);
+        }
+        
+    }
 
     const onCheckShift = (e) => {
         let id = +e.currentTarget.id;
@@ -99,19 +113,20 @@ export default function TimeTable(props: TimeTableInterface) {
 
     const onReset = () => {
         setShiftStr(props.calendar.avail);
+        setLimit(props.calendar.limit)
         setHasChange(false);
     };
 
     const onSave = async () => {
         const obj = { ...props.calendar };
         obj.avail = shiftStr;
+        obj.limit = limit;
         let r = await updateCalendar(obj, accessToken);
         if (r?.affected == 1) {
             toast.success("Đã cập nhật lại cài đặt");
             setHasChange(false);
             await props.onSaveData();
-        }
-        else toast.warning("Cập nhật chưa thành công");
+        } else toast.warning("Cập nhật chưa thành công");
     };
 
     useEffect(() => {
@@ -140,7 +155,7 @@ export default function TimeTable(props: TimeTableInterface) {
     return (
         <TableContainer component={Paper}>
             <Grid container>
-                <Grid item xs={3}>
+                <Grid item xs={2}>
                     <FormControlLabel
                         control={
                             <Switch checked={enable} onChange={() => {}} />
@@ -149,8 +164,22 @@ export default function TimeTable(props: TimeTableInterface) {
                         sx={{ m: 2 }}
                     />
                 </Grid>
-                <Grid item xs={3}></Grid>
-                <Grid item xs={3}></Grid>
+                <Grid item xs={2}>
+                    <TextField
+                        id="outlined-number"
+                        label="Giới hạn yêu cầu trong 1 ca"
+                        type="number"
+                        value={limit}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={handleLimitChange}
+                        sx={{m: 1, height: 2, width: 200}}
+                    />
+                </Grid>
+                <Grid item xs={5}>
+                    <Typography variant="caption" sx={{margin: 2}}>Mặc định 0 là tắt giới hạn</Typography>
+                </Grid>
                 <Grid item xs={3}>
                     <Box
                         m={2}

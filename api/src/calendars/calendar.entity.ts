@@ -15,6 +15,9 @@ export class Calendar {
     @Column({nullable: true})
     doctorId: number;
 
+    @Column({nullable: false, default: 0})
+    limit: number;
+
     @Column('varchar', {default: '00000000000000000000000000000000000000000000000000000000'}) 
     avail: string;
 

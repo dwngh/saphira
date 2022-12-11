@@ -115,7 +115,7 @@ export default function Paperbase() {
                 <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Header
                         onDrawerToggle={handleDrawerToggle}
-                        title="admin-accounts"
+                        title="doctor-calendar"
                         choosing={currentTabId}
                         tabs={tabs}
                         onChangeTab={handleChangeTab}

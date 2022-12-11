@@ -200,7 +200,7 @@ export default function EditProfileContent(props: EditProfileContentProps) {
         } else {
             response = await updateUser(data, accessToken);
         }
-        if (response.status == 201 || response.affected == 1)
+        if (response?.status == 201 || response.affected == 1)
             toast.success(
                 props.registering
                     ? "Registered new account!"
