@@ -65,8 +65,9 @@ export default function ChangePass(props) {
           <TextField
             autoFocus
             margin="dense"
-            id="oldpass"
+            id="oldpassword"
             label="Old Password"
+            type="password"
             fullWidth
             variant="standard"
             value={oldPass}
@@ -75,8 +76,9 @@ export default function ChangePass(props) {
           <TextField
             
             margin="dense"
-            id="newpass"
+            id="newpassword"
             label="New Password"
+            type="password"
             fullWidth
             variant="standard"
             value={newPass}
@@ -85,7 +87,7 @@ export default function ChangePass(props) {
           <TextField
             
             margin="dense"
-            id="repeatpass"
+            id="repeatpassword"
             label="Repeat New Password"
             type="password"
             fullWidth
