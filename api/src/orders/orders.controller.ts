@@ -21,6 +21,11 @@ export class OrdersController {
     return this.ordersService.getAllOrdersByPatientId(id);
   }
 
+  @Get(':id' + '/attachments')
+  getAllAttachmentsOfOrder(@Param('id', ParseIntPipe) id: number) {
+    return this.ordersService.getOrderWithAllAttachments(id);
+  }
+
   @Get()
   findAll(): Promise<Order[]> {
     return this.ordersService.findAll();

@@ -1,3 +1,4 @@
+import { User } from 'src/users/user.entity';
 import {
     Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
@@ -23,4 +24,11 @@ export class Attachment {
 
     @Column({nullable:true}) 
     created_at: Date;
+
+    @ManyToOne(() => User, user => user.attachments)
+    @JoinColumn()
+    author: User['id'];
+
+    @Column({nullable: true})
+    authorId: number;
 }

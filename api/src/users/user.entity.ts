@@ -7,6 +7,7 @@ import { Notification } from '../notifications/notification.entity';
 import { Speciality } from '../specialitys/speciality.entity';
 import { Order } from '../orders/order.entity';
 import { Calendar} from '../calendars/calendar.entity';
+import { Attachment } from 'src/attachments/attachment.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn() 
@@ -94,4 +95,7 @@ export class User {
 
     @Column({nullable: true})
     calendarId: number;
+
+    @ManyToOne(() => Attachment, attachment => attachment.author)
+    attachments: Attachment[];
 }

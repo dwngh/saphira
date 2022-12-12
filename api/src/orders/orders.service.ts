@@ -85,5 +85,17 @@ export class OrdersService {
 
     return repOrder;
   }
+
+  async getOrderWithAllAttachments(_id): Promise<Order> {
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+    .leftJoin("order.patient", "patient")
+    .leftJoin("order.attachments", "attachment")
+    .leftJoin("order.doctor", "doctor")
+    .select(["order", "doctor.id", "doctor.name", "patient.id", "patient.name", "attachment.id", "attachment.authorId", "attachment.fileName", "attachment.file"])
+    .where("order.id=:id", {id: _id})
+    .getOne();
+
+    return resOrder;
+  }
 }
 
