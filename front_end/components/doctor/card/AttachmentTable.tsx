@@ -18,50 +18,47 @@ import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import { useAuth } from "../../../utils/useAuth";
-import { TablePagination } from "@mui/material";
+import { Button, TablePagination } from "@mui/material";
+import FileService from "../../../service/FileService";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import axios from "axios";
+import { OrderService } from "../../../service/OrderService";
+import { toast } from "react-toastify";
 
-function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-    price: number
-) {
-    return {
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
-        price,
-        history: [
-            {
-                date: "2020-01-05",
-                customerId: "11091700",
-                amount: 3,
-            },
-            {
-                date: "2020-01-02",
-                customerId: "Anonymous",
-                amount: 1,
-            },
-        ],
-    };
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return "0 Bytes";
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
-const createRow = ({ id, patient, doctor, createdAt, attachments }) => {
-    return {
-        id: id,
-        patient: patient.name,
-        doctor: doctor.name,
-        createdAt: dayjs(createdAt).format("YYYY-MM-DD HH:mm"),
-        attachments: attachments,
-    };
-};
 
-function Row(props: { row: ReturnType<typeof createRow> }) {
-    const { row } = props;
+function Row(props: { row; token; onReload; canSeeAttachment: boolean }) {
+    const { row, canSeeAttachment } = props;
     const [open, setOpen] = React.useState(false);
+    const { uploadFile, downloadFile } = FileService();
+    const handleFileUpload = async (e) => {
+        let id = e.target.id;
+        const file = e.target.files[e.target.files.length - 1];
+        if (file.size > 16777215) {
+            toast.warning("Chỉ hỗ trợ file nhỏ hơn 16MB");
+            return;
+        }
+        let formData = new FormData();
+
+        formData.append("file", file);
+        formData.append("orderId", id);
+        formData.append("type", file.type);
+        let result = await uploadFile(formData, props.token);
+        if (result?.status == 201) {
+            toast.success("Đã tải lên một tệp đính kèm");
+            props.onReload();
+        } else toast.warning("Tệp chưa được tải lên");
+    };
 
     return (
         <React.Fragment>
@@ -82,13 +79,25 @@ function Row(props: { row: ReturnType<typeof createRow> }) {
                 <TableCell component="th" scope="row" align="center">
                     {row.id}
                 </TableCell>
-                <TableCell align="center">{row.patient}</TableCell>
-                <TableCell align="center">{row.doctor}</TableCell>
-                <TableCell align="center">{row.createdAt}</TableCell>
+                <TableCell align="center">{row?.patient?.name}</TableCell>
+                <TableCell align="center">{row?.doctor?.name}</TableCell>
                 <TableCell align="center">
-                    <IconButton>
-                        <AddIcon />
-                    </IconButton>
+                    {dayjs(row?.createdAt).format("DD/MM/YYYY")}
+                </TableCell>
+                <TableCell align="center">
+                    <Button
+                        component="label"
+                        variant="outlined"
+                        sx={{ marginRight: "1rem" }}
+                    >
+                        <FileUploadIcon />
+                        <input
+                            id={row.id}
+                            type="file"
+                            hidden
+                            onChange={handleFileUpload}
+                        />
+                    </Button>
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -97,52 +106,83 @@ function Row(props: { row: ReturnType<typeof createRow> }) {
                     colSpan={6}
                 >
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography
-                                variant="h6"
-                                gutterBottom
-                                component="div"
-                            >
-                                Đính kèm
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Tên file</TableCell>
-                                        <TableCell align="center">
-                                            Người tải lên
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            Hành động
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {row.attachments.map((historyRow) => (
-                                        <TableRow key={historyRow.id}>
-                                            <TableCell
-                                                component="th"
-                                                scope="row"
-                                            >
-                                                {historyRow.id}
-                                            </TableCell>
-                                            <TableCell>
-                                                {historyRow.filename}
+                        {canSeeAttachment ? (
+                            <Box sx={{ margin: 1 }}>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                >
+                                    Đính kèm
+                                </Typography>
+                                <Table size="small" aria-label="purchases">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>ID</TableCell>
+                                            <TableCell>Tên file</TableCell>
+                                            <TableCell align="center">
+                                                Kích thước
                                             </TableCell>
                                             <TableCell align="center">
-                                                {historyRow.uploader}
+                                                Người tải lên
                                             </TableCell>
                                             <TableCell align="center">
-                                                <IconButton>
-                                                    <DownloadIcon />
-                                                </IconButton>
+                                                Ngày tải lên
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                Hành động
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Box>
+                                    </TableHead>
+                                    <TableBody>
+                                        {row.attachments.map((historyRow) => (
+                                            <TableRow key={historyRow.id}>
+                                                <TableCell
+                                                    component="th"
+                                                    scope="row"
+                                                >
+                                                    {historyRow.id}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {historyRow?.fileName}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {formatBytes(
+                                                        historyRow?.size
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {dayjs(
+                                                        historyRow?.created_at
+                                                    ).format(
+                                                        "HH:mm DD/MM/YYYY"
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {historyRow?.author?.name}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            downloadFile(
+                                                                historyRow?.id
+                                                            )
+                                                        }
+                                                    >
+                                                        <DownloadIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Box>
+                        ) : (
+                            <Typography variant="body2">
+                                Bạn không có quyền truy cập vào file đính kèm
+                                của yêu cầu này
+                            </Typography>
+                        )}
                     </Collapse>
                 </TableCell>
             </TableRow>
@@ -150,184 +190,13 @@ function Row(props: { row: ReturnType<typeof createRow> }) {
     );
 }
 
-const rowss = [
-    createRow({
-        id: 1,
-        patient: {
-            name: "Nguyễn Văn A",
-        },
-        doctor: {
-            name: "Nguyễn Văn B",
-        },
-        createdAt: "2022-06-16T16:44:39+02:00",
-        attachments: [
-            { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-            {
-                id: 3,
-                filename: "abcd.pdf",
-                uploader: "Nguyễn Văn C",
-            },
-        ],
-    }),
-    createRow({
-        id: 2,
-        patient: {
-            name: "Nguyễn Văn A",
-        },
-        doctor: {
-            name: "Nguyễn Văn B",
-        },
-        createdAt: "2022-06-16T16:44:39+02:00",
-        attachments: [
-            { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-            {
-                id: 3,
-                filename: "abcd.pdf",
-                uploader: "Nguyễn Văn C",
-            },
-        ],
-    }),
-    createRow({
-        id: 3,
-        patient: {
-            name: "Nguyễn Văn A",
-        },
-        doctor: {
-            name: "Nguyễn Văn B",
-        },
-        createdAt: "2022-06-16T16:44:39+02:00",
-        attachments: [
-            { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-            {
-                id: 3,
-                filename: "abcd.pdf",
-                uploader: "Nguyễn Văn C",
-            },
-        ],
-    }),
-    createRow({
-      id: 4,
-      patient: {
-          name: "Nguyễn Văn A",
-      },
-      doctor: {
-          name: "Nguyễn Văn B",
-      },
-      createdAt: "2022-06-16T16:44:39+02:00",
-      attachments: [
-          { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-          {
-              id: 3,
-              filename: "abcd.pdf",
-              uploader: "Nguyễn Văn C",
-          },
-      ],
-  }),
-  createRow({
-    id: 5,
-    patient: {
-        name: "Nguyễn Văn A",
-    },
-    doctor: {
-        name: "Nguyễn Văn B",
-    },
-    createdAt: "2022-06-16T16:44:39+02:00",
-    attachments: [
-        { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-        {
-            id: 3,
-            filename: "abcd.pdf",
-            uploader: "Nguyễn Văn C",
-        },
-    ],
-}),
-createRow({
-  id: 6,
-  patient: {
-      name: "Nguyễn Văn A",
-  },
-  doctor: {
-      name: "Nguyễn Văn B",
-  },
-  createdAt: "2022-06-16T16:44:39+02:00",
-  attachments: [
-      { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-      {
-          id: 3,
-          filename: "abcd.pdf",
-          uploader: "Nguyễn Văn C",
-      },
-  ],
-}),
-createRow({
-  id: 7,
-  patient: {
-      name: "Nguyễn Văn A",
-  },
-  doctor: {
-      name: "Nguyễn Văn B",
-  },
-  createdAt: "2022-06-16T16:44:39+02:00",
-  attachments: [
-      { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-      {
-          id: 3,
-          filename: "abcd.pdf",
-          uploader: "Nguyễn Văn C",
-      },
-  ],
-}),
-createRow({
-  id: 8,
-  patient: {
-      name: "Nguyễn Văn A",
-  },
-  doctor: {
-      name: "Nguyễn Văn B",
-  },
-  createdAt: "2022-06-16T16:44:39+02:00",
-  attachments: [
-      { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-      {
-          id: 3,
-          filename: "abcd.pdf",
-          uploader: "Nguyễn Văn C",
-      },
-  ],
-}),
-createRow({
-  id: 9,
-  patient: {
-      name: "Nguyễn Văn A",
-  },
-  doctor: {
-      name: "Nguyễn Văn B",
-  },
-  createdAt: "2022-06-16T16:44:39+02:00",
-  attachments: [
-      { id: 1, filename: "abc.doc", uploader: "Nguyễn Văn B" },
-      {
-          id: 3,
-          filename: "abcd.pdf",
-          uploader: "Nguyễn Văn C",
-      },
-  ],
-}),
-];
-
-const rows = [
-    createData("Fr", 159, 6.0, 24, 4.0, 3.99),
-    createData("Ic", 237, 9.0, 37, 4.3, 4.99),
-    createData("Ec", 262, 16.0, 24, 6.0, 3.79),
-    createData("Cu", 305, 3.7, 67, 4.3, 2.5),
-    createData("Gi", 356, 16.0, 49, 3.9, 1.5),
-];
-
 export default function AttachmentTable() {
-    const [rows, setRows] = useState<any>([]);
-    const { accessToken } = useAuth();
+    const { accessToken, userId } = useAuth();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [orders, setOrders] = useState<any>([]);
+    const { uploadFile } = FileService();
+    const { getOrdersWithAttachment } = OrderService();
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -340,7 +209,8 @@ export default function AttachmentTable() {
         setPage(0);
     };
     const fetchData = async () => {
-        setRows(rowss);
+        const temp = await getOrdersWithAttachment(accessToken);
+        setOrders(temp);
     };
 
     useEffect(() => {
@@ -348,50 +218,71 @@ export default function AttachmentTable() {
     }, []);
 
     return (
-      <>
-        <TableContainer component={Paper} sx={{maxHeight: 350}}>
-            <Table stickyHeader aria-label="collapsible table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell />
-                        <TableCell sx={{ fontWeight: "bold" }} align="center">
-                            ID
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }} align="center">
-                            Người khám
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }} align="center">
-                            Bác sĩ
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }} align="center">
-                            Ngày tạo
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }} align="center">
-                            Hành động
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows
-                        .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row) => (
-                            <Row key={row.id} row={row} />
-                        ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </>
+        <>
+            <TableContainer component={Paper} sx={{ maxHeight: 350 }}>
+                <Table stickyHeader aria-label="collapsible table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell
+                                sx={{ fontWeight: "bold" }}
+                                align="center"
+                            >
+                                ID
+                            </TableCell>
+                            <TableCell
+                                sx={{ fontWeight: "bold" }}
+                                align="center"
+                            >
+                                Người khám
+                            </TableCell>
+                            <TableCell
+                                sx={{ fontWeight: "bold" }}
+                                align="center"
+                            >
+                                Bác sĩ
+                            </TableCell>
+                            <TableCell
+                                sx={{ fontWeight: "bold" }}
+                                align="center"
+                            >
+                                Ngày tạo
+                            </TableCell>
+                            <TableCell
+                                sx={{ fontWeight: "bold" }}
+                                align="center"
+                            >
+                                Hành động
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {orders
+                            .slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                            )
+                            .map((row) => (
+                                <Row
+                                    key={row.id}
+                                    row={row}
+                                    token={accessToken}
+                                    onReload={fetchData}
+                                    canSeeAttachment={row.doctorId == userId}
+                                />
+                            ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={orders.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+        </>
     );
 }

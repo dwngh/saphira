@@ -225,7 +225,6 @@ export default function EditProfileContent(props: EditProfileContentProps) {
         }
         fetchDoctorAdditionInfo();
     }, []);
-    console.log(data);
     return (
         <Paper
             sx={{

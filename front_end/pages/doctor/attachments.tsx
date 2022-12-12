@@ -12,6 +12,8 @@ import { AuthService } from "../../service/AuthService";
 import OrderManagementContent from "../../components/doctor/OrderManagementContent";
 import DoctorNavigator from "../../components/doctor/Navigator";
 import AttachmentContent from "../../components/doctor/AttachmentContent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -104,6 +106,7 @@ export default function Paperbase() {
                         <Copyright />
                     </Box>
                 </Box>
+                <ToastContainer />
             </Box>
         </ThemeProvider>
     );

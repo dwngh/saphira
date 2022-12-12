@@ -16,13 +16,19 @@ export class Attachment {
     @Column({nullable:true})
     orderId: number;
 
-    @Column("blob", {nullable:true})
-    file;
+    @Column('mediumblob', {nullable:true})
+    file: Buffer;
 
     @Column({charset: 'utf8', collation: 'utf8_general_ci'}) 
     fileName: string;
 
-    @Column({nullable:true}) 
+    @Column()
+    type: string;
+
+    @Column()
+    size: number;
+
+    @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
 
     @ManyToOne(() => User, user => user.attachments)

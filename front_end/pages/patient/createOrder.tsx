@@ -96,7 +96,6 @@ export default function Paperbase() {
     const handleSubmit = async () => {
         let temp = { ...currentOrder };
         let r = await createOrder(temp, accessToken);
-        console.log(r);
         if (r.status == 201) {
             toast.success("Tạo yêu cầu thành công");
             setCurrentTabId(currentTabId + 1);

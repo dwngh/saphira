@@ -156,19 +156,6 @@ export default function AttachmentContent() {
                                                         key={column.id}
                                                         align={column.align}
                                                     >
-                                                        <Tooltip title="Xem trước">
-                                                            <IconButton
-                                                                id={
-                                                                    row["id"] +
-                                                                    ""
-                                                                }
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
-                                                            >
-                                                                <VisibilityIcon />
-                                                            </IconButton>
-                                                        </Tooltip>
                                                         <Tooltip title="Tải xuống">
                                                             <IconButton
                                                                 id={

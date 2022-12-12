@@ -21,9 +21,9 @@ export class OrdersController {
     return this.ordersService.getAllOrdersByPatientId(id);
   }
 
-  @Get(':id' + '/attachments')
-  getAllAttachmentsOfOrder(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.getOrderWithAllAttachments(id);
+  @Get('/attachments')
+  getAllAttachmentsOfOrder() {
+    return this.ordersService.getOrderWithAllAttachments();
   }
 
   @Get()

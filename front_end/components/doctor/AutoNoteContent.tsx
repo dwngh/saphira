@@ -35,9 +35,6 @@ export default function AutoNoteContent(props: AutoNoteContentProps) {
 
     const handleSave = async () => {
         const nCalendar = { ...props.calendar };
-        console.log("Handle save")
-        console.log(enableAutoNote);
-        console.log(note);
         if (enableAutoNote && (note === "" || note == null)) {
             toast.error("Không thể bật tự động thêm ghi chú với giá trị trống");
             return
@@ -61,7 +58,6 @@ export default function AutoNoteContent(props: AutoNoteContentProps) {
     }, []);
 
     useEffect(() => {
-        console.log(enableAutoNote);
         if (
             !(
                 ((props.calendar.enableAutoNote == null && !enableAutoNote) ||

@@ -26,7 +26,7 @@ export class OrdersService {
       .where("order.id=:idd",{idd : order.id})
       .getOne();
     //console.log(resOrder.doctor.calendar.note);
-    if (resOrder.doctor.calendar.enableAutoNote===true)
+    if (resOrder.doctor?.calendar?.enableAutoNote===true)
     return await this.ordersRepo.createQueryBuilder()
       .update(Order)
       .set({ note: resOrder.doctor.calendar.note })
@@ -86,14 +86,14 @@ export class OrdersService {
     return repOrder;
   }
 
-  async getOrderWithAllAttachments(_id): Promise<Order> {
+  async getOrderWithAllAttachments(): Promise<Order[]> {
     const resOrder = await this.ordersRepo.createQueryBuilder("order")
-    .leftJoin("order.patient", "patient")
     .leftJoin("order.attachments", "attachment")
+    .leftJoin("attachment.author", "user")
+    .leftJoin("order.patient", "patient")
     .leftJoin("order.doctor", "doctor")
-    .select(["order", "doctor.id", "doctor.name", "patient.id", "patient.name", "attachment.id", "attachment.authorId", "attachment.fileName", "attachment.file"])
-    .where("order.id=:id", {id: _id})
-    .getOne();
+    .select(["order", "doctor.id", "doctor.name", "patient.id", "patient.name", "user.id", "user.name", "attachment.id", "attachment.fileName", "attachment.size", "attachment.created_at"])
+    .getMany();
 
     return resOrder;
   }

@@ -55,9 +55,6 @@ interface ShiftListProps {
 }
 
 export default function ShiftList(props: ShiftListProps) {
-    useEffect(() => {
-        console.log("Avail: " + props?.avail);
-    }, []);
     return (
         <Paper
             elevation={1}
