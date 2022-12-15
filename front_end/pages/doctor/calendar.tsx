@@ -50,13 +50,9 @@ export default function Paperbase() {
     };
 
     const fetchData = async () => {
-        console.log("Fetching data ...");
         const user: any = await getUser(userId, accessToken);
-        console.log(user);
         if (!user.calendarId) {
-            console.log("Creating calendar");
             let r = await createCalendar(user, accessToken);
-            console.log(r);
             setCurrentCalendar(r);
         } else {
             setCurrentCalendar(user.calendar);

@@ -70,8 +70,6 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
 
     const fetchData = async () => {
         const doctors = await getDoctors(accessToken);
-        console.log("Doctor here!");
-        console.log(doctors);
         setDoctors(doctors);
     };
 
@@ -89,7 +87,6 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
         let id = +e.currentTarget.id;
         let doctor = doctors.filter((user) => user.id == id)[0];
         if (doctor) {
-            console.log(doctor);
             props.setDoctor(id, doctor.calendar, doctor.price, doctor);
             props.onNextTab();
         } else toast.error("Unexpected error!");

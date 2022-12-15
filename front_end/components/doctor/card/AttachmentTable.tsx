@@ -24,18 +24,8 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axios from "axios";
 import { OrderService } from "../../../service/OrderService";
 import { toast } from "react-toastify";
+import { formatBytes } from "../../../common/files";
 
-function formatBytes(bytes, decimals = 2) {
-    if (!+bytes) return "0 Bytes";
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}
 
 function Row(props: { row; token; onReload; canSeeAttachment: boolean }) {
     const { row, canSeeAttachment } = props;

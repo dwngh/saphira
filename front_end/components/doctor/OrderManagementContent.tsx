@@ -104,6 +104,7 @@ export default function OrderManagementContent() {
 
     const fetchData = async () => {
         let orders = await getOrdersByDoctor(userId, accessToken);
+        console.log(orders);
         setOrderList(orders);
     };
 

@@ -29,8 +29,11 @@ const shiftList = [
     "15h30 - 16h30",
     "16h30 - 17h30",
 ];
+interface MyDoctorContentProps {
+    orderId?;
+}
 
-export default function MyDoctorContent() {
+export default function MyDoctorContent(props: MyDoctorContentProps) {
     const [open, setOpen] = useState(false);
     const [orders, setOrders] = useState<any[]>([]);
     const [currentOrder, setCurrentOrder] = useState<any>({});
@@ -39,6 +42,7 @@ export default function MyDoctorContent() {
 
     const fetchData = async () => {
         const orders = await getOrdersByPatient(userId, accessToken);
+        console.log("ORRDARRRR");
         console.log(orders);
         setOrders(orders);
     };
@@ -46,6 +50,12 @@ export default function MyDoctorContent() {
     useEffect(() => {
         fetchData();
     }, [userId]);
+
+    useEffect(() => {
+        if (props?.orderId) {
+            handleOpenDetail(props?.orderId)
+        }
+    }, [props?.orderId]);
 
     const handleOpenDetail = (id) => {
         let currentId = +id;
@@ -109,10 +119,7 @@ export default function MyDoctorContent() {
                             note: order.note ?? '',
                         }}
                         onOpenDetail={handleOpenDetail}
-                        attachments={[
-                            { name: "Don-thuoc.doc", href: "#" },
-                            { name: "ket-qua-xet-nghiem-mau.pdf", href: "#" },
-                        ]}
+                        attachments={order.attachments}
                     />
                 ))}
             </Paper>

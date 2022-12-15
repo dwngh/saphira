@@ -3,8 +3,6 @@ import axios from "axios";
 export default function FileService() {
     const uploadFile = async (payload, token) => {
         let response;
-        console.log("Upload payload");
-        console.log(payload);
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/attachments/upload`,
@@ -28,5 +26,24 @@ export default function FileService() {
         window.open(`${process.env.NEXT_PUBLIC_HOST}/attachments/${id}`);
     }
 
-    return { uploadFile, downloadFile};
+    const getAttachmentByPatientId = async (id, token) => {
+        let response;
+        await axios({
+            method: "GET",
+            url: `${process.env.NEXT_PUBLIC_HOST}/attachments/patient/${id}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((res) => {
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
+    return { uploadFile, downloadFile, getAttachmentByPatientId };
 }

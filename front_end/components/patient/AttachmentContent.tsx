@@ -10,27 +10,47 @@ import TableRow from "@mui/material/TableRow";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
 import { IconButton, Tooltip } from "@mui/material";
+import FileService from "../../service/FileService";
+import { useAuth } from "../../utils/useAuth";
+import dayjs from "dayjs";
+import { formatBytes } from "../../common/files";
+import { useRouter } from "next/router";
+import LaunchIcon from '@mui/icons-material/Launch';
 
 interface Column {
     id: string;
     label: string;
     minWidth?: number;
     align?;
+    isFormat?;
+    format?;
 }
 
 const columns: readonly Column[] = [
     { id: "id", label: "ID", minWidth: 70 },
-    { id: "file", label: "Tệp đính kèm", minWidth: 200 },
+    { id: "fileName", label: "Tệp đính kèm", minWidth: 200 },
     {
-        id: "createdAt",
+        id: "created_at",
         label: "Ngày tạo",
         minWidth: 120,
+        isFormat: true,
+        format: (value) => dayjs(value).format("HH:mm DD/MM/YYYY"),
     },
     {
         id: "author",
         label: "Người đính kèm",
         minWidth: 120,
         align: "center",
+        isFormat: true,
+        format: (value) => value.name
+    },
+    {
+        id: "size",
+        label: "Kích thước",
+        minWidth: 80,
+        align: "center",
+        isFormat: true,
+        format: (value) => formatBytes(value)
     },
     {
         id: "action",
@@ -96,19 +116,36 @@ const rows = [
 export default function AttachmentContent() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [attachments, setAttachments] = React.useState<any>([]);
+    const {accessToken, userId} = useAuth();
+    const router = useRouter();
+    const { getAttachmentByPatientId, downloadFile } = FileService();
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
+    const fetchData = async () => {
+        let items = await getAttachmentByPatientId(userId, accessToken);
+        console.log(items);
+        setAttachments(items);
+    }
+
+    React.useEffect(() => {
+        fetchData();
+    }, [])
+
     const handleDownload = (e) => {
-        let id = e.currentTarget.id;
-        console.log("Download id: " + id);
+        let id = +e.currentTarget.id;
+        downloadFile(id);
     };
 
     const handleOpen = (e) => {
         let id = e.currentTarget.id;
-        console.log("Open id: " + id);
+        router.push({
+            pathname: "/patient/orders",
+            query: { orderId: id },
+        });
     };
 
     const handleChangeRowsPerPage = (
@@ -136,7 +173,7 @@ export default function AttachmentContent() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {attachments
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -169,10 +206,24 @@ export default function AttachmentContent() {
                                                                 <DownloadIcon />
                                                             </IconButton>
                                                         </Tooltip>
+                                                        <Tooltip title="Mở yêu cầu">
+                                                            <IconButton
+                                                                id={
+                                                                    row?.order?.id +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleOpen
+                                                                }
+                                                            >
+                                                                <LaunchIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
                                                     </TableCell>
                                                 );
                                             } else {
-                                                const value = row[column.id];
+                                                let value = row[column.id];
+                                                if (column?.isFormat) value = column.format(value)
                                                 return (
                                                     <TableCell
                                                         key={column.id}
@@ -192,7 +243,7 @@ export default function AttachmentContent() {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={rows.length}
+                count={attachments.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

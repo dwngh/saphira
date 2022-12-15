@@ -41,7 +41,6 @@ export default function DoctorCard(props: DoctorCardProps) {
     const [ calendar, setCalendar ] = useState("");
     const { getAvailableDay } = TimeSolve();
     useEffect(() => {
-        console.log("Calendar: " + props.calendar);
         let temp = getAvailableDay(props.calendar ?? "00000000000000000000000000000000000000000000000000000000");
         setCalendar(temp?.join(", "));
     }, [])

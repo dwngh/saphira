@@ -36,7 +36,6 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
             ? getAvailableDayBit(props.calendar?.avail)
             : "1111111";
         temp = temp.substring(temp.length - 1) + temp.substring(0, 5);
-        console.log(temp);
         setWeekStr(temp);
     }, []);
 
@@ -45,7 +44,6 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
         let temp: any = bottomRef.current;
         if (value) temp?.scrollIntoView({ behavior: "smooth" });
         let date = value?.day() ?? -1;
-        console.log(date);
         if (isEmpty(props.calendar?.avail)) setShiftList("11111111");
         else if (date == 0) {
             setShiftList(getShiftAvailable(props.calendar?.avail, 6));

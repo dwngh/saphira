@@ -34,11 +34,8 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
     const { accessToken } = useAuth();
 
     useEffect(() => {
-        console.log("Swipteabsddwes");
-        console.log(props.order);
         setChoosedShift(props.order?.shift);
         setDescription(props.order?.description);
-        console.log(props.order?.description);
         let date = dayjs(props.order?.date).day();
         // console.log(dayjs(props.order?.date).format("DD-MM-YYYY"));
         if (isEmpty(props.order?.doctor?.calendar?.avail)) setAvail("11111111");

@@ -18,7 +18,8 @@ export class AttachmentsService {
     const resAttach = await this.attachRepo.createQueryBuilder("attachment")
         .leftJoin("attachment.order", "order")
         .leftJoin("order.patient", "patient")
-        .select(["attachment", "order.id", "patient.name", "patient.id"])
+        .leftJoin("attachment.author", "user")
+        .select(["attachment", "order.id", "patient.name", "patient.id", "user.name"])
         .where("patient.id=:id", {id: _id})
         .getMany();
     return resAttach;

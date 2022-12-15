@@ -41,6 +41,7 @@ const headerTitle = {
     "admin-accounts": "Quản lý tài khoản",
     "admin-hospital": "Quản lý bệnh viện",
     "doctor-calendar": "Cài đặt lịch khám",
+    "doctor-orders": "Quản lý yêu cầu"
 };
 
 export default function Header(props: HeaderProps) {

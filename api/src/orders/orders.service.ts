@@ -51,7 +51,8 @@ export class OrdersService {
       .leftJoin("order.patient", "patient")
       .leftJoin("doctor.speciality", "speciality")
       .leftJoin("doctor.calendar", "calendar")
-      .select(["order", "patient.id", "patient.name", "patient.birthday", "patient.email", "patient.phone", "doctor.id", "doctor.name", "speciality.name", "calendar.avail"])
+      .leftJoin("order.attachments", "attachment")
+      .select(["order", "patient.id", "patient.name", "patient.birthday", "patient.email", "patient.phone", "doctor.id", "doctor.name", "speciality.name", "calendar.avail", "attachment.id", "attachment.fileName"])
       .where("patient.id=:id", {id: _id})
       .getMany();
 

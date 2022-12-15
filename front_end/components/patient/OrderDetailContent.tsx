@@ -31,8 +31,6 @@ export default function OrderDetailContent(props: OrderDetailContentProps) {
 
     useEffect(() => {
         fetchPatient(props?.order?.patientId);
-        console.log('ORRDEERSAAAA')
-        console.log(dayjs(props.order.date).format("DD/MM/YYYY"));
     }, [])
     const handleClose = () => {
         setOpenConfirm(false);
