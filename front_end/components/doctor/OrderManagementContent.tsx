@@ -9,13 +9,18 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
+import InfoIcon from "@mui/icons-material/Info";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
-import FileService from "../../service/FileService";
+import { UserService } from "../../service/UserService";
 import { useAuth } from "../../utils/useAuth";
+import { useEffect, useState } from "react";
+import User from "../../interface/user";
+// import SwipeableProfile from "./card/SwipeableProfile";
+// import SwipeableEditProfile from "./card/SwipableEditProfile";
 import dayjs from "dayjs";
-import { formatBytes } from "../../common/files";
-import { useRouter } from "next/router";
-import LaunchIcon from '@mui/icons-material/Launch';
+import { OrderService } from "../../service/OrderService";
 
 interface Column {
     id: string;
@@ -26,126 +31,89 @@ interface Column {
     format?;
 }
 
+const shiftList = [
+    "7h00 - 8h00",
+    "8h00 - 9h00",
+    "9h00 - 10h00",
+    "10h00 - 11h00",
+    "13h30 - 14h30",
+    "14h30 - 15h30",
+    "15h30 - 16h30",
+    "16h30 - 17h30",
+];
+
 const columns: readonly Column[] = [
-    { id: "id", label: "ID", minWidth: 70 },
-    { id: "fileName", label: "Tệp đính kèm", minWidth: 200 },
+    { id: "id", label: "ID", minWidth: 50 },
     {
-        id: "created_at",
-        label: "Ngày tạo",
-        minWidth: 120,
+        id: "patient",
+        label: "Người đặt khám",
+        minWidth: 90,
         isFormat: true,
-        format: (value) => dayjs(value).format("HH:mm DD/MM/YYYY"),
+        format: (value) => {
+            return value.name;
+        },
     },
     {
-        id: "author",
-        label: "Người đính kèm",
-        minWidth: 120,
-        align: "center",
+        id: "doctor",
+        label: "Bác sĩ",
+        minWidth: 90,
         isFormat: true,
-        format: (value) => value.name
+        format: (value) => {
+            return value.name;
+        },
     },
     {
-        id: "size",
-        label: "Kích thước",
-        minWidth: 80,
+        id: "date",
+        label: "Ngày khám",
+        minWidth: 90,
         align: "center",
         isFormat: true,
-        format: (value) => formatBytes(value)
+        format: (value) => {
+            if (value) return dayjs(value).format("DD/MM/YYYY");
+            else return "None";
+        },
+    },
+    {
+        id: "shift",
+        label: "Ca",
+        minWidth: 90,
+        align: "center",
+        format: (value) => {
+            return shiftList[value]
+        },
     },
     {
         id: "action",
         label: "Hành động",
-        minWidth: 170,
+        minWidth: 90,
         align: "center",
     },
 ];
 
-interface Data {
-    name: string;
-    code: string;
-    population: number;
-    size: number;
-    density: number;
-}
-
-const rows = [
-    {
-        id: 11,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-    {
-        id: 22,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-    {
-        id: 34,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-    {
-        id: 234,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-    {
-        id: 1234,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-    {
-        id: 111,
-        file: "Ket-qua-xet-nghiem.pdf",
-        createdAt: "30-2-2050",
-        author: "Còn ai là vua đất này",
-        href: "#",
-    },
-];
-
-export default function AttachmentContent() {
+export default function OrderManagementContent() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [attachments, setAttachments] = React.useState<any>([]);
-    const {accessToken, userId} = useAuth();
-    const router = useRouter();
-    const { getAttachmentByPatientId, downloadFile } = FileService();
+    const { accessToken, userId } = useAuth();
+    const { getUsers } = UserService();
+    const { getOrdersByDoctor } = OrderService();
+    const [userList, setUserList] = useState<User[]>([]);
+    const [orderList, setOrderList] = useState<any>([]);
+    const [openSideInfo, setOpenSideInfo] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(-1);
+    const [openSideEditInfo, setOpenSideEditInfo] = useState(false);
+
+    const fetchData = async () => {
+        let orders = await getOrdersByDoctor(userId, accessToken);
+        console.log(orders);
+        setOrderList(orders);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [openSideEditInfo]);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
-    };
-
-    const fetchData = async () => {
-        let items = await getAttachmentByPatientId(userId, accessToken);
-        console.log(items);
-        setAttachments(items);
-    }
-
-    React.useEffect(() => {
-        fetchData();
-    }, [])
-
-    const handleDownload = (e) => {
-        let id = +e.currentTarget.id;
-        downloadFile(id);
-    };
-
-    const handleOpen = (e) => {
-        let id = e.currentTarget.id;
-        router.push({
-            pathname: "/patient/orders",
-            query: { orderId: id },
-        });
     };
 
     const handleChangeRowsPerPage = (
@@ -153,6 +121,24 @@ export default function AttachmentContent() {
     ) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
+    };
+
+    const handleInfo = (e) => {
+        let id = +e.currentTarget.id;
+        setOpenSideInfo(true);
+        setOpenSideEditInfo(false);
+        setCurrentUserId(id);
+    };
+
+    const handleEdit = (e) => {
+        let id = e.currentTarget.id;
+        setOpenSideInfo(false);
+        setOpenSideEditInfo(true);
+        setCurrentUserId(id);
+    };
+
+    const handleDelete = (e) => {
+        let id = e.currentTarget.id;
     };
 
     return (
@@ -173,7 +159,7 @@ export default function AttachmentContent() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {attachments
+                        {orderList
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -193,37 +179,52 @@ export default function AttachmentContent() {
                                                         key={column.id}
                                                         align={column.align}
                                                     >
-                                                        <Tooltip title="Tải xuống">
+                                                        <Tooltip title="Thông tin chi tiết">
                                                             <IconButton
                                                                 id={
                                                                     row["id"] +
                                                                     ""
                                                                 }
                                                                 onClick={
-                                                                    handleDownload
+                                                                    handleInfo
                                                                 }
                                                             >
-                                                                <DownloadIcon />
+                                                                <InfoIcon />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <Tooltip title="Mở yêu cầu">
+                                                        <Tooltip title="Chỉnh sửa">
                                                             <IconButton
                                                                 id={
-                                                                    row?.order?.id +
+                                                                    row["id"] +
                                                                     ""
                                                                 }
                                                                 onClick={
-                                                                    handleOpen
+                                                                    handleEdit
                                                                 }
                                                             >
-                                                                <LaunchIcon />
+                                                                <EditIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="Xóa">
+                                                            <IconButton
+                                                                id={
+                                                                    row["id"] +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleDelete
+                                                                }
+                                                            >
+                                                                <DeleteIcon />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </TableCell>
                                                 );
                                             } else {
-                                                let value = row[column.id];
-                                                if (column?.isFormat) value = column.format(value)
+                                                let value: any = row[column.id];
+                                                if (column.isFormat)
+                                                    value =
+                                                        column.format(value);
                                                 return (
                                                     <TableCell
                                                         key={column.id}
@@ -243,12 +244,14 @@ export default function AttachmentContent() {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={attachments.length}
+                count={orderList.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            {/* <SwipeableProfile open={openSideInfo} setOpen={setOpenSideInfo} userId={currentUserId} />
+            <SwipeableEditProfile open={openSideEditInfo} setOpen={setOpenSideEditInfo} userId={currentUserId} privilege /> */}
         </Paper>
     );
 }

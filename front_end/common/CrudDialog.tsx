@@ -22,20 +22,14 @@ export default function FormDialog(props: FormDialogProps) {
     const [formList, setFormList] = useState<JSX.Element[]>([]);
 
     useEffect(() => {
-        console.log("Init");
-        console.log(props.item);
         let temp: JSX.Element[] = [];
         props.columns.map((column) => {
             if (column.input) {
                 let prop = { ...column.props };
                 if (props.isEdit) prop.defaultValue = props.item[column.id];
-                console.log(props.isEdit);
-                console.log(column.props);
-                console.log(prop);
                 temp.push(<column.input {...prop} />);
             }
         });
-        console.log(temp);
         setFormList(temp);
     }, [props.isEdit, props.item, props.open]);
 

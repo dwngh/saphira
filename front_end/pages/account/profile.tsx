@@ -19,6 +19,7 @@ import AttachmentContent from "../../components/patient/AttachmentContent";
 import ProfileContent from "../../components/ProfileContent";
 import AdminNavigator from "../../components/admin/Navigator";
 import { AuthService } from "../../service/AuthService";
+import DoctorNavigator from "../../components/doctor/Navigator";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -70,6 +71,22 @@ export default function Paperbase() {
                     component="nav"
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
+                     {role == 3 && (<>
+                        {isSmUp ? null : (
+                            <DoctorNavigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                choosing="profile"
+                            />
+                        )}
+                        <DoctorNavigator
+                            PaperProps={{ style: { width: drawerWidth } }}
+                            choosing="profile"
+                            sx={{ display: { sm: "block", xs: "none" } }}
+                        />
+                    </>)}
                     {role == 1 && (<>
                         {isSmUp ? null : (
                             <PatientNavigator

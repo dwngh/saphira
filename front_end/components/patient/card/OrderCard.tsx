@@ -12,6 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoIcon from "@mui/icons-material/Info";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
+import FileService from "../../../service/FileService";
 
 const cardStyle = {
     marginLeft: 2,
@@ -31,8 +32,7 @@ const iconStyle = {
 };
 
 const status = [
-    { color: "#ab47bc", message: "Đợi xác nhận" },
-    { color: "teal", message: "Đã xác nhận" },
+    { color: "#ab47bc", message: "Đợi khám" },
     { color: "green", message: "Đã khám" },
     { color: "red", message: "Đã muộn" },
 ];
@@ -51,6 +51,7 @@ export default function OrderCard(props: OrderCardProps) {
         const id = props.item.id;
         props.onOpenDetail(id);
     };
+    const { downloadFile } = FileService();
     return (
         <Card sx={cardStyle} elevation={2}>
             <Box sx={{ padding: 3 }}>
@@ -71,6 +72,7 @@ export default function OrderCard(props: OrderCardProps) {
                         />
                         Đơn số #{props.item.id}
                         <IconButton
+                            id={props.item.id}
                             sx={{ marginLeft: 1, marginBottom: 0.2 }}
                             onClick={() => openDetail()}
                         >
@@ -117,7 +119,7 @@ export default function OrderCard(props: OrderCardProps) {
                     <AccordionDetails>
                         <Grid container spacing={1}>
                             <Grid item xs={4}>
-                                <Typography>
+                                <Typography sx={{ fontWeight: "bold" }}>
                                     Bác sĩ:
                                 </Typography>
                                 {props.item.doctor}
@@ -157,10 +159,10 @@ export default function OrderCard(props: OrderCardProps) {
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        {props.attachments.map((attachment) => (
+                        {props?.attachments.map((attachment) => (
                             <Typography key={attachment.id}>
-                                <Link href={attachment.href}>
-                                    {attachment.name}
+                                <Link onClick={(e) => {e.preventDefault();downloadFile(attachment.id)}}>
+                                    {attachment.fileName}
                                 </Link>
                             </Typography>
                         ))}

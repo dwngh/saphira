@@ -10,15 +10,14 @@ import EmailIcon from "@mui/icons-material/Email";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TodayIcon from '@mui/icons-material/Today';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import dayjs from "dayjs";
 
 interface OrderDetailCardProps {
     id?;
     patient;
     doctor;
-    price;
     status?;
-    shift;
-    date;
     isCreated;
 }
 
@@ -113,25 +112,25 @@ export default function OrderDetailCard(props: OrderDetailCardProps) {
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.patient.name}
+                                {props.patient.name + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.patient.birthday}
+                                {props.patient.birthday + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.patient.phone}
+                                {props.patient.phone + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.patient.email}
+                                {props.patient.email + ' '}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -193,6 +192,16 @@ export default function OrderDetailCard(props: OrderDetailCardProps) {
                                 />
                                 Địa điểm:
                             </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{ ...typographyStyle, fontWeight: "bold" }}
+                            >
+                                <MonetizationOnIcon
+                                    fontSize="small"
+                                    sx={{ ...iconStyle }}
+                                />
+                                Giá tiền:
+                            </Typography>
                         </Grid>
                         <Grid item xs>
                             <Typography
@@ -205,25 +214,31 @@ export default function OrderDetailCard(props: OrderDetailCardProps) {
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.doctor.speciality}
+                                {props.doctor.speciality + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {shiftList[props.doctor.shift]}
+                                {shiftList[props.doctor.shift] + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.doctor.date}
+                                {dayjs(props.doctor.date).format("DD-MM-YYYY") + ' '}
                             </Typography>
                             <Typography
                                 variant="body1"
                                 sx={{ ...typographyStyle }}
                             >
-                                {props.doctor.location}
+                                {props.doctor.location + ' '}
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{ ...typographyStyle }}
+                            >
+                                {props.doctor.price ? props.doctor.price.toLocaleString("en-US") : ''} VNĐ
                             </Typography>
                             <br />
                         </Grid>

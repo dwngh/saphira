@@ -1,4 +1,5 @@
-import { Button, Divider, Paper, Typography, Box } from "@mui/material";
+import { Button, Divider, Paper, Typography, Box, Grid } from "@mui/material";
+import { useEffect } from "react";
 
 interface ShiftLabelProps {
     shift;
@@ -48,28 +49,52 @@ function ShiftLabel(props: ShiftLabelProps) {
 interface ShiftListProps {
     choosedShift;
     enable: boolean;
+    avail?;
     onChooseShift: (e) => void;
+    small?;
 }
 
 export default function ShiftList(props: ShiftListProps) {
     return (
-        <Paper elevation={1} sx={{ marginTop: 3 }}>
+        <Paper
+            elevation={1}
+            sx={
+                props.small ? { marginTop: 3, maxWidth: 600 } : { marginTop: 3 }
+            }
+        >
             <Typography variant="subtitle1" component="div">
-                {shiftList.map((shift, index) => {
-                    const rows = [<Box key={"box-" + index}/>];
-                    let status = 0;
-                    if (index == props.choosedShift) status = 1;
-                    if (index == 0) rows.push(<Divider />);
-                    if (index == 4) rows.push(<Divider />);
-                    rows.push(
-                        <ShiftLabel
-                            shift={index}
-                            status={status}
-                            onShiftChoose={props.enable ? props.onChooseShift : (() => alert("Editing is disabled!"))}
-                        />
-                    );
-                    return rows;
-                })}
+                <Grid container>
+                    {shiftList.map((shift, index) => {
+                        const rows = [<Box key={"box-" + index} />];
+                        let df = props.enable ? 0 : 2;
+                        let status;
+                        if (index == props.choosedShift) status = 1;
+                        if (index == 0) rows.push(<Divider />);
+                        if (index == 4) rows.push(<Grid xs={2}></Grid>);
+                        rows.push(
+                            <Grid xs={2.5}>
+                                <ShiftLabel
+                                    shift={index}
+                                    status={
+                                        status ??
+                                        (props.avail
+                                            ? props.avail[index] == "1"
+                                                ? df
+                                                : 2
+                                            : 2)
+                                    }
+                                    onShiftChoose={
+                                        props.enable
+                                            ? props.onChooseShift
+                                            : () =>
+                                                  alert("Editing is disabled!")
+                                    }
+                                />
+                            </Grid>
+                        );
+                        return rows;
+                    })}
+                </Grid>
             </Typography>
         </Paper>
     );

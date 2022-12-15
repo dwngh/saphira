@@ -14,6 +14,17 @@ export class AttachmentsService {
       return await this.attachRepo.find();
   }
 
+  async findByPatientId(_id): Promise<Attachment[]> {
+    const resAttach = await this.attachRepo.createQueryBuilder("attachment")
+        .leftJoin("attachment.order", "order")
+        .leftJoin("order.patient", "patient")
+        .leftJoin("attachment.author", "user")
+        .select(["attachment", "order.id", "patient.name", "patient.id", "user.name"])
+        .where("patient.id=:id", {id: _id})
+        .getMany();
+    return resAttach;
+  } 
+
   async findOne(_id): Promise<Attachment> {
       return await this.attachRepo.findOneBy({id:_id});
   }

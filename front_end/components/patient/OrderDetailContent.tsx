@@ -1,16 +1,37 @@
 import * as React from "react";
 import Paper from "@mui/material/Paper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import OrderDetailCard from "./card/OrderDetailCard";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { UserService } from "../../service/UserService";
+import { useAuth } from "../../utils/useAuth";
+import dayjs from "dayjs";
 
+interface OrderDetailContentProps {
+    order;
+    onPreviousTab;
+    onSubmit;
+}
 
-
-export default function OrderDetailContent() {
+export default function OrderDetailContent(props: OrderDetailContentProps) {
     const [openConfirm, setOpenConfirm] = useState(false);
+    const [patient, setPatient] = useState<any>();
+    const { accessToken } = useAuth();
+    const { getUser } = UserService();
+
+    const fetchPatient = async(patientId) => {
+        if (patientId) {
+            const user = await getUser(patientId, accessToken);
+            if (user) setPatient(user);
+        }
+    }
+
+    useEffect(() => {
+        fetchPatient(props?.order?.patientId);
+    }, [])
     const handleClose = () => {
         setOpenConfirm(false);
     }
@@ -19,6 +40,7 @@ export default function OrderDetailContent() {
     }
     const handleSave = () => {
         // Xu ly logic
+        props.onSubmit();
         setOpenConfirm(false);
     }
 
@@ -42,21 +64,19 @@ export default function OrderDetailContent() {
                 </Typography>
                 <OrderDetailCard
                     patient={{
-                        name: "Minh",
-                        email: "minh2ten@zz.com",
-                        birthday: "30-2-2002",
-                        phone: "0123456678"
+                        name: patient?.name,
+                        email: patient?.email,
+                        birthday: patient?.birthday ? dayjs(patient?.birthday).format('DD - MM - YYYY') : '',
+                        phone: patient?.phone,
                     }}
                     doctor={{
-                        name: "Huy",
-                        speciality: "Nghệ thuật hắc ám",
-                        shift: 1,
-                        date: "30-2-2050",
-                        location: "Sao hỏa",
+                        name: props.order?.doctor?.name,
+                        speciality: props.order?.doctor?.speciality?.name,
+                        shift: props.order?.shift,
+                        date: props.order.date,
+                        location: props.order?.doctor?.hospital?.name,
+                        price: props.order?.price,
                     }}
-                    price={100000}
-                    shift={5}
-                    date="30-2-2022"
                     isCreated={false}
                 />
                 <Box
@@ -70,6 +90,7 @@ export default function OrderDetailContent() {
                         variant="outlined"
                         color="primary"
                         sx={{ height: 40, borderRadius: 28, marginRight: 2 }}
+                        onClick={props.onPreviousTab}
                     >
                         Quay lại
                     </Button>

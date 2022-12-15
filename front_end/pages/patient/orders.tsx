@@ -20,7 +20,7 @@ let theme = getTheme("default");
 const drawerWidth = 256;
 const tabs = ["Yêu cầu của tôi"];
 const content = [
-    <MyDoctorContent key="my-doctor-content"/>,
+    <Box key="my-doctor-content"/>,
 ];
 
 export default function Paperbase() {
@@ -31,6 +31,7 @@ export default function Paperbase() {
     const { accessToken, role } = useAuth();
     const router = useRouter();
     const { validateToken } = AuthService();
+    const [orderId, setOrderId] = React.useState<any>();
 
     const validate = async() => {
         let jwtValid = await validateToken(accessToken);
@@ -41,8 +42,10 @@ export default function Paperbase() {
     }
 
     useEffect(() => {
-        setCurrentTab(content[currentTabId]);
-    }, [currentTabId]);
+        console.log("Query ...");
+        console.log(router.query);
+        setOrderId(router.query?.orderId);
+    }, [router.query]);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -98,7 +101,7 @@ export default function Paperbase() {
                         component="main"
                         sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
                     >
-                        {currentTab}
+                        <MyDoctorContent key="my-doctor-content" orderId={orderId} />
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
                         <Copyright />

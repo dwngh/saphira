@@ -13,9 +13,6 @@ interface ExtendTextfieldProps {
     autoComplete?;
 }
 export default function ExtendTextfield(props: ExtendTextfieldProps) {
-    const ahihi = () => {
-        console.log("ahihi");
-    }
     return (
         <>
             {props.value ? (

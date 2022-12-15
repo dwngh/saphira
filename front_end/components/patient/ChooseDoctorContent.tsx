@@ -15,27 +15,37 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import DoneIcon from "@mui/icons-material/Done";
-import ClearIcon from "@mui/icons-material/Clear";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { Icon } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import DateFilter from "./filterBox/DateFilter";
 import dayjs, { Dayjs } from "dayjs";
 import HospitalFilter from "./filterBox/HospitalFilter";
 import SpecialityFilter from "./filterBox/SpecialityFilter";
 import DoctorCard from "./card/DoctorCard";
+import { useAuth } from "../../utils/useAuth";
+import { UserService } from "../../service/UserService";
+import { toast } from "react-toastify";
+import { TimeSolve } from "../../common/time";
 
-export default function ChooseDoctorContent() {
+interface ChooseDoctorContentProps {
+    onNextTab;
+    setDoctor;
+}
+
+export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
+    const [doctors, setDoctors] = useState<any[]>([]);
     const [filterMenu, setFilterMenu] = useState(null);
     const [showDateFilter, setShowDateFilter] = useState(false);
     const [showHospitalFilter, setShowHospitalFilter] = useState(false);
     const [showSpecialityFilter, setShowSpecialityFilter] = useState(false);
-
     const [dateFilter, setDateFilter] = useState(dayjs());
     const [hospitalFilter, setHospitalFilter] = useState("");
     const [specialityFilter, setSpecialityFilter] = useState("");
+
+    const { accessToken, userId } = useAuth();
+    const { getDoctors } = UserService();
+    const { getAvailableDay } = TimeSolve();
 
     const handleChangeDate = (newValue: Dayjs) => {
         setDateFilter(newValue);
@@ -58,6 +68,11 @@ export default function ChooseDoctorContent() {
         setShowSpecialityFilter(false);
     };
 
+    const fetchData = async () => {
+        const doctors = await getDoctors(accessToken);
+        setDoctors(doctors);
+    };
+
     const open = Boolean(filterMenu);
 
     const handleFilterMenuOpen = (e) => {
@@ -67,6 +82,20 @@ export default function ChooseDoctorContent() {
     const handleClose = () => {
         setFilterMenu(null);
     };
+
+    const handleDoctorChoose = (e) => {
+        let id = +e.currentTarget.id;
+        let doctor = doctors.filter((user) => user.id == id)[0];
+        if (doctor) {
+            props.setDoctor(id, doctor.calendar, doctor.price, doctor);
+            props.onNextTab();
+        } else toast.error("Unexpected error!");
+        
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <Paper
@@ -120,7 +149,7 @@ export default function ChooseDoctorContent() {
                     position="static"
                     color="default"
                     elevation={0}
-                    sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)"}}
+                    sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
                 >
                     <Toolbar>
                         <Grid container spacing={1} alignItems="center">
@@ -149,13 +178,7 @@ export default function ChooseDoctorContent() {
                     </Toolbar>
                 </AppBar>
             )}
-            {/* <Typography
-                sx={{ my: 5, mx: 2 }}
-                color="text.secondary"
-                align="center"
-            >
-                No users for this project yet
-            </Typography> */}
+
             <Paper
                 style={{
                     maxHeight:
@@ -166,11 +189,20 @@ export default function ChooseDoctorContent() {
                             : 400,
                     overflow: "auto",
                 }}
-                variant="outlined" square 
+                variant="outlined"
+                square
             >
-                <DoctorCard name="Nguyễn Văn A" speciality="Tai mũi họng" calendar="Thứ 2" price={400000}/>
-                <DoctorCard name="Trần Văn B" speciality="Xương khớp" calendar="Thứ 4,6" price={300000}/>
-                <DoctorCard name="Đỗ Thị C" speciality="Răng hàm mặt" calendar="Thứ 3,4,6" price={500000}/>
+                {doctors.map((doctor) => (
+                    <DoctorCard
+                        id={doctor?.id}
+                        hospital={doctor?.hospital?.name}
+                        name={doctor.name}
+                        speciality={doctor?.speciality?.name}
+                        calendar={doctor?.calendar?.avail}
+                        price={doctor.price}
+                        onDoctorChoose={handleDoctorChoose}
+                    />
+                ))}
             </Paper>
 
             <Menu

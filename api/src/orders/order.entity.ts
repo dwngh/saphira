@@ -30,28 +30,34 @@ export class Order {
     @Column()
     doctorId: number;
 
-    @Column({charset: 'utf8', collation: 'utf8_general_ci'}) 
+    @Column({charset: 'utf8', collation: 'utf8_general_ci', nullable: true}) 
     description: string;
 
-    @Column({nullable: true})
+    @Column()
     price: number;
 
     // 
-    @Column({nullable: true})
+    @Column({default: 0})
     status: number; 
 
     //- Ca người dùng chọn và lưu theo đúng một số theo thứ tự ca trong xâu avail.
     @Column({nullable: true})
     shift: number;
 
-    @Column({nullable: true})
+    @Column({ nullable: true})
+    date: Date;
+
+    @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
 
     @OneToMany(() => Attachment, attachment => attachment.order)
     attachments?: Attachment[];
 
-    @Column()
+    @Column({default: false})
     isPaid: boolean;
+
+    @Column({nullable: true})
+    location: string;
 
     @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
     note: string;

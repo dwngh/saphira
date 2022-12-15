@@ -20,6 +20,7 @@ import ProfileContent from "../../components/ProfileContent";
 import EditProfileContent from "../../components/EditProfileContent";
 import AdminNavigator from "../../components/admin/Navigator";
 import { AuthService } from "../../service/AuthService";
+import DoctorNavigator from "../../components/doctor/Navigator";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -70,19 +71,35 @@ export default function Paperbase() {
                     component="nav"
                     sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 >
-                                        {role == 1 && (<>
+                    {role == 3 && (<>
+                        {isSmUp ? null : (
+                            <DoctorNavigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                choosing="update-profile"
+                            />
+                        )}
+                        <DoctorNavigator
+                            PaperProps={{ style: { width: drawerWidth } }}
+                            choosing="update-profile"
+                            sx={{ display: { sm: "block", xs: "none" } }}
+                        />
+                    </>)}
+                    {role == 1 && (<>
                         {isSmUp ? null : (
                             <PatientNavigator
                                 PaperProps={{ style: { width: drawerWidth } }}
                                 variant="temporary"
                                 open={mobileOpen}
                                 onClose={handleDrawerToggle}
-                                choosing="profile"
+                                choosing="update-profile"
                             />
                         )}
                         <PatientNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
-                            choosing="profile"
+                            choosing="update-profile"
                             sx={{ display: { sm: "block", xs: "none" } }}
                         />
                     </>)}
@@ -93,12 +110,12 @@ export default function Paperbase() {
                                 variant="temporary"
                                 open={mobileOpen}
                                 onClose={handleDrawerToggle}
-                                choosing="profile"
+                                choosing="update-profile"
                             />
                         )}
                         <AdminNavigator
                             PaperProps={{ style: { width: drawerWidth } }}
-                            choosing="profile"
+                            choosing="update-profile"
                             sx={{ display: { sm: "block", xs: "none" } }}
                         />
                     </>)}

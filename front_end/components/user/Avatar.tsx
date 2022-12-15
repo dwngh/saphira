@@ -31,10 +31,7 @@ function stringAvatar(name: string) {
 }
 
 export default function SpAvatar(props) {
-    console.log("props");
-    console.log(props);
     const { width = -1 } = props;
-    console.log(width);
     if (width > 0)
         return (
             <Avatar

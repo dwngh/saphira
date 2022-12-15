@@ -59,11 +59,9 @@ export default function SignInSide() {
         } else setIsPasswordValid(false);
         if (Regex.test(userInfo.username) && Regex.test(userInfo.password)) {
             const data = await fetchLogin(userInfo);
-            console.log(data);
             if (data) {
                 signin(data);
                 let user = await fetchUser(data.access_token);
-                console.log(user);
                 storeProfile(user);
                 let roleStr = "";
                 switch (user.role) {
