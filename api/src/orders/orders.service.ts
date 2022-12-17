@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult  } from 'typeorm';
 import { Order } from './order.entity';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
-    private readonly ordersRepo: Repository<Order>
+    private readonly ordersRepo: Repository<Order>,
+
+    private readonly notisService: NotificationsService
   ) {}
 
   private validateTime(rep: Order[]) {
@@ -73,6 +76,15 @@ export class OrdersService {
   }
 
   async update(order: Order): Promise<UpdateResult> {
+    return await this.ordersRepo.update(order.id, order);
+  }
+
+  async updateNoteFromOrder(order: Order): Promise<UpdateResult> {
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.patient", "patient").select(["order", "patient.id", "patient.name"])
+      .where("order.id=:id", {id: order.id})
+      .getOne();
+    await this.notisService.noticeUpdateNote(order.id, resOrder.patientId);
     return await this.ordersRepo.update(order.id, order);
   }
 

@@ -5,28 +5,41 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class NotificationsService {
-  constructor(
-    @InjectRepository(Notification) 
-    private readonly notisRepo: Repository<Notification>,
-  ) {}
+    constructor(
+        @InjectRepository(Notification) 
+        private readonly notisRepo: Repository<Notification>,
+    ) {}
 
-  async findAll(): Promise<Notification[]> {
-      return await this.notisRepo.find();
-  }
+    async findAll(): Promise<Notification[]> {
+        return await this.notisRepo.find();
+    }
 
-  async findOne(_id): Promise<Notification> {
-      return await this.notisRepo.findOneBy({id:_id});
-  }
+    async findOne(_id): Promise<Notification> {
+        return await this.notisRepo.findOneBy({id:_id});
+    }
 
-  async create(notification: Notification): Promise<Notification>{
-      return await this.notisRepo.save(notification);
-  }
+    async noticeUpdateNote(orderId, userid): Promise<Notification>{
+        let notice = new Notification;
+        notice.url = "/patient/orders?note=" + orderId;
+        notice.content = "Bác sĩ đã thay đổi ghi chú ở đơn đặt khám của bạn. Vui lòng kiểm tra!";
+        notice.userId = userid;
+        return await this.notisRepo.save(notice);
+    }
 
-  async update(notification: Notification): Promise<UpdateResult> {
-      return await this.notisRepo.update(notification.id, notification)
-  }
+    async getAllNotificationsOfUser(_userId): Promise<Notification[]> {
+        const notis = this.notisRepo.createQueryBuilder("notification")
+            .leftJoin("notification.user", "user")
+            .select(["notification", "user.id", "user.name", "user.username"])
+            .where("user.id=:id", {id: _userId})
+            .getMany();
+        return notis;
+    }
 
-  async delete(id): Promise<DeleteResult> {
-      return await this.notisRepo.delete(id);
-  }
+    async update(notification: Notification): Promise<UpdateResult> {
+        return await this.notisRepo.update(notification.id, notification)
+    }
+
+    async delete(id): Promise<DeleteResult> {
+        return await this.notisRepo.delete(id);
+    }
 }

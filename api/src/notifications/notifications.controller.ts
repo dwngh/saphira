@@ -8,19 +8,25 @@ export class NotificationsController {
 
   @Get()
   findAll(): Promise<Notification[]> {
-      return this.notificationService.findAll();
+    return this.notificationService.findAll();
+  }
+
+  @Get('/user/' + ':id')
+  getNotificationsByUserId(@Param('id', ParseIntPipe) id: number): Promise<Notification[]> {
+    return this.notificationService.getAllNotificationsOfUser(id);
   }
 
   @Get(':id')
   get(@Param('id', ParseIntPipe) id : number) {
-      return this.notificationService.findOne(id);
+    return this.notificationService.findOne(id);
   }
 
+  /*
   @Post()
-  create(@Body() item: Notification) {
-      return this.notificationService.create(item);
+  create() {
+    return this.notificationService.create(item);
   } 
-
+  */
   @Put() 
   update(@Body() item: Notification) {
       return this.notificationService.update(item);

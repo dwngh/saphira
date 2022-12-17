@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, Request } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './order.entity';
+import { request } from 'https';
 
 @Controller('orders')
 export class OrdersController {
@@ -38,7 +39,7 @@ export class OrdersController {
 
   @Put("/note")
   updateNote(@Body() order: Order) {
-    return this.ordersService.update(order);
+    return this.ordersService.updateNoteFromOrder(order);
   }
 
   @Put()
