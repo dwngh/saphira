@@ -32,6 +32,7 @@ export default function Paperbase() {
     const router = useRouter();
     const { validateToken } = AuthService();
     const [orderId, setOrderId] = React.useState<any>();
+    const [note, setNote] = React.useState<any>();
 
     const validate = async() => {
         let jwtValid = await validateToken(accessToken);
@@ -45,6 +46,7 @@ export default function Paperbase() {
         console.log("Query ...");
         console.log(router.query);
         setOrderId(router.query?.orderId);
+        setNote(router.query?.note ? +router.query?.note : null);
     }, [router.query]);
 
     const handleDrawerToggle = () => {
@@ -101,7 +103,7 @@ export default function Paperbase() {
                         component="main"
                         sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
                     >
-                        <MyDoctorContent key="my-doctor-content" orderId={orderId} />
+                        <MyDoctorContent key="my-doctor-content" orderId={orderId} note={note} />
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
                         <Copyright />

@@ -20,6 +20,8 @@ import { useEffect } from "react";
 import { AuthService } from "../../service/AuthService";
 import OrderManagementContent from "../../components/doctor/OrderManagementContent";
 import DoctorNavigator from "../../components/doctor/Navigator";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 let theme = getTheme("default");
 const drawerWidth = 256;
@@ -112,6 +114,7 @@ export default function Paperbase() {
                         <Copyright />
                     </Box>
                 </Box>
+                <ToastContainer />
             </Box>
         </ThemeProvider>
     );

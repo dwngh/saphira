@@ -141,6 +141,7 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
                             shift: props.order?.shift,
                             date: props.order?.date,
                             location: props.order?.location,
+                            price: props.order?.price,
                         }}
                         isCreated={true}
                     />

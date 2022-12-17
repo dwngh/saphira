@@ -7,20 +7,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DownloadIcon from "@mui/icons-material/Download";
-import InfoIcon from "@mui/icons-material/Info";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
-import { UserService } from "../../service/UserService";
 import { useAuth } from "../../utils/useAuth";
 import { useEffect, useState } from "react";
-import User from "../../interface/user";
-// import SwipeableProfile from "./card/SwipeableProfile";
-// import SwipeableEditProfile from "./card/SwipableEditProfile";
 import dayjs from "dayjs";
 import { OrderService } from "../../service/OrderService";
+import StickyNote2Icon from "@mui/icons-material/StickyNote2";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import SwipeableProfile from "../admin/card/SwipeableProfile";
+import NoteDialog from "./card/NoteDialog";
+import { toast } from "react-toastify";
 
 interface Column {
     id: string;
@@ -79,7 +76,7 @@ const columns: readonly Column[] = [
         minWidth: 90,
         align: "center",
         format: (value) => {
-            return shiftList[value]
+            return shiftList[value];
         },
     },
     {
@@ -94,13 +91,12 @@ export default function OrderManagementContent() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const { accessToken, userId } = useAuth();
-    const { getUsers } = UserService();
-    const { getOrdersByDoctor } = OrderService();
-    const [userList, setUserList] = useState<User[]>([]);
+    const { getOrdersByDoctor, updateNote } = OrderService();
     const [orderList, setOrderList] = useState<any>([]);
     const [openSideInfo, setOpenSideInfo] = useState(false);
     const [currentUserId, setCurrentUserId] = useState(-1);
-    const [openSideEditInfo, setOpenSideEditInfo] = useState(false);
+    const [openNoteDialog, setOpenNoteDialog] = useState(false);
+    const [currentNote, setCurrentNote] = useState("");
 
     const fetchData = async () => {
         let orders = await getOrdersByDoctor(userId, accessToken);
@@ -110,7 +106,11 @@ export default function OrderManagementContent() {
 
     useEffect(() => {
         fetchData();
-    }, [openSideEditInfo]);
+    }, []);
+
+    useEffect(() => {
+        if (!openNoteDialog) setCurrentNote("");
+    }, [openNoteDialog]);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -126,15 +126,33 @@ export default function OrderManagementContent() {
     const handleInfo = (e) => {
         let id = +e.currentTarget.id;
         setOpenSideInfo(true);
-        setOpenSideEditInfo(false);
+        setOpenNoteDialog(false);
         setCurrentUserId(id);
     };
 
     const handleEdit = (e) => {
-        let id = e.currentTarget.id;
+        let id = +e.currentTarget.id;
         setOpenSideInfo(false);
-        setOpenSideEditInfo(true);
+        setOpenNoteDialog(true);
         setCurrentUserId(id);
+        let order = orderList.filter((order) => order.id == id)[0];
+        setCurrentNote(order.note);
+    };
+
+    const handleSubmit = async (newNote) => {
+        let hasChange = !(newNote === currentNote);
+        let payload = {
+            id: currentUserId,
+            note: newNote,
+        };
+        if (hasChange) {
+            let r = await updateNote(payload, accessToken);
+            if (r?.affected == 1) {
+                toast.success("Đã cập nhật note cho yêu cầu");
+                fetchData();
+            } else toast.warning("Note chưa được cập nhật, vui lòng thử lại");
+        }
+        setOpenNoteDialog(false);
     };
 
     const handleDelete = (e) => {
@@ -179,20 +197,21 @@ export default function OrderManagementContent() {
                                                         key={column.id}
                                                         align={column.align}
                                                     >
-                                                        <Tooltip title="Thông tin chi tiết">
+                                                        <Tooltip title="Hồ sơ người khám">
                                                             <IconButton
                                                                 id={
-                                                                    row["id"] +
-                                                                    ""
+                                                                    row[
+                                                                        "patientId"
+                                                                    ] + ""
                                                                 }
                                                                 onClick={
                                                                     handleInfo
                                                                 }
                                                             >
-                                                                <InfoIcon />
+                                                                <AssignmentIndIcon />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <Tooltip title="Chỉnh sửa">
+                                                        <Tooltip title="Ghi chú của bác sĩ">
                                                             <IconButton
                                                                 id={
                                                                     row["id"] +
@@ -202,10 +221,10 @@ export default function OrderManagementContent() {
                                                                     handleEdit
                                                                 }
                                                             >
-                                                                <EditIcon />
+                                                                <StickyNote2Icon />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <Tooltip title="Xóa">
+                                                        <Tooltip title="Đánh dấu đã hoàn thành">
                                                             <IconButton
                                                                 id={
                                                                     row["id"] +
@@ -215,7 +234,7 @@ export default function OrderManagementContent() {
                                                                     handleDelete
                                                                 }
                                                             >
-                                                                <DeleteIcon />
+                                                                <TaskAltIcon />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </TableCell>
@@ -250,8 +269,17 @@ export default function OrderManagementContent() {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            {/* <SwipeableProfile open={openSideInfo} setOpen={setOpenSideInfo} userId={currentUserId} />
-            <SwipeableEditProfile open={openSideEditInfo} setOpen={setOpenSideEditInfo} userId={currentUserId} privilege /> */}
+            <SwipeableProfile
+                open={openSideInfo}
+                setOpen={setOpenSideInfo}
+                userId={currentUserId}
+            />
+            <NoteDialog
+                note={currentNote}
+                open={openNoteDialog}
+                setOpen={setOpenNoteDialog}
+                onSubmit={handleSubmit}
+            />
         </Paper>
     );
 }

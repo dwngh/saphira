@@ -21,6 +21,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useAuth } from "../utils/useAuth";
 import { Box, Card, Paper } from "@mui/material";
 import SpAvatar from "./user/Avatar";
+import { useRouter } from "next/router";
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 interface HeaderProps {
@@ -45,6 +46,7 @@ const headerTitle = {
 };
 
 export default function Header(props: HeaderProps) {
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const openProfile = Boolean(anchorEl);
     const handleClickProfile = (event: React.MouseEvent<HTMLElement>) => {
@@ -232,7 +234,7 @@ export default function Header(props: HeaderProps) {
                     <Avatar /> My account
                 </MenuItem>
                 <Divider />
-                <MenuItem>
+                <MenuItem onClick={() => router.push("/logout")}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>

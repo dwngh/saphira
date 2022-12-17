@@ -11,7 +11,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import OrderCard from "./card/OrderCard";
-import { useState, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect, useRef } from "react";
 import SwipeableOrderDetail from "./card/SwipeableOrderDetail";
 import { OrderService } from "../../service/OrderService";
 import { useAuth } from "../../utils/useAuth";
@@ -31,12 +31,14 @@ const shiftList = [
 ];
 interface MyDoctorContentProps {
     orderId?;
+    note?;
 }
 
 export default function MyDoctorContent(props: MyDoctorContentProps) {
     const [open, setOpen] = useState(false);
     const [orders, setOrders] = useState<any[]>([]);
     const [currentOrder, setCurrentOrder] = useState<any>({});
+    const noteRef = useRef(null);
     const { getOrdersByPatient } = OrderService();
     const { accessToken, userId } = useAuth();
 
@@ -56,6 +58,14 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
             handleOpenDetail(props?.orderId)
         }
     }, [props?.orderId]);
+
+    useEffect(() => {
+        console.log("Note: " + props?.note);
+        if (props?.note) {
+            let temp: any = noteRef.current;
+            temp?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [props?.note]);
 
     const handleOpenDetail = (id) => {
         let currentId = +id;
@@ -109,18 +119,22 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
                 square
             >
                 {orders.map((order) => (
-                    <OrderCard
-                        item={{
-                            id: order.id,
-                            status: order.status,
-                            doctor: order.doctor.name,
-                            time: "Ca " + shiftList[order?.shift] + " ngày " + dayjs(order?.date).format("DD-MM-YYYY"),
-                            address: order.location,
-                            note: order.note ?? '',
-                        }}
-                        onOpenDetail={handleOpenDetail}
-                        attachments={order.attachments}
-                    />
+                    <>
+                        {(props.note && props.note == order.id) && (<div ref={noteRef}></div>)}
+                        <OrderCard
+                            item={{
+                                id: order.id,
+                                status: order.status,
+                                doctor: order.doctor.name,
+                                time: "Ca " + shiftList[order?.shift] + " ngày " + dayjs(order?.date).format("DD-MM-YYYY"),
+                                address: order.location,
+                                note: order.note ?? '',
+                            }}
+                            onOpenDetail={handleOpenDetail}
+                            attachments={order.attachments}
+                            infoExpanded={(props.note && props.note == order.id)}
+                        />
+                    </>
                 ))}
             </Paper>
             <SwipeableOrderDetail open={open} setOpen={setOpen} order={currentOrder} />

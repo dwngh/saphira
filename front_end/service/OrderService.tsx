@@ -1,6 +1,27 @@
 import axios from "axios";
 
 export const OrderService = () => {
+    const updateNote = async (payload, token) => {
+        let response;
+        await axios({
+            method: "PUT",
+            url: `${process.env.NEXT_PUBLIC_HOST}/orders/note`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: payload,
+        })
+            .then((res) => {
+                console.log("Update note successfully ...");
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
     const updateOrder = async (payload, token) => {
         let response;
         delete payload["calendar"];
@@ -17,7 +38,7 @@ export const OrderService = () => {
             data: payload,
         })
             .then((res) => {
-                console.log("Update user successfully ...");
+                console.log("Update order successfully ...");
                 response = res.data;
                 return res;
             })
@@ -165,5 +186,6 @@ export const OrderService = () => {
         updateOrder,
         getOrdersByDoctor,
         getOrdersWithAttachment,
+        updateNote,
     };
 };

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, Request } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './order.entity';
 
@@ -34,6 +34,11 @@ export class OrdersController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.ordersService.findOne(id);
+  }
+
+  @Put("/note")
+  updateNote(@Body() order: Order) {
+    return this.ordersService.update(order);
   }
 
   @Put()

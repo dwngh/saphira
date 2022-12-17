@@ -11,6 +11,10 @@ export class OrdersService {
     private readonly ordersRepo: Repository<Order>
   ) {}
 
+  private validateTime(rep: Order[]) {
+    
+  }
+
   async validateOrder(order: Order) {
     return true;
   }

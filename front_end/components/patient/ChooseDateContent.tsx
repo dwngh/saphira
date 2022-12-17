@@ -8,8 +8,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import Box from "@mui/material/Box";
 import ShiftList from "../time/ShiftList";
 import { Grid } from "@mui/material";
 import { TimeSolve } from "../../common/time";
@@ -50,6 +48,7 @@ export default function ChooseDateContent(props: ChooseDateContentProps) {
         } else if (date > 0 && date <= 6) {
             setShiftList(getShiftAvailable(props.calendar?.avail, date - 1));
         }
+        setChoosedShift(-1);
     }, [value]);
 
     const handleShiftChoose = (e) => {

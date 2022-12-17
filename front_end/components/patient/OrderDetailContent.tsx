@@ -66,7 +66,7 @@ export default function OrderDetailContent(props: OrderDetailContentProps) {
                     patient={{
                         name: patient?.name,
                         email: patient?.email,
-                        birthday: patient?.birthday ? dayjs(patient?.birthday).format('DD - MM - YYYY') : '',
+                        birthday: patient?.birthday,
                         phone: patient?.phone,
                     }}
                     doctor={{
