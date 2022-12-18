@@ -16,14 +16,14 @@ export default function CalendarService() {
             data: payload
         })
             .then((res) => {
-                console.log("Create calendar successfully ...");
+                //console.log("Create calendar successfully ...");
                 response = res.data;
                 return res;
             })
             .catch((err) => {
                 console.error(err);
             });
-        console.log("New calendar");
+        //console.log("New calendar");
         console.log(response);
         const { updateUser } = UserService();
         if (response) {
