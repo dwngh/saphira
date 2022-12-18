@@ -110,7 +110,7 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
             props.setDoctor(id, doctor.calendar, doctor.price, doctor);
             props.onNextTab();
         } else toast.error("Unexpected error!");
-        
+
     }
 
     const filterDoctor = (list) => {
@@ -138,7 +138,6 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
     }, []);
 
     useEffect(() => {
-        console.log(dayFilter + " -- " + hospitalFilter + " -- " + specialityFilter);
         setDoctors(filterDoctor(doctorList.filter(item => item.name.indexOf(filterName) != -1)));
     }, [doctorList, filterName, dayFilter, hospitalFilter, specialityFilter]);
 
@@ -232,8 +231,8 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                 style={{
                     maxHeight:
                         showDateFilter ||
-                        showHospitalFilter ||
-                        showSpecialityFilter
+                            showHospitalFilter ||
+                            showSpecialityFilter
                             ? 350
                             : 400,
                     overflow: "auto",
@@ -269,7 +268,7 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                         handleClose();
                         setShowDateFilter(!showDateFilter);
                         if (showDateFilter)
-                        setDayFilter(undefined);
+                            setDayFilter(undefined);
                     }}
                 >
                     {showDateFilter ? <DoneIcon /> : <Icon />}
@@ -280,7 +279,7 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                         handleClose();
                         setShowHospitalFilter(!showHospitalFilter);
                         if (showHospitalFilter)
-                        setHospitalFilter(undefined);
+                            setHospitalFilter(undefined);
                     }}
                 >
                     {showHospitalFilter ? <DoneIcon /> : <Icon />}
@@ -291,7 +290,7 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                         handleClose();
                         setShowSpecialityFilter(!showSpecialityFilter);
                         if (showSpecialityFilter)
-                        setSpecialityFilter(undefined);
+                            setSpecialityFilter(undefined);
                     }}
                 >
                     {showSpecialityFilter ? <DoneIcon /> : <Icon />}

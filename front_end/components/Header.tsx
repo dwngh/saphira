@@ -116,7 +116,6 @@ export default function Header(props: HeaderProps) {
     const [unread, setUnread] = React.useState(0);
 
     const handleMarkRead = async (id) => {
-        console.log("Handle mark read");
         await markRead(id, accessToken);
         await fetchData();
     };
@@ -128,7 +127,6 @@ export default function Header(props: HeaderProps) {
 
     const fetchData = async () => {
         let notis = await getNotifications(userId, accessToken);
-        console.log(notis);
         setNotifications(notis.reverse());
     };
 
