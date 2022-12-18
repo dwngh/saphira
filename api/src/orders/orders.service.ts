@@ -33,12 +33,15 @@ export class OrdersService {
       .where("order.id=:idd",{idd : order.id})
       .getOne();
     //console.log(resOrder.doctor.calendar.note);
-    if (resOrder.doctor?.calendar?.enableAutoNote===true)
-    return await this.ordersRepo.createQueryBuilder()
-      .update(Order)
-      .set({ note: resOrder.doctor.calendar.note })
-      .where("order.id = :id", { id: resOrder.id })
-      .execute();
+    if (resOrder.doctor?.calendar?.enableAutoNote===true) {
+      await this.notisService.noticeUpdateNote(resOrder.id, resOrder.patientId);
+      return await this.ordersRepo.createQueryBuilder()
+        .update(Order)
+        .set({ note: resOrder.doctor.calendar.note })
+        .where("order.id = :id", { id: resOrder.id })
+        .execute();
+    }
+
   }
 
   async findAll(): Promise<Order[]> {
@@ -85,7 +88,7 @@ export class OrdersService {
     const resOrder = await this.ordersRepo.createQueryBuilder("order")
       .where("order.id = :id", {id: order.id})
       .getOne();
-    console.log(resOrder.date);
+    
     return await this.ordersRepo.createQueryBuilder()
       .update(Order)
       .set({ status: 2 })

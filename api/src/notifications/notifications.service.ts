@@ -18,6 +18,22 @@ export class NotificationsService {
         return await this.notisRepo.findOneBy({id:_id});
     }
 
+    async readAllNotifications(_userid): Promise<UpdateResult> {
+        return await this.notisRepo.createQueryBuilder()
+            .update(Notification)
+            .set({read: true})
+            .where("Notification.userId = :id", {id: _userid})
+            .execute();
+    }
+
+    async readANotification(userid, noticeId): Promise<UpdateResult> {
+        return await this.notisRepo.createQueryBuilder()
+            .update(Notification)
+            .set({read: true})
+            .where("Notification.userId = :id AND Notification.id = :idd", {id: userid, idd: noticeId})
+            .execute();
+    }
+
     async noticeUpdateNote(orderId, userid): Promise<Notification>{
         let notice = new Notification;
         notice.url = "/patient/orders?note=" + orderId;

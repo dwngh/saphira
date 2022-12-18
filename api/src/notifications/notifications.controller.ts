@@ -16,6 +16,16 @@ export class NotificationsController {
     return this.notificationService.getAllNotificationsOfUser(id);
   }
 
+  @Put('/user/' +  ':userid' + '/read')
+  readAllNotifications(@Param('userid', ParseIntPipe) id: number) {
+    return this.notificationService.readAllNotifications(id);
+  }
+
+  @Put('/user/' + ':userid' + '/read/' + ':noticeid')
+  readANotification(@Param('userid', ParseIntPipe) userid: number, @Param('noticeid', ParseIntPipe) noticeid: number) {
+    return this.notificationService.readANotification(userid, noticeid);
+  }
+
   @Get(':id')
   get(@Param('id', ParseIntPipe) id : number) {
     return this.notificationService.findOne(id);

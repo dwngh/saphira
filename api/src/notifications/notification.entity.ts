@@ -21,6 +21,9 @@ export class Notification {
     @Column({charset: 'utf8', collation: 'utf8_general_ci'})
     content: string;
     
-    @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
+    @Column({nullable: false, default: () => 'CURRENT_TIMESTAMP'})
     created_at: Date;
+
+    @Column({default: false})
+    read: boolean;
 }
