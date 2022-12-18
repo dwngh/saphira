@@ -37,7 +37,6 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
         setChoosedShift(props.order?.shift);
         setDescription(props.order?.description);
         let date = dayjs(props.order?.date).day();
-        // console.log(dayjs(props.order?.date).format("DD-MM-YYYY"));
         if (isEmpty(props.order?.doctor?.calendar?.avail)) setAvail("11111111");
         else if (date == 0) {
             setAvail(
@@ -58,7 +57,7 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
         setChoosedShift(id);
     };
 
-    const handleShiftSave = async() => {
+    const handleShiftSave = async () => {
         const temp = {
             id: props.order?.id,
             shift: choosedShift
@@ -71,9 +70,9 @@ export default function SwipeableOrderDetail(props: SwipeableOrderDetailProps) {
             setChoosedShift(props.order?.shift)
         }
         setEnableEditShift(false);
-    } 
+    }
 
-    const handleDescriptionSave = async(des) => {
+    const handleDescriptionSave = async (des) => {
         const temp = {
             id: props.order?.id,
             description: des,
