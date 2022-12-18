@@ -43,8 +43,8 @@ export class UsersService {
     let saltRounds = 10;
     const user = this.usersRepo.findOneBy({id:_id});
     const isOldPasswordCorrect = await bcrypt.compare(oldPassword, (await user).password);
-    if (!isOldPasswordCorrect) throw new BadRequestException("Wrong old password!");
-    if ((oldPassword == newPassword)) throw new BadRequestException("The new password is the same as the old password!");
+    if (!isOldPasswordCorrect) throw new BadRequestException("Mật khẩu cũ chưa đúng!");
+    if ((oldPassword == newPassword)) throw new BadRequestException("Mật khẩu mới trùng với mật khẩu cũ!");
     return await this.usersRepo.createQueryBuilder()
       .update(User)
       .set({ password: await bcrypt.hash(newPassword, saltRounds) })

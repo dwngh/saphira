@@ -106,11 +106,11 @@ export default function Header(props: HeaderProps) {
     const { getNotifications, markRead, markAllRead } = NotificationService();
     const [notifications, setNotifications] = React.useState<any[]>([]);
     const openDialogChangePass = () => {
-        setOpenChangePass(true)
-    }
+        setOpenChangePass(true);
+    };
     const CloseChangePass = () => {
-        setOpenChangePass(false)
-    }
+        setOpenChangePass(false);
+    };
     const { onDrawerToggle } = props.onDrawerToggle;
     const { accessToken, name, userId } = useAuth();
     const [unread, setUnread] = React.useState(0);
@@ -143,157 +143,197 @@ export default function Header(props: HeaderProps) {
 
     return (
         <>
-        {openChangePass === false ? <></> : <ChangePass changePass={CloseChangePass}/>}
-        <React.Fragment>
-            <Head>
-                <title>{headerTitle[props.title]}</title>
-                <meta
-                    name="viewport"
-                    content="initial-scale=1.0, width=device-width"
-                />
-            </Head>
-            <AppBar color="primary" position="sticky" elevation={0}>
-                <Toolbar>
-                    <Grid container spacing={1} alignItems="center">
-                        <Grid
-                            sx={{ display: { sm: "none", xs: "block" } }}
-                            item
-                        >
-                            <IconButton
-                                color="inherit"
-                                aria-label="open drawer"
-                                onClick={onDrawerToggle}
-                                edge="start"
+            {openChangePass === false ? (
+                <></>
+            ) : (
+                <ChangePass changePass={CloseChangePass} />
+            )}
+            <React.Fragment>
+                <Head>
+                    <title>{headerTitle[props.title]}</title>
+                    <meta
+                        name="viewport"
+                        content="initial-scale=1.0, width=device-width"
+                    />
+                </Head>
+                <AppBar color="primary" position="sticky" elevation={0}>
+                    <Toolbar>
+                        <Grid container spacing={1} alignItems="center">
+                            <Grid
+                                sx={{ display: { sm: "none", xs: "block" } }}
+                                item
                             >
-                                <MenuIcon />
-                            </IconButton>
-                        </Grid>
-                        <Grid item xs />
-                        <Grid item></Grid>
-                        <Grid item>
-                            <Tooltip title="Thông báo">
                                 <IconButton
                                     color="inherit"
-                                    onClick={handleClickNotification}
+                                    aria-label="open drawer"
+                                    onClick={onDrawerToggle}
+                                    edge="start"
                                 >
-                                    <Badge color="error" badgeContent={unread}>
-                                        <NotificationsIcon />
-                                    </Badge>
+                                    <MenuIcon />
                                 </IconButton>
-                            </Tooltip>
+                            </Grid>
+                            <Grid item xs />
+                            <Grid item></Grid>
+                            <Grid item>
+                                <Tooltip title="Thông báo">
+                                    <IconButton
+                                        color="inherit"
+                                        onClick={handleClickNotification}
+                                    >
+                                        <Badge
+                                            color="error"
+                                            badgeContent={unread}
+                                        >
+                                            <NotificationsIcon />
+                                        </Badge>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <IconButton
+                                    onClick={handleClickProfile}
+                                    sx={{ ml: 2 }}
+                                    aria-controls={
+                                        openProfile ? "account-menu" : undefined
+                                    }
+                                    aria-haspopup="true"
+                                    aria-expanded={
+                                        openProfile ? "true" : undefined
+                                    }
+                                >
+                                    <SpAvatar name={name} />
+                                </IconButton>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <IconButton
-                                onClick={handleClickProfile}
-                                sx={{ ml: 2 }}
-                                aria-controls={
-                                    openProfile ? "account-menu" : undefined
-                                }
-                                aria-haspopup="true"
-                                aria-expanded={openProfile ? "true" : undefined}
-                            >
-                                <SpAvatar name={name} />
-                            </IconButton>
+                    </Toolbar>
+                </AppBar>
+                <AppBar
+                    component="div"
+                    color="primary"
+                    position="static"
+                    elevation={0}
+                    sx={{ zIndex: 0 }}
+                >
+                    <Toolbar>
+                        <Grid container alignItems="center" spacing={1}>
+                            <Grid item xs>
+                                <Typography
+                                    color="inherit"
+                                    variant="h5"
+                                    component="h1"
+                                >
+                                    {headerTitle[props.title]}
+                                </Typography>
+                            </Grid>
+                            <Grid item></Grid>
+                            <Grid item></Grid>
                         </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <AppBar
-                component="div"
-                color="primary"
-                position="static"
-                elevation={0}
-                sx={{ zIndex: 0 }}
-            >
-                <Toolbar>
-                    <Grid container alignItems="center" spacing={1}>
-                        <Grid item xs>
-                            <Typography
-                                color="inherit"
-                                variant="h5"
-                                component="h1"
-                            >
-                                {headerTitle[props.title]}
-                            </Typography>
-                        </Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <AppBar
-                component="div"
-                position="static"
-                elevation={0}
-                sx={{ zIndex: 0 }}
-            >
-                {props.tabs.length > 0 && (
-                    <Tabs value={props.choosing ?? 0} textColor="inherit">
-                        {props.tabs.map((value, index) => (
-                            <Tab
-                                id={"" + index}
-                                key={"tab-" + index}
-                                label={value}
-                                onClick={props.onChangeTab}
-                            />
-                        ))}
+                    </Toolbar>
+                </AppBar>
+                <AppBar
+                    component="div"
+                    position="static"
+                    elevation={0}
+                    sx={{ zIndex: 0 }}
+                >
+                    {props.tabs.length > 0 && (
+                        <Tabs value={props.choosing ?? 0} textColor="inherit">
+                            {props.tabs.map((value, index) => (
+                                <Tab
+                                    id={"" + index}
+                                    key={"tab-" + index}
+                                    label={value}
+                                    onClick={props.onChangeTab}
+                                />
+                            ))}
 
-                        {/* <Tab label="Sign-in method" />
+                            {/* <Tab label="Sign-in method" />
                     <Tab label="Templates" />
                     <Tab label="Usage" /> */}
-                    </Tabs>
-                )}
-            </AppBar>
-            <Menu
-                anchorEl={anchorEl}
-                id="account-menu"
-                open={openProfile}
-                onClose={handleCloseProfile}
-                onClick={handleCloseProfile}
-                PaperProps={menuPaperProps}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-                <Box>
-                    <Grid
-                        container
-                        spacing={0}
-                        direction="column"
-                        alignItems="center"
-                        justifyContent="center"
-                        sx={{
-                            minHeight: "30",
-                            paddingTop: 3,
-                            paddingBottom: 3,
-                        }}
-                    >
-                        <Grid item xs={3}>
-                            <SpAvatar name={name} width={100} />
+                        </Tabs>
+                    )}
+                </AppBar>
+                <Menu
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={openProfile}
+                    onClose={handleCloseProfile}
+                    onClick={handleCloseProfile}
+                    PaperProps={menuPaperProps}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                >
+                    <Box>
+                        <Grid
+                            container
+                            spacing={0}
+                            direction="column"
+                            alignItems="center"
+                            justifyContent="center"
+                            sx={{
+                                minHeight: "30",
+                                paddingTop: 3,
+                                paddingBottom: 3,
+                            }}
+                        >
+                            <Grid item xs={2}>
+                                <SpAvatar name={name} width={100} />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <Typography variant="caption">
+                                                UID:
+                                            </Typography>
+                                        </td>
+                                        <td>
+                                            <Typography variant="caption">
+                                                {userId}
+                                            </Typography>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <Typography variant="caption">
+                                                Name:
+                                            </Typography>
+                                        </td>
+                                        <td>
+                                            <Typography variant="caption">
+                                                {name}
+                                            </Typography>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
-                <MenuItem>
-                    <Avatar /> Profile
-                </MenuItem>
-                <MenuItem onClick={openDialogChangePass}>
-                    <Avatar /> Change Password
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={() => router.push("/logout")}>
-                    <ListItemIcon>
-                        <Logout fontSize="small" />
-                    </ListItemIcon>
-                    Logout
-                </MenuItem>
-            </Menu>
-            <Notifications
-                anchor={anchorNoti}
-                open={openNotification}
-                notifications={notifications}
-                onMarkRead={handleMarkRead}
-                onMarkAllRead={handleMarkAllRead}
-            />
-        </React.Fragment>
+                    </Box>
+                    <MenuItem
+                        onClick={() => router.push("/account/profile")}
+                        sx={{ minWidth: 170 }}
+                    >
+                        Hồ sơ của tôi
+                    </MenuItem>
+                    <MenuItem onClick={openDialogChangePass}>
+                        Đổi mật khẩu
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={() => router.push("/logout")}>
+                        <ListItemIcon>
+                            <Logout fontSize="small" />
+                        </ListItemIcon>
+                        Logout
+                    </MenuItem>
+                </Menu>
+                <Notifications
+                    anchor={anchorNoti}
+                    open={openNotification}
+                    notifications={notifications}
+                    onMarkRead={handleMarkRead}
+                    onMarkAllRead={handleMarkAllRead}
+                />
+            </React.Fragment>
         </>
     );
 }

@@ -43,7 +43,7 @@ export default function ChangePass(props) {
             position: toast.POSITION.TOP_RIGHT
         });
         } else {
-          toast.success('Change Success !', {
+          toast.success('Cập nhật thành công!', {
             position: toast.POSITION.TOP_RIGHT
           });
           setTimeout(() => {

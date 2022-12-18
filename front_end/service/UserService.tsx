@@ -92,8 +92,6 @@ export const UserService = () => {
         return response;
     }
 
-
-    return { getUsers, getUser, updateUser, getDoctors}
     const changePassword = async (pass, userId, token) => {
         let response;
 
@@ -115,5 +113,5 @@ export const UserService = () => {
             return response
     }
 
-    return { getUsers, getUser, updateUser, changePassword }
+    return { getUsers, getUser, updateUser, changePassword, getDoctors }
 }

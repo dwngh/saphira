@@ -116,6 +116,9 @@ export default function Paperbase() {
                                 Sử dụng các chức năng bên trái thanh công cụ để
                                 thao tác.
                             </Typography>
+                            <Typography variant="body2" component="div">
+                                Hãy hoàn thành thông tin cá nhân ở mục <b>Cập nhật thông tin cá nhân</b> để có thể có trải nghiệm dịch vụ tốt nhất!
+                            </Typography>
                         </Paper>
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
