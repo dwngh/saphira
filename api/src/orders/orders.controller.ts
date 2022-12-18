@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './order.entity';
 import { request } from 'https';
@@ -13,12 +24,16 @@ export class OrdersController {
   }
 
   @Get('/doctor/' + ':id')
-  findOrdersByDoctorId(@Param('id', ParseIntPipe) id: number): Promise<Order[]> {
+  findOrdersByDoctorId(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Order[]> {
     return this.ordersService.getAllOrdersByDoctorId(id);
   }
 
   @Get('/patient/' + ':id')
-  findOrdersByPatientId(@Param('id', ParseIntPipe) id: number): Promise<Order[]> {
+  findOrdersByPatientId(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Order[]> {
     return this.ordersService.getAllOrdersByPatientId(id);
   }
 
@@ -37,7 +52,15 @@ export class OrdersController {
     return this.ordersService.findOne(id);
   }
 
-  @Put("/note")
+  @Post('/done/' + ':id')
+  updateStatus(@Param('id', ParseIntPipe) id: number) {
+    let order = new Order();
+    order.id = id;
+    order.status = 1;
+    return this.ordersService.update(order);
+  }
+
+  @Put('/note')
   updateNote(@Body() order: Order) {
     return this.ordersService.updateNoteFromOrder(order);
   }

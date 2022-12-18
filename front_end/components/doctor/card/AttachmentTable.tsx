@@ -18,14 +18,20 @@ import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import { useAuth } from "../../../utils/useAuth";
-import { Button, TablePagination } from "@mui/material";
+import {
+    Button,
+    Grid,
+    TablePagination,
+    TextField,
+    Toolbar,
+} from "@mui/material";
 import FileService from "../../../service/FileService";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axios from "axios";
 import { OrderService } from "../../../service/OrderService";
 import { toast } from "react-toastify";
 import { formatBytes } from "../../../common/files";
-
+import SearchIcon from "@mui/icons-material/Search";
 
 function Row(props: { row; token; onReload; canSeeAttachment: boolean }) {
     const { row, canSeeAttachment } = props;
@@ -142,14 +148,14 @@ function Row(props: { row; token; onReload; canSeeAttachment: boolean }) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell align="center">
+                                                    {historyRow?.author?.name}
+                                                </TableCell>
+                                                <TableCell align="center">
                                                     {dayjs(
                                                         historyRow?.created_at
                                                     ).format(
                                                         "HH:mm DD/MM/YYYY"
                                                     )}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    {historyRow?.author?.name}
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <IconButton
@@ -185,7 +191,8 @@ export default function AttachmentTable() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [orders, setOrders] = useState<any>([]);
-    const { uploadFile } = FileService();
+    const [orderList, setOrderList] = useState<any>([]);
+    const [filterId, setFilterId] = useState("");
     const { getOrdersWithAttachment } = OrderService();
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -200,8 +207,19 @@ export default function AttachmentTable() {
     };
     const fetchData = async () => {
         const temp = await getOrdersWithAttachment(accessToken);
-        setOrders(temp);
+        setOrderList(temp);
     };
+
+    useEffect(() => {
+        if (filterId != "") {
+            setOrders(
+                orderList.filter((item) => {
+                    let st = item.id + " ";
+                    return st.indexOf(filterId) != -1;
+                })
+            );
+        } else setOrders(orderList);
+    }, [filterId, orderList]);
 
     useEffect(() => {
         fetchData();
@@ -209,6 +227,26 @@ export default function AttachmentTable() {
 
     return (
         <>
+            <Toolbar>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item>
+                        <SearchIcon color="inherit" sx={{ display: "block" }} />
+                    </Grid>
+                    <Grid item xs>
+                        <TextField
+                            fullWidth
+                            placeholder="Nhập ID yêu cầu ..."
+                            InputProps={{
+                                disableUnderline: true,
+                                sx: { fontSize: "default" },
+                            }}
+                            variant="standard"
+                            value={filterId}
+                            onChange={(e) => setFilterId(e.target.value)}
+                        />
+                    </Grid>
+                </Grid>
+            </Toolbar>
             <TableContainer component={Paper} sx={{ maxHeight: 350 }}>
                 <Table stickyHeader aria-label="collapsible table">
                     <TableHead>

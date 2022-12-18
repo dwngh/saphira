@@ -1,6 +1,27 @@
 import axios from "axios";
 
 export const OrderService = () => {
+
+    const updateDoneOrder = async (id, token) => {
+        let response;
+        await axios({
+            method: "POST",
+            url: `${process.env.NEXT_PUBLIC_HOST}/orders/done/${id}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((res) => {
+                console.log("Update done successfully ...");
+                response = res.data;
+                return res;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return response;
+    }
+
     const updateNote = async (payload, token) => {
         let response;
         await axios({
@@ -187,5 +208,6 @@ export const OrderService = () => {
         getOrdersByDoctor,
         getOrdersWithAttachment,
         updateNote,
+        updateDoneOrder,
     };
 };

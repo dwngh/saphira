@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { IconButton, Tooltip } from "@mui/material";
+import { Grid, IconButton, Menu, MenuItem, TextField, Toolbar, Tooltip } from "@mui/material";
 import { useAuth } from "../../utils/useAuth";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -18,6 +18,11 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import SwipeableProfile from "../admin/card/SwipeableProfile";
 import NoteDialog from "./card/NoteDialog";
 import { toast } from "react-toastify";
+import DoneDialog from "./card/DoneDialog";
+import SearchIcon from "@mui/icons-material/Search";
+import DoneIcon from "@mui/icons-material/Done";
+import { Icon } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 interface Column {
     id: string;
@@ -91,12 +96,19 @@ export default function OrderManagementContent() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const { accessToken, userId } = useAuth();
-    const { getOrdersByDoctor, updateNote } = OrderService();
+    const { getOrdersByDoctor, updateNote, updateDoneOrder } = OrderService();
     const [orderList, setOrderList] = useState<any>([]);
+    const [orders, setOrders] = useState<any>([]);
+    const [filterId, setFilterId] = useState('');
     const [openSideInfo, setOpenSideInfo] = useState(false);
     const [currentUserId, setCurrentUserId] = useState(-1);
     const [openNoteDialog, setOpenNoteDialog] = useState(false);
     const [currentNote, setCurrentNote] = useState("");
+    const [currentOrderId, setCurrentOrderId] = useState(-1);
+    const [openDoneDialog, setOpenDoneDialog] = useState(false);
+    const [showPendingItemFilter, setShowPendingItemFilter] = useState(true);
+    const [showDoneItemFilter, setShowDoneItemFilter] = useState(false);
+    const [showLateItemFilter, setShowLateItemFilter] = useState(false);
 
     const fetchData = async () => {
         let orders = await getOrdersByDoctor(userId, accessToken);
@@ -155,12 +167,115 @@ export default function OrderManagementContent() {
         setOpenNoteDialog(false);
     };
 
-    const handleDelete = (e) => {
-        let id = e.currentTarget.id;
+    const handleDone = (e) => {
+        let id = +e.currentTarget.id;
+        setCurrentOrderId(id);
+        setOpenDoneDialog(true);        
     };
+
+    const handleDoneSubmit = async() => {
+        let id = currentOrderId;
+        let r = await updateDoneOrder(id, accessToken);
+        if (r?.affected >= 0) {
+            toast.success("Đã thay đổi trạng thái của yêu cầu");
+            fetchData();
+        }
+        handleDoneCancel();
+    };
+
+    const handleDoneCancel = () => {
+        setCurrentOrderId(-1);
+        setOpenDoneDialog(false);
+    }
+
+    const [filterMenu, setFilterMenu] = useState(null);
+    const open = Boolean(filterMenu);
+
+    const handleClose = () => {
+        setFilterMenu(null);
+    };
+    const handleFilterMenuOpen = (e) => {
+        setFilterMenu(e.currentTarget);
+    };
+
+    const filterItem = (list) => {
+        let temp = list;
+        if (!showPendingItemFilter) {
+            temp = temp.filter(item => item.status != 0);
+        }
+        if (!showDoneItemFilter) {
+            temp = temp.filter(item => item.status != 1);
+        }
+        if (!showLateItemFilter) {
+            temp = temp.filter(item => item.status != 2);
+        }
+        temp = temp.sort((a, b) => {
+            console.log("Two item comparision");
+            console.log(a?.date);
+            console.log(b?.date);
+            let a_value = dayjs(a?.date);
+            let b_value = dayjs(b?.date);
+            if (a_value.isSame(b_value, "day")) {
+                if (a?.shift == b?.shift) {
+                    let a_value_c = dayjs(a?.created_at);
+                    let b_value_c = dayjs(b?.created_at);
+                    console.log("Created at compare");
+                    if (a_value_c.isBefore(b_value_c, "day")) return -1;
+                    else return 1;
+                }
+                console.log("Shift compare");
+                if (a?.shift < b?.shift) return -1;
+                else return 1;
+            }
+            console.log("Date compare");
+            if (a_value.isBefore(b_value, "day")) return -1;
+            else return 1;
+        })
+        console.log(temp);
+        return temp;
+    }
+
+    useEffect(() => {
+        if (filterId != '') {
+            setOrders(filterItem(orderList.filter(item => {
+                let st = item.id + ' ';
+                return st.indexOf(filterId) != -1;
+            })))
+        } else setOrders(filterItem(orderList));
+    }, [filterId, orderList, showPendingItemFilter, showDoneItemFilter, showLateItemFilter]);
 
     return (
         <Paper sx={{ width: "100%", overflow: "auto" }}>
+            <Toolbar>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item>
+                        <SearchIcon color="inherit" sx={{ display: "block" }} />
+                    </Grid>
+                    <Grid item xs>
+                        <TextField
+                            fullWidth
+                            placeholder="Nhập ID yêu cầu ..."
+                            InputProps={{
+                                disableUnderline: true,
+                                sx: { fontSize: "default" },
+                            }}
+                            variant="standard"
+                            value={filterId}
+                            onChange={e => setFilterId(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item>
+                            <Tooltip title="Bộ lọc">
+                                <IconButton onClick={handleFilterMenuOpen}>
+                                    <FilterListIcon
+                                        color="inherit"
+                                        sx={{ display: "block" }}
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                </Grid>
+            </Toolbar>
             <TableContainer sx={{ maxHeight: 450 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -177,7 +292,7 @@ export default function OrderManagementContent() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {orderList
+                        {orders
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -231,7 +346,7 @@ export default function OrderManagementContent() {
                                                                     ""
                                                                 }
                                                                 onClick={
-                                                                    handleDelete
+                                                                    handleDone
                                                                 }
                                                             >
                                                                 <TaskAltIcon />
@@ -263,7 +378,7 @@ export default function OrderManagementContent() {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={orderList.length}
+                count={orders.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -280,6 +395,49 @@ export default function OrderManagementContent() {
                 setOpen={setOpenNoteDialog}
                 onSubmit={handleSubmit}
             />
+            <DoneDialog 
+                open={openDoneDialog}
+                onSubmit={handleDoneSubmit}
+                onCancel={handleDoneCancel}
+            />
+            <Menu
+                id="basic-menu"
+                anchorEl={filterMenu}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                }}
+                sx={{ width: 400 }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowPendingItemFilter(!showPendingItemFilter);
+                    }}
+                >
+                    {showPendingItemFilter ? <DoneIcon /> : <Icon />}
+                    Chờ khám
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowDoneItemFilter(!showDoneItemFilter);
+                    }}
+                >
+                    {showDoneItemFilter ? <DoneIcon /> : <Icon />}
+                    Đã khám
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowLateItemFilter(!showLateItemFilter);
+                    }}
+                >
+                    {showLateItemFilter ? <DoneIcon /> : <Icon />}
+                    Đã muộn
+                </MenuItem>
+            </Menu>
         </Paper>
     );
 }
