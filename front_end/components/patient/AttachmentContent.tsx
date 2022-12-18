@@ -117,7 +117,7 @@ export default function AttachmentContent() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [attachments, setAttachments] = React.useState<any>([]);
-    const {accessToken, userId} = useAuth();
+    const { accessToken, userId } = useAuth();
     const router = useRouter();
     const { getAttachmentByPatientId, downloadFile } = FileService();
 
@@ -127,7 +127,6 @@ export default function AttachmentContent() {
 
     const fetchData = async () => {
         let items = await getAttachmentByPatientId(userId, accessToken);
-        console.log(items);
         setAttachments(items);
     }
 

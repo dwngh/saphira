@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
-  ) {}
+  ) { }
 
   async validateUser(user: User) {
     //validate user here
@@ -28,12 +28,9 @@ export class UsersService {
     if (resultByEmail) throw new BadRequestException('Email already used!');
     if (resultByPhone) throw new BadRequestException('Phone number already used!');
     */
-    //console.log(resultByUsername.username);
     if (resultByUsername == null) {
-      
-      if (resultByIdentityNum == null) {
-        //console.log("xacthucthanhconghihi");
 
+      if (resultByIdentityNum == null) {
         return true;
       } else throw new BadRequestException('Identity number already exists!')
     } else throw new BadRequestException('Username already exists!');
@@ -41,7 +38,7 @@ export class UsersService {
 
   async changeUserPassword(_id, oldPassword: string, newPassword: string) {
     let saltRounds = 10;
-    const user = this.usersRepo.findOneBy({id:_id});
+    const user = this.usersRepo.findOneBy({ id: _id });
     const isOldPasswordCorrect = await bcrypt.compare(oldPassword, (await user).password);
     if (!isOldPasswordCorrect) throw new BadRequestException("Mật khẩu cũ chưa đúng!");
     if ((oldPassword == newPassword)) throw new BadRequestException("Mật khẩu mới trùng với mật khẩu cũ!");
@@ -51,13 +48,13 @@ export class UsersService {
       .where("user.Id = :id", { id: _id })
       .execute();
   }
-  
+
   async create(user: User): Promise<User> {
     let saltRounds = 10;
 
-    if(user.username == "admin") {
+    if (user.username == "admin") {
       user.role = 0;
-    } 
+    }
 
     if (!(await this.validateUser(user)))
       throw new BadRequestException({ error: 'Invalid user information' });
@@ -76,7 +73,7 @@ export class UsersService {
       .leftJoin("user.speciality", "speciality")
       .leftJoin("user.hospital", "hospital")
       .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
-      .where({role: 3})
+      .where({ role: 3 })
       .getMany();
     return doctors;
   }
@@ -86,10 +83,10 @@ export class UsersService {
       .leftJoin("user.speciality", "speciality")
       .leftJoin("user.hospital", "hospital")
       .leftJoin("user.calendar", "calendar").select(["user", "calendar", "speciality.name", "hospital"])
-      .where({id: _id})
+      .where({ id: _id })
       .getOne();
     if (userRep?.role != 3) {
-      return await this.usersRepo.findOneBy({id: _id});
+      return await this.usersRepo.findOneBy({ id: _id });
     } else {
       return userRep;
     }
@@ -100,7 +97,7 @@ export class UsersService {
   }
 
   async findByIdentityNum(_identity): Promise<User> {
-    return await this.usersRepo.findOneBy( { identity_num: _identity});
+    return await this.usersRepo.findOneBy({ identity_num: _identity });
   }
 
   /* find user by email and phone number (coming soon)
@@ -114,8 +111,7 @@ export class UsersService {
 */
 
   async findByOrderId(_orderid): Promise<User> {
-    //console.log(_orderid);
-    const userFinded = await this.usersRepo.findOneBy({order: _orderid});
+    const userFinded = await this.usersRepo.findOneBy({ order: _orderid });
     if (userFinded) {
       return userFinded;
     } throw new BadRequestException("Not Found");

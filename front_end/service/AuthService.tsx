@@ -32,7 +32,7 @@ export const AuthService = () => {
             },
         })
             .then((res) => {
-                console.log("Sign in successfully ...");
+                //console.log("Sign in successfully ...");
                 response = res;
                 return res;
             })
@@ -44,7 +44,7 @@ export const AuthService = () => {
 
     const fetchUser = async (token) => {
         let response;
-        console.log("TOKENは" + token);
+        //console.log("TOKENは" + token);
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/auth/profile`,
@@ -53,8 +53,8 @@ export const AuthService = () => {
             } 
         })
             .then((res) => {
-                console.log("Sign in successfully ...");
-                console.log(res);
+                //console.log("Sign in successfully ...");
+                //console.log(res);
                 response = res.data;
                 return res;
             })
@@ -66,7 +66,7 @@ export const AuthService = () => {
 
     const validateToken = async(token) => {
         let response;
-        console.log("TOKENは" + token);
+        //console.log("TOKENは" + token);
         await axios({
             method: "POST",
             url: `${process.env.NEXT_PUBLIC_HOST}/auth/profile`,

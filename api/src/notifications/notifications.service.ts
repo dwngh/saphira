@@ -49,7 +49,6 @@ export class NotificationsService {
         notice.content = "Bác sĩ đã thay đổi trạng thái yêu cầu thành đã khám. Vui lòng kiểm tra!";
         notice.userId = userid;
         let a = await this.notisRepo.save(notice);
-        console.log(a);
         return a;
     }
 
