@@ -79,6 +79,21 @@ export class OrdersService {
     return await this.ordersRepo.update(order.id, order);
   }
 
+  async updateAllOrders(order: Order): Promise<UpdateResult> {
+    await this.ordersRepo.update(order.id, order); 
+     
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+      .where("order.id = :id", {id: order.id})
+      .getOne();
+    console.log(resOrder.date);
+    return await this.ordersRepo.createQueryBuilder()
+      .update(Order)
+      .set({ status: 2 })
+      .where("order.date < :newDate", { newDate: new Date(resOrder.date)})
+      .orWhere("order.date = :newDate AND order.shift < :newShift", {newDate: resOrder.date, newShift: resOrder.shift})
+      .execute();
+  }
+
   async updateNoteFromOrder(order: Order): Promise<UpdateResult> {
     const resOrder = await this.ordersRepo.createQueryBuilder("order")
       .leftJoin("order.patient", "patient").select(["order", "patient.id", "patient.name"])

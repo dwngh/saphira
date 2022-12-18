@@ -36,7 +36,7 @@ export class Order {
     @Column()
     price: number;
 
-    // 
+    //0 - đang chờ, 1 - đã xong, 2 - đã muộn/ trễ/ bị huỷ
     @Column({default: 0})
     status: number; 
 

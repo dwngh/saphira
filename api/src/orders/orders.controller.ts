@@ -57,7 +57,7 @@ export class OrdersController {
     let order = new Order();
     order.id = id;
     order.status = 1;
-    return this.ordersService.update(order);
+    return this.ordersService.updateAllOrders(order);
   }
 
   @Put('/note')
