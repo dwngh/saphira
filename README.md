@@ -12,7 +12,6 @@
 * Từ nhánh mới tạo commit code dần vào nhánh đó (Thằng nào commit thẳng vào main phạt ***50k***)
 * Thỉnh thoảng check xem nhánh main có gì mới không, nếu có thì nên merge về nhánh của mình tránh bị tụt hậu rồi lúc merge bị conflict
 * Cố gắng code sáng sủa, dễ đọc. Nếu không tự tin có thể dùng thêm extension.
-* Không khuyến khích "vạch lá tìm sâu".
 
 ## Hỗ trợ về phần mềm
 * [Visual Studio Code](https://code.visualstudio.com/download)
