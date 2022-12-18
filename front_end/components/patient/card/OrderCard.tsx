@@ -13,6 +13,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import FileService from "../../../service/FileService";
+import { useEffect, useState } from "react";
 
 const cardStyle = {
     marginLeft: 2,
@@ -44,9 +45,15 @@ interface OrderCardProps {
     item;
     onOpenDetail;
     attachments;
+    infoExpanded: boolean;
 }
 
 export default function OrderCard(props: OrderCardProps) {
+    const [infoExpanded, setInfoExpaned] = useState(false);
+
+    useEffect(() => {
+        if (props.infoExpanded) setInfoExpaned(true);
+    }, [props.infoExpanded])
     const openDetail = () => {
         const id = props.item.id;
         props.onOpenDetail(id);
@@ -103,7 +110,7 @@ export default function OrderCard(props: OrderCardProps) {
                         </Typography>
                     </Typography>
                 </Box>
-                <Accordion>
+                <Accordion expanded={infoExpanded} onChange={() => setInfoExpaned(!infoExpanded)} >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"

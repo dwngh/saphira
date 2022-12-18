@@ -3,13 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult  } from 'typeorm';
 import { Order } from './order.entity';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
-    private readonly ordersRepo: Repository<Order>
+    private readonly ordersRepo: Repository<Order>,
+
+    private readonly notisService: NotificationsService
   ) {}
+
+  private validateTime(rep: Order[]) {
+    
+  }
 
   async validateOrder(order: Order) {
     return true;
@@ -26,12 +33,15 @@ export class OrdersService {
       .where("order.id=:idd",{idd : order.id})
       .getOne();
     //console.log(resOrder.doctor.calendar.note);
-    if (resOrder.doctor?.calendar?.enableAutoNote===true)
-    return await this.ordersRepo.createQueryBuilder()
-      .update(Order)
-      .set({ note: resOrder.doctor.calendar.note })
-      .where("order.id = :id", { id: resOrder.id })
-      .execute();
+    if (resOrder.doctor?.calendar?.enableAutoNote===true) {
+      await this.notisService.noticeUpdateNote(resOrder.id, resOrder.patientId);
+      return await this.ordersRepo.createQueryBuilder()
+        .update(Order)
+        .set({ note: resOrder.doctor.calendar.note })
+        .where("order.id = :id", { id: resOrder.id })
+        .execute();
+    }
+
   }
 
   async findAll(): Promise<Order[]> {
@@ -69,6 +79,32 @@ export class OrdersService {
   }
 
   async update(order: Order): Promise<UpdateResult> {
+    return await this.ordersRepo.update(order.id, order);
+  }
+
+  async updateAllOrders(order: Order): Promise<UpdateResult> {
+    await this.ordersRepo.update(order.id, order); 
+     
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+      .where("order.id = :id", {id: order.id})
+      .getOne();
+
+    await this.notisService.doneStatusUpdate(order.id, resOrder.patientId);
+    
+    return await this.ordersRepo.createQueryBuilder()
+      .update(Order)
+      .set({ status: 2 })
+      .where("order.date < :newDate AND order.status = 0", { newDate: new Date(resOrder.date)})
+      .orWhere("order.date = :newDate AND order.shift < :newShift  AND order.status = 0", {newDate: resOrder.date, newShift: resOrder.shift})
+      .execute();
+  }
+
+  async updateNoteFromOrder(order: Order): Promise<UpdateResult> {
+    const resOrder = await this.ordersRepo.createQueryBuilder("order")
+      .leftJoin("order.patient", "patient").select(["order", "patient.id", "patient.name"])
+      .where("order.id=:id", {id: order.id})
+      .getOne();
+    await this.notisService.noticeUpdateNote(order.id, resOrder.patientId);
     return await this.ordersRepo.update(order.id, order);
   }
 

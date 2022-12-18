@@ -45,7 +45,7 @@ export default function SignUp() {
             role: 1,
         };
         const Regex = /^[a-zA-Z0-9]+$/;
-        const RegexName = /^[a-zA-Z\- ]+$/;
+        const RegexName = /^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ ]+$/;
         const RegexNum = /^[0-9]+$/;
         if (!Regex.test(userInfo.username)) {
             setIsUsernameValid(true);

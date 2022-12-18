@@ -12,12 +12,18 @@ export class Notification {
     @JoinColumn()
     public user: User['id'];
 
-    @Column() 
+    @Column({nullable: true})
+    userId: number;
+
+    @Column({nullable: true}) 
     url: string;
 
     @Column({charset: 'utf8', collation: 'utf8_general_ci'})
     content: string;
     
-    @Column('date', { nullable: true })
+    @Column({nullable: false, default: () => 'CURRENT_TIMESTAMP'})
     created_at: Date;
+
+    @Column({default: false})
+    read: boolean;
 }

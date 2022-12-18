@@ -9,8 +9,8 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import TodayIcon from '@mui/icons-material/Today';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import TodayIcon from "@mui/icons-material/Today";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import dayjs from "dayjs";
 
 interface OrderDetailCardProps {
@@ -64,189 +64,282 @@ export default function OrderDetailCard(props: OrderDetailCardProps) {
                     <Typography variant="h6" align="center">
                         NGƯỜI KHÁM
                     </Typography>
-                    <Grid container>
-                        <Grid item xs>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <PersonIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Họ và tên:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <CalendarMonthIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Ngày sinh:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <PhoneIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Số điện thoại:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <EmailIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Email:
-                            </Typography>
-                        </Grid>
-                        <Grid item xs>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.patient.name + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.patient.birthday + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.patient.phone + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.patient.email + ' '}
-                            </Typography>
-                        </Grid>
-                    </Grid>
+                    <table>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <PersonIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Họ và tên:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.patient.name}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <CalendarMonthIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Ngày sinh:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {dayjs(props.patient?.birthday).format(
+                                        "DD-MM-YYYY"
+                                    )}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <PhoneIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Số điện thoại:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.patient.phone}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <EmailIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Email:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.patient.email}
+                                </Typography>
+                            </td>
+                        </tr>
+                    </table>
                 </Grid>
-                <Divider orientation="vertical" flexItem></Divider>
+                <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ marginRight: 3 }}
+                ></Divider>
                 <Grid item xs>
                     <Typography variant="h6" align="center">
                         CA KHÁM
                     </Typography>
-                    <Grid container sx={{paddingLeft: 3}}>
-                        <Grid item xs>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <PersonIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Bác sĩ:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <MedicalServicesIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Chuyên khoa:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <AccessTimeIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Ca:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <TodayIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Ngày:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <LocationOnIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Địa điểm:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle, fontWeight: "bold" }}
-                            >
-                                <MonetizationOnIcon
-                                    fontSize="small"
-                                    sx={{ ...iconStyle }}
-                                />
-                                Giá tiền:
-                            </Typography>
-                        </Grid>
-                        <Grid item xs>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.doctor.name}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.doctor.speciality + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {shiftList[props.doctor.shift] + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {dayjs(props.doctor.date).format("DD-MM-YYYY") + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.doctor.location + ' '}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{ ...typographyStyle }}
-                            >
-                                {props.doctor.price ? props.doctor.price.toLocaleString("en-US") : ''} VNĐ
-                            </Typography>
-                            <br />
-                        </Grid>
-                    </Grid>
+                    <table>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <PersonIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Bác sĩ:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.doctor.name}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <MedicalServicesIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Chuyên khoa:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.doctor.speciality + " "}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <AccessTimeIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Ca:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {shiftList[props.doctor.shift] + " "}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <TodayIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Ngày:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {dayjs(props.doctor.date).format(
+                                        "DD-MM-YYYY"
+                                    ) + " "}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <LocationOnIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Địa điểm:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.doctor.location + " "}
+                                </Typography>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        ...typographyStyle,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <MonetizationOnIcon
+                                        fontSize="small"
+                                        sx={{ ...iconStyle }}
+                                    />
+                                    Giá tiền:
+                                </Typography>
+                            </td>
+                            <td>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ ...typographyStyle }}
+                                >
+                                    {props.doctor.price
+                                        ? props.doctor.price.toLocaleString(
+                                              "en-US"
+                                          )
+                                        : ""}{" "}
+                                    VNĐ
+                                </Typography>
+                            </td>
+                        </tr>
+                    </table>
                 </Grid>
             </Grid>
             <Divider></Divider>
-            
         </Paper>
     );
 }
