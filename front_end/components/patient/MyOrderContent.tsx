@@ -66,7 +66,6 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
     }, [props?.orderId]);
 
     useEffect(() => {
-        console.log("Note: " + props?.note);
         if (props?.note) {
             let temp: any = noteRef.current;
             temp?.scrollIntoView({ behavior: "smooth" });
@@ -104,8 +103,8 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
         temp = temp.sort((a, b) => {
             let a_value = dayjs(a?.date);
             let b_value = dayjs(b?.date);
-            if (a.status != b.status && b.status == 0) return 1; 
-            if (a.status != b.status && a.status == 0) return -1; 
+            if (a.status != b.status && b.status == 0) return 1;
+            if (a.status != b.status && a.status == 0) return -1;
             if (a_value.isSame(b_value, "day")) {
                 if (a?.shift == b?.shift) {
                     let a_value_c = dayjs(a?.created_at);

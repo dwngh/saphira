@@ -116,7 +116,6 @@ export default function OrderManagementContent() {
 
     const fetchData = async () => {
         let orders = await getOrdersByDoctor(userId, accessToken);
-        console.log(orders);
         setOrderList(orders);
     };
 
@@ -174,10 +173,10 @@ export default function OrderManagementContent() {
     const handleDone = (e) => {
         let id = +e.currentTarget.id;
         setCurrentOrderId(id);
-        setOpenDoneDialog(true);        
+        setOpenDoneDialog(true);
     };
 
-    const handleDoneSubmit = async() => {
+    const handleDoneSubmit = async () => {
         let id = currentOrderId;
         let r = await updateDoneOrder(id, accessToken);
         if (r?.affected >= 0) {
@@ -273,15 +272,15 @@ export default function OrderManagementContent() {
                         />
                     </Grid>
                     <Grid item>
-                            <Tooltip title="Bộ lọc">
-                                <IconButton onClick={handleFilterMenuOpen}>
-                                    <FilterListIcon
-                                        color="inherit"
-                                        sx={{ display: "block" }}
-                                    />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
+                        <Tooltip title="Bộ lọc">
+                            <IconButton onClick={handleFilterMenuOpen}>
+                                <FilterListIcon
+                                    color="inherit"
+                                    sx={{ display: "block" }}
+                                />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
                 </Grid>
             </Toolbar>
             <TableContainer sx={{ maxHeight: 450 }}>
@@ -337,7 +336,7 @@ export default function OrderManagementContent() {
                                                             <IconButton
                                                                 id={
                                                                     row[
-                                                                        "patientId"
+                                                                    "patientId"
                                                                     ] + ""
                                                                 }
                                                                 onClick={
@@ -416,12 +415,12 @@ export default function OrderManagementContent() {
                 setOpen={setOpenNoteDialog}
                 onSubmit={handleSubmit}
             />
-            <DoneDialog 
+            <DoneDialog
                 open={openDoneDialog}
                 onSubmit={handleDoneSubmit}
                 onCancel={handleDoneCancel}
             />
-            <InformationDialog 
+            <InformationDialog
                 open={openInformationDialog}
                 order={currentInfoOrder}
                 onClose={handleCloseInfoDialog}

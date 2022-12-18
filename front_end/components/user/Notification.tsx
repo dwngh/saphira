@@ -15,10 +15,9 @@ export default function Notifications(props: NotificationsProps) {
     const router = useRouter();
     const { anchor, open, notifications, onMarkRead, onMarkAllRead } = props;
 
-    const handleClickNotification = async(e) => {
+    const handleClickNotification = async (e) => {
         let id = +e.currentTarget.id;
         let noti = notifications.filter(item => item.id == id)[0];
-        console.log("Read " + id);
         await onMarkRead(id);
         router.push(noti.url);
     }
@@ -79,8 +78,8 @@ export default function Notifications(props: NotificationsProps) {
                 }}
             >
                 {notifications.map((notification) => (
-                    <Card variant="outlined" sx={{mt: 1}}>
-                        <CardActionArea id={notification?.id} sx={{padding: 2, bgcolor: notification.read ? '#dedfe0' : '#ffffff'}} onClick={handleClickNotification}>
+                    <Card variant="outlined" sx={{ mt: 1 }}>
+                        <CardActionArea id={notification?.id} sx={{ padding: 2, bgcolor: notification.read ? '#dedfe0' : '#ffffff' }} onClick={handleClickNotification}>
                             <Typography variant="body1">
                                 {notification?.content}
                             </Typography>
