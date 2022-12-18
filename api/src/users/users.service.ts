@@ -39,6 +39,19 @@ export class UsersService {
     } else throw new BadRequestException('Username already exists!');
   }
 
+  async changeUserPassword(_id, oldPassword: string, newPassword: string) {
+    let saltRounds = 10;
+    const user = this.usersRepo.findOneBy({id:_id});
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, (await user).password);
+    if (!isOldPasswordCorrect) throw new BadRequestException("Wrong old password!");
+    if ((oldPassword == newPassword)) throw new BadRequestException("The new password is the same as the old password!");
+    return await this.usersRepo.createQueryBuilder()
+      .update(User)
+      .set({ password: await bcrypt.hash(newPassword, saltRounds) })
+      .where("user.Id = :id", { id: _id })
+      .execute();
+  }
+  
   async create(user: User): Promise<User> {
     let saltRounds = 10;
 

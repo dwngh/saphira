@@ -94,4 +94,26 @@ export const UserService = () => {
 
 
     return { getUsers, getUser, updateUser, getDoctors}
+    const changePassword = async (pass, userId, token) => {
+        let response;
+
+        await axios({
+            method: "POST",
+            url: `${process.env.NEXT_PUBLIC_HOST}/users/${userId}`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+            data: pass 
+        })
+            .then((res) => {
+                response = "Change successful";
+            })
+            .catch((err) => {
+                console.error(err);
+                response = err
+            });
+            return response
+    }
+
+    return { getUsers, getUser, updateUser, changePassword }
 }

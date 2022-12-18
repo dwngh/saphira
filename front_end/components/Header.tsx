@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import Notifications from "./user/Notification";
 import NotificationService from "../service/NotificationService";
 import { useEffect } from "react";
+import ChangePass from "./user/ChangePass";
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 interface HeaderProps {
@@ -80,6 +81,7 @@ const menuPaperProps = {
 export default function Header(props: HeaderProps) {
     const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [openChangePass, setOpenChangePass] = React.useState(false);
     const openProfile = Boolean(anchorEl);
     const [anchorNoti, setAnchorNoti] = React.useState<null | HTMLElement>(
         null
@@ -103,6 +105,12 @@ export default function Header(props: HeaderProps) {
 
     const { getNotifications, markRead, markAllRead } = NotificationService();
     const [notifications, setNotifications] = React.useState<any[]>([]);
+    const openDialogChangePass = () => {
+        setOpenChangePass(true)
+    }
+    const CloseChangePass = () => {
+        setOpenChangePass(false)
+    }
     const { onDrawerToggle } = props.onDrawerToggle;
     const { accessToken, name, userId } = useAuth();
     const [unread, setUnread] = React.useState(0);
@@ -134,6 +142,8 @@ export default function Header(props: HeaderProps) {
     }, [notifications]);
 
     return (
+        <>
+        {openChangePass === false ? <></> : <ChangePass changePass={CloseChangePass}/>}
         <React.Fragment>
             <Head>
                 <title>{headerTitle[props.title]}</title>
@@ -265,8 +275,8 @@ export default function Header(props: HeaderProps) {
                 <MenuItem>
                     <Avatar /> Profile
                 </MenuItem>
-                <MenuItem>
-                    <Avatar /> My account
+                <MenuItem onClick={openDialogChangePass}>
+                    <Avatar /> Change Password
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => router.push("/logout")}>
@@ -284,5 +294,6 @@ export default function Header(props: HeaderProps) {
                 onMarkAllRead={handleMarkAllRead}
             />
         </React.Fragment>
+        </>
     );
 }
