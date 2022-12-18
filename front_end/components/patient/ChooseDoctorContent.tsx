@@ -27,6 +27,8 @@ import { useAuth } from "../../utils/useAuth";
 import { UserService } from "../../service/UserService";
 import { toast } from "react-toastify";
 import { TimeSolve } from "../../common/time";
+import { HospitalService } from "../../service/HospitalService";
+import { SpecialityService } from "../../service/SpecialityService";
 
 interface ChooseDoctorContentProps {
     onNextTab;
@@ -35,42 +37,60 @@ interface ChooseDoctorContentProps {
 
 export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
     const [doctors, setDoctors] = useState<any[]>([]);
+    const [doctorList, setDoctorList] = useState<any[]>([]);
     const [filterMenu, setFilterMenu] = useState(null);
     const [showDateFilter, setShowDateFilter] = useState(false);
     const [showHospitalFilter, setShowHospitalFilter] = useState(false);
     const [showSpecialityFilter, setShowSpecialityFilter] = useState(false);
-    const [dateFilter, setDateFilter] = useState(dayjs());
-    const [hospitalFilter, setHospitalFilter] = useState("");
-    const [specialityFilter, setSpecialityFilter] = useState("");
+    const [dateFilter, setDateFilter] = useState<Dayjs>();
+    const [hospitalFilter, setHospitalFilter] = useState<number>();
+    const [specialityFilter, setSpecialityFilter] = useState<number>();
+    const [filterName, setFilterName] = useState("");
+    const [hospitals, setHospitals] = useState<any[]>([]);
+    const [specialities, setSpecialities] = useState<any[]>([]);
+    const [dayFilter, setDayFilter] = useState<number>();
 
     const { accessToken, userId } = useAuth();
     const { getDoctors } = UserService();
-    const { getAvailableDay } = TimeSolve();
+    const { getHospitals } = HospitalService();
+    const { getSpecialities } = SpecialityService();
+    const { getAvailableDayBit } = TimeSolve();
 
     const handleChangeDate = (newValue: Dayjs) => {
         setDateFilter(newValue);
+        let day = newValue.day();
+        if (day == 0) day = 6;
+        else day = day - 1;
+        setDayFilter(day);
     };
     const handleCancelDateFilter = () => {
         setShowDateFilter(false);
+        setDayFilter(undefined);
     };
 
-    const handleChangeHospital = (newValue) => {
-        setHospitalFilter(newValue);
+    const handleChangeHospital = (e) => {
+        setHospitalFilter(e.target.value);
     };
     const handleCancelHospitalFilter = () => {
         setShowHospitalFilter(false);
+        setHospitalFilter(undefined);
     };
 
-    const handleChangeSpeciality = (newValue) => {
-        setSpecialityFilter(newValue);
+    const handleChangeSpeciality = (e) => {
+        setSpecialityFilter(e.target.value);
     };
     const handleCancelSpecialityFilter = () => {
         setShowSpecialityFilter(false);
+        setSpecialityFilter(undefined);
     };
 
     const fetchData = async () => {
         const doctors = await getDoctors(accessToken);
-        setDoctors(doctors);
+        const hospitals = await getHospitals(accessToken);
+        const specialities = await getSpecialities(accessToken);
+        setDoctorList(doctors);
+        setHospitals(hospitals);
+        setSpecialities(specialities);
     };
 
     const open = Boolean(filterMenu);
@@ -93,9 +113,34 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
         
     }
 
+    const filterDoctor = (list) => {
+        let temp = list;
+        if (dayFilter) {
+            temp = temp.filter(item => {
+                let cal = getAvailableDayBit(item.calendar.avail);
+                if (item.calendarId) {
+                    let dayAvail = getAvailableDayBit(item.calendar?.avail);
+                    return (dayAvail[dayFilter] == '1')
+                } else return true;
+            })
+        }
+        if (hospitalFilter) {
+            temp = temp.filter(item => item?.hospitalId == hospitalFilter);
+        }
+        if (specialityFilter) {
+            temp = temp.filter(item => item?.specialityId == specialityFilter);
+        }
+        return temp;
+    }
+
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        console.log(dayFilter + " -- " + hospitalFilter + " -- " + specialityFilter);
+        setDoctors(filterDoctor(doctorList.filter(item => item.name.indexOf(filterName) != -1)));
+    }, [doctorList, filterName, dayFilter, hospitalFilter, specialityFilter]);
 
     return (
         <Paper
@@ -129,6 +174,8 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                                     sx: { fontSize: "default" },
                                 }}
                                 variant="standard"
+                                value={filterName}
+                                onChange={(e) => setFilterName(e.target.value)}
                             />
                         </Grid>
                         <Grid item>
@@ -165,10 +212,12 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                                     value={hospitalFilter}
                                     onChange={handleChangeHospital}
                                     onCancel={handleCancelHospitalFilter}
+                                    hospitals={hospitals}
                                 />
                             )}
                             {showSpecialityFilter && (
                                 <SpecialityFilter
+                                    specialities={specialities}
                                     value={specialityFilter}
                                     onChange={handleChangeSpeciality}
                                     onCancel={handleCancelSpecialityFilter}
@@ -219,6 +268,8 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                     onClick={() => {
                         handleClose();
                         setShowDateFilter(!showDateFilter);
+                        if (showDateFilter)
+                        setDayFilter(undefined);
                     }}
                 >
                     {showDateFilter ? <DoneIcon /> : <Icon />}
@@ -228,6 +279,8 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                     onClick={() => {
                         handleClose();
                         setShowHospitalFilter(!showHospitalFilter);
+                        if (showHospitalFilter)
+                        setHospitalFilter(undefined);
                     }}
                 >
                     {showHospitalFilter ? <DoneIcon /> : <Icon />}
@@ -237,6 +290,8 @@ export default function ChooseDoctorContent(props: ChooseDoctorContentProps) {
                     onClick={() => {
                         handleClose();
                         setShowSpecialityFilter(!showSpecialityFilter);
+                        if (showSpecialityFilter)
+                        setSpecialityFilter(undefined);
                     }}
                 >
                     {showSpecialityFilter ? <DoneIcon /> : <Icon />}

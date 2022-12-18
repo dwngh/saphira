@@ -7,14 +7,17 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Paper from "@mui/material/Paper";
 import Card from "@mui/material/Card";
+import { MenuItem } from "@mui/material";
 
 interface SpecialityFilterProps {
     value;
-    onChange: (hospitalId) => void;
+    onChange: (e) => void;
     onCancel: () => void;
+    specialities;
 }
 
 export default function SpecialityFilter(props: SpecialityFilterProps) {
+    const {value, specialities, onChange} = props;
     return (
         <Grid item>
             <Paper sx={{padding: 0.5}}>
@@ -28,18 +31,17 @@ export default function SpecialityFilter(props: SpecialityFilterProps) {
                     <TextField
                         label="Tên chuyên khoa"
                         size="small"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <SearchIcon
-                                        color="inherit"
-                                        sx={{ display: "block" }}
-                                    />
-                                </InputAdornment>
-                            ),
-                        }}
                         sx={{width: 230}}
-                    />
+                        select
+                        value={value}
+                        onChange={onChange}
+                    >
+                        {specialities.map(speciality => (
+                            <MenuItem key={speciality.id} value={speciality.id}>
+                                {speciality.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </Grid>
             </Grid>
             </Paper>

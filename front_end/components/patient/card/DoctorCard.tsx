@@ -9,6 +9,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PaidIcon from "@mui/icons-material/Paid";
 import { TimeSolve } from "../../../common/time";
 import { useEffect, useState } from "react";
+import { pureFinalPropsSelectorFactory } from "react-redux/es/connect/selectorFactory";
 
 const cardStyle = {
     marginLeft: 2,
@@ -43,9 +44,9 @@ export default function DoctorCard(props: DoctorCardProps) {
     useEffect(() => {
         let temp = getAvailableDay(props.calendar ?? "00000000000000000000000000000000000000000000000000000000");
         setCalendar(temp?.join(", "));
-    }, [])
+    }, [props?.calendar])
     return (
-        <Card sx={cardStyle} elevation={2}>
+        <Card sx={cardStyle} elevation={2} key={props.id}>
             <CardActionArea id={props.id} sx={{ padding: 3 }} onClick={props.onDoctorChoose}>
                 <Typography
                     variant="h6"
@@ -54,7 +55,7 @@ export default function DoctorCard(props: DoctorCardProps) {
                     sx={{ fontWeight: "bold", ...typographyStyle }}
                 >
                     <PersonIcon sx={{marginLeft: -0.2, ...iconStyle}} />
-                    {props.name} - {props.id}
+                    {props.name}
                 </Typography>
                 <Typography variant="body1" sx={typographyStyle}>
                     <LocalHospitalIcon sx={iconStyle} fontSize="small" />

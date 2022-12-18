@@ -7,14 +7,17 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Paper from "@mui/material/Paper";
 import Card from "@mui/material/Card";
+import { MenuItem } from "@mui/material";
 
 interface HospitalFilterProps {
     value;
-    onChange: (hospitalId) => void;
+    onChange: (e) => void;
     onCancel: () => void;
+    hospitals;
 }
 
 export default function HospitalFilter(props: HospitalFilterProps) {
+    const {hospitals, value, onChange } = props;
     return (
         <Grid item>
             <Paper sx={{padding: 0.5}}>
@@ -28,18 +31,17 @@ export default function HospitalFilter(props: HospitalFilterProps) {
                     <TextField
                         label="Tên bệnh viện"
                         size="small"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <SearchIcon
-                                        color="inherit"
-                                        sx={{ display: "block" }}
-                                    />
-                                </InputAdornment>
-                            ),
-                        }}
                         sx={{width: 230}}
-                    />
+                        value={value}
+                        onChange={onChange}
+                        select
+                    >
+                        {hospitals.map(hospital => (
+                            <MenuItem key={hospital.id} value={hospital.id}>
+                                {hospital.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </Grid>
             </Grid>
             </Paper>
