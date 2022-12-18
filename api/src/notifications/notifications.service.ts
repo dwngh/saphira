@@ -26,11 +26,11 @@ export class NotificationsService {
             .execute();
     }
 
-    async readANotification(userid, noticeId): Promise<UpdateResult> {
+    async readANotification(noticeId): Promise<UpdateResult> {
         return await this.notisRepo.createQueryBuilder()
             .update(Notification)
             .set({read: true})
-            .where("Notification.userId = :id AND Notification.id = :idd", {id: userid, idd: noticeId})
+            .where("Notification.id = :id", {id: noticeId})
             .execute();
     }
 
@@ -38,6 +38,25 @@ export class NotificationsService {
         let notice = new Notification;
         notice.url = "/patient/orders?note=" + orderId;
         notice.content = "Bác sĩ đã thay đổi ghi chú ở đơn đặt khám của bạn. Vui lòng kiểm tra!";
+        notice.userId = userid;
+        return await this.notisRepo.save(notice);
+    }
+
+    async doneStatusUpdate(orderId, userid): Promise<Notification>{
+        let notice = new Notification;
+        console.log("Doneeee!!");
+        notice.url = "/patient/orders?order=" + orderId;
+        notice.content = "Bác sĩ đã thay đổi trạng thái yêu cầu thành đã khám. Vui lòng kiểm tra!";
+        notice.userId = userid;
+        let a = await this.notisRepo.save(notice);
+        console.log(a);
+        return a;
+    }
+
+    async lateStatusUpdate(orderId, userid): Promise<Notification>{
+        let notice = new Notification;
+        notice.url = "/patient/orders?order=" + orderId;
+        notice.content = "Yêu cầu của bạn vừa bị thay đổi trạng thái thành muộn. Vui lòng kiểm tra lại!";
         notice.userId = userid;
         return await this.notisRepo.save(notice);
     }

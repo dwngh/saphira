@@ -18,10 +18,15 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import Logout from "@mui/icons-material/Logout";
+import Head from "next/head";
 import { useAuth } from "../utils/useAuth";
-import { Box, Card, Paper } from "@mui/material";
+import { Badge, Box, Card, Fade, Paper, Popper } from "@mui/material";
 import SpAvatar from "./user/Avatar";
 import { useRouter } from "next/router";
+import dayjs from "dayjs";
+import Notifications from "./user/Notification";
+import NotificationService from "../service/NotificationService";
+import { useEffect } from "react";
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 interface HeaderProps {
@@ -33,32 +38,110 @@ interface HeaderProps {
 }
 
 const headerTitle = {
-    "home": "Trang chủ",
+    home: "Trang chủ",
     "create-order": "Tạo yêu cầu khám bệnh",
     "my-orders": "Quản lý yêu cầu",
-    "attachment": "Tệp đính kèm",
-    "profile": "Tài khoản của tôi",
+    attachment: "Tệp đính kèm",
+    profile: "Tài khoản của tôi",
     "update-profile": "Cập nhật thông tin cá nhân",
     "admin-accounts": "Quản lý tài khoản",
     "admin-hospital": "Quản lý bệnh viện",
     "doctor-calendar": "Cài đặt lịch khám",
-    "doctor-orders": "Quản lý yêu cầu"
+    "doctor-orders": "Quản lý yêu cầu",
+};
+
+const menuPaperProps = {
+    elevation: 0,
+    sx: {
+        overflow: "visible",
+        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+        mt: 1.5,
+        "& .MuiAvatar-root": {
+            width: 32,
+            height: 32,
+            ml: -0.5,
+            mr: 1,
+        },
+        "&:before": {
+            content: '""',
+            display: "block",
+            position: "absolute",
+            top: 0,
+            right: 14,
+            width: 10,
+            height: 10,
+            bgcolor: "background.paper",
+            transform: "translateY(-50%) rotate(45deg)",
+            zIndex: 0,
+        },
+    },
 };
 
 export default function Header(props: HeaderProps) {
     const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const openProfile = Boolean(anchorEl);
+    const [anchorNoti, setAnchorNoti] = React.useState<null | HTMLElement>(
+        null
+    );
+    const [openNotification, setOpenNotification] = React.useState(false);
     const handleClickProfile = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
     const handleCloseProfile = () => {
         setAnchorEl(null);
     };
+    const handleClickNotification = (event: React.MouseEvent<HTMLElement>) => {
+        if (openNotification) {
+            setAnchorNoti(null);
+            setOpenNotification(false);
+        } else {
+            setAnchorNoti(event.currentTarget);
+            setOpenNotification(true);
+        }
+    };
+
+    const { getNotifications, markRead, markAllRead } = NotificationService();
+    const [notifications, setNotifications] = React.useState<any[]>([]);
     const { onDrawerToggle } = props.onDrawerToggle;
-    const { username, name } = useAuth();
+    const { accessToken, name, userId } = useAuth();
+    const [unread, setUnread] = React.useState(0);
+
+    const handleMarkRead = async (id) => {
+        console.log("Handle mark read");
+        await markRead(id, accessToken);
+        await fetchData();
+    };
+
+    const handleMarkAllRead = async (id) => {
+        await markAllRead(userId, accessToken);
+        await fetchData();
+    };
+
+    const fetchData = async () => {
+        let notis = await getNotifications(userId, accessToken);
+        console.log(notis);
+        setNotifications(notis.reverse());
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        let len = notifications.filter((item) => !item.read).length;
+        setUnread(len);
+    }, [notifications]);
+
     return (
         <React.Fragment>
+            <Head>
+                <title>{headerTitle[props.title]}</title>
+                <meta
+                    name="viewport"
+                    content="initial-scale=1.0, width=device-width"
+                />
+            </Head>
             <AppBar color="primary" position="sticky" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={1} alignItems="center">
@@ -76,34 +159,22 @@ export default function Header(props: HeaderProps) {
                             </IconButton>
                         </Grid>
                         <Grid item xs />
+                        <Grid item></Grid>
                         <Grid item>
-                            <Link
-                                href="/"
-                                variant="body2"
-                                sx={{
-                                    textDecoration: "none",
-                                    color: lightColor,
-                                    "&:hover": {
-                                        color: "common.white",
-                                    },
-                                }}
-                                rel="noopener noreferrer"
-                                target="_blank"
-                            >
-                                Go to docs
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title="Alerts • No alerts">
-                                <IconButton color="inherit">
-                                    <NotificationsIcon />
+                            <Tooltip title="Thông báo">
+                                <IconButton
+                                    color="inherit"
+                                    onClick={handleClickNotification}
+                                >
+                                    <Badge color="error" badgeContent={unread}>
+                                        <NotificationsIcon />
+                                    </Badge>
                                 </IconButton>
                             </Tooltip>
                         </Grid>
                         <Grid item>
                             <IconButton
                                 onClick={handleClickProfile}
-                                size="small"
                                 sx={{ ml: 2 }}
                                 aria-controls={
                                     openProfile ? "account-menu" : undefined
@@ -111,7 +182,7 @@ export default function Header(props: HeaderProps) {
                                 aria-haspopup="true"
                                 aria-expanded={openProfile ? "true" : undefined}
                             >
-                                <SpAvatar name={name}/>
+                                <SpAvatar name={name} />
                             </IconButton>
                         </Grid>
                     </Grid>
@@ -135,23 +206,8 @@ export default function Header(props: HeaderProps) {
                                 {headerTitle[props.title]}
                             </Typography>
                         </Grid>
-                        <Grid item>
-                            <Button
-                                sx={{ borderColor: lightColor }}
-                                variant="outlined"
-                                color="inherit"
-                                size="small"
-                            >
-                                Web setup
-                            </Button>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title="Help">
-                                <IconButton color="inherit">
-                                    <HelpIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
+                        <Grid item></Grid>
+                        <Grid item></Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>
@@ -184,32 +240,7 @@ export default function Header(props: HeaderProps) {
                 open={openProfile}
                 onClose={handleCloseProfile}
                 onClick={handleCloseProfile}
-                PaperProps={{
-                    elevation: 0,
-                    sx: {
-                        overflow: "visible",
-                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                        mt: 1.5,
-                        "& .MuiAvatar-root": {
-                            width: 32,
-                            height: 32,
-                            ml: -0.5,
-                            mr: 1,
-                        },
-                        "&:before": {
-                            content: '""',
-                            display: "block",
-                            position: "absolute",
-                            top: 0,
-                            right: 14,
-                            width: 10,
-                            height: 10,
-                            bgcolor: "background.paper",
-                            transform: "translateY(-50%) rotate(45deg)",
-                            zIndex: 0,
-                        },
-                    },
-                }}
+                PaperProps={menuPaperProps}
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
@@ -220,10 +251,14 @@ export default function Header(props: HeaderProps) {
                         direction="column"
                         alignItems="center"
                         justifyContent="center"
-                        sx={{ minHeight: "30", paddingTop: 3, paddingBottom: 3}}
+                        sx={{
+                            minHeight: "30",
+                            paddingTop: 3,
+                            paddingBottom: 3,
+                        }}
                     >
                         <Grid item xs={3}>
-                            <SpAvatar name={name} width={100}/>
+                            <SpAvatar name={name} width={100} />
                         </Grid>
                     </Grid>
                 </Box>
@@ -241,6 +276,13 @@ export default function Header(props: HeaderProps) {
                     Logout
                 </MenuItem>
             </Menu>
+            <Notifications
+                anchor={anchorNoti}
+                open={openNotification}
+                notifications={notifications}
+                onMarkRead={handleMarkRead}
+                onMarkAllRead={handleMarkAllRead}
+            />
         </React.Fragment>
     );
 }

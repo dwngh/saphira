@@ -18,6 +18,9 @@ import { useAuth } from "../../utils/useAuth";
 import dayjs from "dayjs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Menu, MenuItem } from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
+import { Icon } from "@mui/material";
 
 const shiftList = [
     "7h00 - 8h00",
@@ -41,12 +44,15 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
     const noteRef = useRef(null);
     const { getOrdersByPatient } = OrderService();
     const { accessToken, userId } = useAuth();
+    const [showPendingItemFilter, setShowPendingItemFilter] = useState(true);
+    const [showDoneItemFilter, setShowDoneItemFilter] = useState(false);
+    const [showLateItemFilter, setShowLateItemFilter] = useState(false);
+    const [orderList, setOrderList] = useState<any>([]);
+    const [filterId, setFilterId] = useState('');
 
     const fetchData = async () => {
         const orders = await getOrdersByPatient(userId, accessToken);
-        console.log("ORRDARRRR");
-        console.log(orders);
-        setOrders(orders);
+        setOrderList(orders);
     };
 
     useEffect(() => {
@@ -69,10 +75,63 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
 
     const handleOpenDetail = (id) => {
         let currentId = +id;
-        const item = orders.filter(item => item.id == currentId)[0];
+        const item = orderList.filter(item => item.id == currentId)[0];
         setCurrentOrder(item);
         setOpen(true);
     };
+
+    const [filterMenu, setFilterMenu] = useState(null);
+    const openFilter = Boolean(filterMenu);
+
+    const handleClose = () => {
+        setFilterMenu(null);
+    };
+    const handleFilterMenuOpen = (e) => {
+        setFilterMenu(e.currentTarget);
+    };
+
+    const filterItem = (list) => {
+        let temp = list;
+        if (!showPendingItemFilter) {
+            temp = temp.filter(item => item.status != 0);
+        }
+        if (!showDoneItemFilter) {
+            temp = temp.filter(item => item.status != 1);
+        }
+        if (!showLateItemFilter) {
+            temp = temp.filter(item => item.status != 2);
+        }
+        temp = temp.sort((a, b) => {
+            let a_value = dayjs(a?.date);
+            let b_value = dayjs(b?.date);
+            if (a.status != b.status && b.status == 0) return 1; 
+            if (a.status != b.status && a.status == 0) return -1; 
+            if (a_value.isSame(b_value, "day")) {
+                if (a?.shift == b?.shift) {
+                    let a_value_c = dayjs(a?.created_at);
+                    let b_value_c = dayjs(b?.created_at);
+                    if (a_value_c.isBefore(b_value_c, "day")) return -1;
+                    else return 1;
+                }
+                if (a?.shift < b?.shift) return 1;
+                else return -1;
+            }
+            if (a_value.isBefore(b_value, "day")) return 1;
+            else return -1;
+        })
+        return temp;
+    }
+
+    useEffect(() => {
+        if (filterId != '') {
+            setOrders(filterItem(orderList.filter(item => {
+                let st = item.id + ' ';
+                return st.indexOf(filterId) != -1;
+            })))
+        } else setOrders(filterItem(orderList));
+    }, [filterId, orderList, showPendingItemFilter, showDoneItemFilter, showLateItemFilter]);
+
+
     return (
         <Paper
             sx={{
@@ -96,11 +155,13 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
                                 sx: { fontSize: "default" },
                             }}
                             variant="standard"
+                            value={filterId}
+                            onChange={(e) => setFilterId(e.target.value)}
                         />
                     </Grid>
                     <Grid item>
                         <Tooltip title="Reload">
-                            <IconButton onClick={() => {}}>
+                            <IconButton onClick={handleFilterMenuOpen}>
                                 <FilterListIcon
                                     color="inherit"
                                     sx={{ display: "block" }}
@@ -138,6 +199,44 @@ export default function MyDoctorContent(props: MyDoctorContentProps) {
                 ))}
             </Paper>
             <SwipeableOrderDetail open={open} setOpen={setOpen} order={currentOrder} />
+            <Menu
+                id="basic-menu"
+                anchorEl={filterMenu}
+                open={openFilter}
+                onClose={handleClose}
+                MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                }}
+                sx={{ width: 400 }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowPendingItemFilter(!showPendingItemFilter);
+                    }}
+                >
+                    {showPendingItemFilter ? <DoneIcon /> : <Icon />}
+                    Chờ khám
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowDoneItemFilter(!showDoneItemFilter);
+                    }}
+                >
+                    {showDoneItemFilter ? <DoneIcon /> : <Icon />}
+                    Đã khám
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        handleClose();
+                        setShowLateItemFilter(!showLateItemFilter);
+                    }}
+                >
+                    {showLateItemFilter ? <DoneIcon /> : <Icon />}
+                    Đã muộn
+                </MenuItem>
+            </Menu>
             <ToastContainer />
         </Paper>
     );

@@ -21,9 +21,9 @@ export class NotificationsController {
     return this.notificationService.readAllNotifications(id);
   }
 
-  @Put('/user/' + ':userid' + '/read/' + ':noticeid')
-  readANotification(@Param('userid', ParseIntPipe) userid: number, @Param('noticeid', ParseIntPipe) noticeid: number) {
-    return this.notificationService.readANotification(userid, noticeid);
+  @Put('/read/' + ':noticeid')
+  readANotification(@Param('noticeid', ParseIntPipe) noticeid: number) {
+    return this.notificationService.readANotification(noticeid);
   }
 
   @Get(':id')

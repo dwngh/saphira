@@ -88,12 +88,14 @@ export class OrdersService {
     const resOrder = await this.ordersRepo.createQueryBuilder("order")
       .where("order.id = :id", {id: order.id})
       .getOne();
+
+    await this.notisService.doneStatusUpdate(order.id, resOrder.patientId);
     
     return await this.ordersRepo.createQueryBuilder()
       .update(Order)
       .set({ status: 2 })
-      .where("order.date < :newDate", { newDate: new Date(resOrder.date)})
-      .orWhere("order.date = :newDate AND order.shift < :newShift", {newDate: resOrder.date, newShift: resOrder.shift})
+      .where("order.date < :newDate AND order.status = 0", { newDate: new Date(resOrder.date)})
+      .orWhere("order.date = :newDate AND order.shift < :newShift  AND order.status = 0", {newDate: resOrder.date, newShift: resOrder.shift})
       .execute();
   }
 

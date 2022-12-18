@@ -45,7 +45,7 @@ export default function Paperbase() {
     useEffect(() => {
         console.log("Query ...");
         console.log(router.query);
-        setOrderId(router.query?.orderId);
+        setOrderId(router.query?.order);
         setNote(router.query?.note ? +router.query?.note : null);
     }, [router.query]);
 

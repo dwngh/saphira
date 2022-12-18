@@ -6,6 +6,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import Navigator from "../Navigator";
 import LogoutIcon from '@mui/icons-material/Logout';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 
 interface AdminNavigatorProps {
     choosing;
@@ -37,14 +38,8 @@ export default function AdminNavigator(props: AdminNavigatorProps) {
                 {
                     id: "admin-hospital",
                     text: "Quản lý bệnh viện",
-                    icon: <AttachFileIcon />,
+                    icon: <LocalHospitalIcon />,
                     route: "/admin/hospital",
-                },
-                {
-                    id: "admin-data",
-                    text: "Dữ liệu",
-                    icon: <AttachFileIcon />,
-                    // route: "/patient/attachments",
                 },
             ],
         },

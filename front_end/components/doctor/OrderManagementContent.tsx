@@ -23,6 +23,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import DoneIcon from "@mui/icons-material/Done";
 import { Icon } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import InformationDialog from "./card/GeneralInformation";
+import InfoIcon from '@mui/icons-material/Info';
 
 interface Column {
     id: string;
@@ -109,6 +111,8 @@ export default function OrderManagementContent() {
     const [showPendingItemFilter, setShowPendingItemFilter] = useState(true);
     const [showDoneItemFilter, setShowDoneItemFilter] = useState(false);
     const [showLateItemFilter, setShowLateItemFilter] = useState(false);
+    const [openInformationDialog, setOpenInformationDialog] = useState(false);
+    const [currentInfoOrder, setCurrentInfoOrder] = useState<any>();
 
     const fetchData = async () => {
         let orders = await getOrdersByDoctor(userId, accessToken);
@@ -188,6 +192,17 @@ export default function OrderManagementContent() {
         setOpenDoneDialog(false);
     }
 
+    const handleOpenInfoDialog = (e) => {
+        let id = +e.currentTarget.id;
+        let order = orderList.filter(item => item.id == id)[0];
+        setCurrentInfoOrder(order);
+        setOpenInformationDialog(true);
+    }
+
+    const handleCloseInfoDialog = () => {
+        setOpenInformationDialog(false);
+    }
+
     const [filterMenu, setFilterMenu] = useState(null);
     const open = Boolean(filterMenu);
 
@@ -210,28 +225,21 @@ export default function OrderManagementContent() {
             temp = temp.filter(item => item.status != 2);
         }
         temp = temp.sort((a, b) => {
-            console.log("Two item comparision");
-            console.log(a?.date);
-            console.log(b?.date);
             let a_value = dayjs(a?.date);
             let b_value = dayjs(b?.date);
             if (a_value.isSame(b_value, "day")) {
                 if (a?.shift == b?.shift) {
                     let a_value_c = dayjs(a?.created_at);
                     let b_value_c = dayjs(b?.created_at);
-                    console.log("Created at compare");
                     if (a_value_c.isBefore(b_value_c, "day")) return -1;
                     else return 1;
                 }
-                console.log("Shift compare");
                 if (a?.shift < b?.shift) return -1;
                 else return 1;
             }
-            console.log("Date compare");
             if (a_value.isBefore(b_value, "day")) return -1;
             else return 1;
         })
-        console.log(temp);
         return temp;
     }
 
@@ -312,6 +320,19 @@ export default function OrderManagementContent() {
                                                         key={column.id}
                                                         align={column.align}
                                                     >
+                                                        <Tooltip title="Thông tin chung">
+                                                            <IconButton
+                                                                id={
+                                                                    row["id"] +
+                                                                    ""
+                                                                }
+                                                                onClick={
+                                                                    handleOpenInfoDialog
+                                                                }
+                                                            >
+                                                                <InfoIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
                                                         <Tooltip title="Hồ sơ người khám">
                                                             <IconButton
                                                                 id={
@@ -399,6 +420,11 @@ export default function OrderManagementContent() {
                 open={openDoneDialog}
                 onSubmit={handleDoneSubmit}
                 onCancel={handleDoneCancel}
+            />
+            <InformationDialog 
+                open={openInformationDialog}
+                order={currentInfoOrder}
+                onClose={handleCloseInfoDialog}
             />
             <Menu
                 id="basic-menu"
